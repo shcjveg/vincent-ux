@@ -1,6 +1,6 @@
 # 参与贡献
 
-先阅读 `principles/README.md` 和 `README.md` 的收录边界。问题与建议通过 GitHub Issues 提交；代码与文档改动通过 Pull Request 提交。
+先阅读 `principles/README.md` 和 `README.md` 的设计理念。问题与建议通过 GitHub Issues 提交；代码与文档改动通过 Pull Request 提交。
 
 用 Node.js 24 安装并验证：
 
