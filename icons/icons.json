@@ -1,0 +1,101 @@
+{
+  "$source": "vincent-ux v1.3.0 · icons/icons.json",
+  "$description": "图标层：页面按含义引用，不直接挑图标。底层用 lucide（https://lucide.dev），名称为 lucide 的 kebab-case 名。新增含义时先在这里登记。",
+  "$library": "lucide",
+  "sizes": {
+    "sm": 14,
+    "md": 16,
+    "lg": 18
+  },
+  "strokeWidth": 1.75,
+  "meanings": {
+    "navigation": {
+      "todo": "list-todo",
+      "home": "layout-list",
+      "product": "package",
+      "store": "store",
+      "explore": "compass",
+      "checklist": "clipboard-check",
+      "publish": "upload",
+      "promote": "megaphone",
+      "ship": "truck",
+      "support": "headset",
+      "risk": "shield-alert",
+      "wallet": "wallet",
+      "report": "chart-pie",
+      "settings": "settings",
+      "apps": "layout-grid",
+      "build": "blocks"
+    },
+    "action": {
+      "chat": "message-circle",
+      "new-chat": "message-circle-plus",
+      "send": "corner-down-left",
+      "add": "plus",
+      "edit": "pencil",
+      "delete": "trash-2",
+      "search": "search",
+      "filter": "list-filter",
+      "sort": "arrow-up-down",
+      "download": "download",
+      "upload": "upload",
+      "external": "external-link",
+      "copy": "copy",
+      "refresh": "rotate-ccw",
+      "play": "play",
+      "guide": "signpost",
+      "switch-user": "user-round-cog",
+      "close": "x",
+      "back": "arrow-left",
+      "next": "arrow-right",
+      "expand": "chevron-down",
+      "more": "ellipsis",
+      "collapse-sidebar": "panel-left-close",
+      "expand-sidebar": "panel-left-open",
+      "calendar": "calendar",
+      "watch": "eye",
+      "pin": "pin"
+    },
+    "status": {
+      "done": "check",
+      "pending": "clock",
+      "warning": "triangle-alert",
+      "blocked": "circle-x",
+      "info": "info",
+      "locked": "lock",
+      "verified": "badge-check",
+      "running": "loader-circle"
+    },
+    "subject": {
+      "$description": "对象与身份：引导里选经营方式、选角色时用，表示「这是谁 / 哪一类」",
+      "maker": "factory",
+      "reseller": "shopping-cart",
+      "creator": "clapperboard",
+      "owner": "briefcase-business",
+      "operator": "sliders-horizontal",
+      "personal": "user",
+      "team": "users",
+      "public": "globe",
+      "local": "laptop",
+      "cloud": "cloud",
+      "fork": "git-branch",
+      "version": "git-commit-horizontal"
+    }
+  },
+  "forbidden": {
+    "$description": "没有功能含义的装饰图标，任何地方都不用，包括 AI 相关入口。",
+    "names": [
+      "sparkles",
+      "sparkle",
+      "star",
+      "stars",
+      "wand",
+      "wand-2",
+      "wand-sparkles",
+      "zap",
+      "flame",
+      "party-popper",
+      "gem"
+    ]
+  }
+}

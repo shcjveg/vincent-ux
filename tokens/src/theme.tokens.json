@@ -1,0 +1,169 @@
+{
+  "$description": "主题变量：浅色与暗色各一个取值（light / dark）。中性层与品牌无关；品牌色在 brand.tokens.json。组件只引用这里和 brand 的语义名，不引用色值。",
+  "surface": {
+    "$description": "面分层：每升一级亮一档（浅色）或亮一档（暗色），层级靠明度差而不是线。",
+    "canvas": {
+      "$type": "color",
+      "light": "#E3DED4",
+      "dark": "#141210",
+      "$description": "应用底"
+    },
+    "shell": {
+      "$type": "color",
+      "light": "#F2EFE9",
+      "dark": "#1C1A17",
+      "$description": "承载区：左栏、页面区"
+    },
+    "card": {
+      "$type": "color",
+      "light": "#FFFFFF",
+      "dark": "#262320",
+      "$description": "卡片"
+    },
+    "card-hover": {
+      "$type": "color",
+      "light": "#FBFAF7",
+      "dark": "#2C2925"
+    },
+    "inset": {
+      "$type": "color",
+      "light": "#EBE7DE",
+      "dark": "#1B1916",
+      "$description": "凹面：输入框、分段控件、次按钮"
+    },
+    "overlay": {
+      "$type": "color",
+      "light": "rgba(255, 255, 255, 0.84)",
+      "dark": "rgba(40, 37, 33, 0.84)",
+      "$description": "浮层：对话面板、下拉、说明卡"
+    },
+    "overlay-strong": {
+      "$type": "color",
+      "light": "rgba(255, 255, 255, 0.92)",
+      "dark": "rgba(44, 41, 37, 0.94)"
+    },
+    "scrim": {
+      "$type": "color",
+      "light": "rgba(28, 24, 20, 0.42)",
+      "dark": "rgba(0, 0, 0, 0.56)",
+      "$description": "蒙版"
+    }
+  },
+  "fill": {
+    "$description": "状态填充：叠在任何面上都成立。",
+    "hover": {
+      "$type": "color",
+      "light": "rgba(60, 44, 20, 0.05)",
+      "dark": "rgba(255, 245, 230, 0.06)"
+    },
+    "selected": {
+      "$type": "color",
+      "light": "rgba(60, 44, 20, 0.09)",
+      "dark": "rgba(255, 245, 230, 0.11)"
+    },
+    "quiet": {
+      "$type": "color",
+      "light": "rgba(60, 44, 20, 0.04)",
+      "dark": "rgba(255, 245, 230, 0.04)",
+      "$description": "卡片里嵌套的块、表头"
+    }
+  },
+  "text": {
+    "primary": {
+      "$type": "color",
+      "light": "#1C1814",
+      "dark": "#F3EEE7",
+      "$description": "标题、正文"
+    },
+    "secondary": {
+      "$type": "color",
+      "light": "#5E574E",
+      "dark": "#B9B0A4",
+      "$description": "次级正文"
+    },
+    "tertiary": {
+      "$type": "color",
+      "light": "#655D52",
+      "dark": "#A39A8D",
+      "$description": "辅助文字；所有常用面上达到普通文本 4.5:1"
+    },
+    "disabled": {
+      "$type": "color",
+      "light": "#B4ACA1",
+      "dark": "#5E574E"
+    },
+    "on-strong": {
+      "$type": "color",
+      "light": "#FFFFFF",
+      "dark": "#1C1814",
+      "$description": "墨色主按钮上的文字"
+    },
+    "on-critical": {
+      "$type": "color",
+      "light": "#FFFFFF",
+      "dark": "#1C1814",
+      "$description": "红点、危急色块上的文字"
+    }
+  },
+  "line": {
+    "faint": {
+      "$type": "color",
+      "light": "rgba(60, 44, 20, 0.06)",
+      "dark": "rgba(255, 245, 230, 0.08)",
+      "$description": "唯一的线色：长列表、数据表格行间，暗色下相邻面之间"
+    },
+    "control": {
+      "$type": "color",
+      "light": "#80766A",
+      "dark": "#A39A8D",
+      "$description": "输入与未选中控件的必要边界；与装饰分隔线分开"
+    }
+  },
+  "ink": {
+    "$description": "墨：主按钮、强调文字。暗色下反转为浅色主按钮。",
+    "base": {
+      "$type": "color",
+      "light": "#1C1814",
+      "dark": "#F3EEE7"
+    },
+    "top": {
+      "$type": "color",
+      "light": "#2E2822",
+      "dark": "#FFFFFF",
+      "$description": "主按钮渐变的上沿"
+    }
+  },
+  "shadow": {
+    "card": {
+      "$type": "shadow",
+      "light": "0 1px 2px rgba(60, 44, 20, 0.05), 0 4px 14px -6px rgba(60, 44, 20, 0.07)",
+      "dark": "0 1px 2px rgba(0, 0, 0, 0.3)"
+    },
+    "overlay": {
+      "$type": "shadow",
+      "light": "0 2px 4px rgba(60, 44, 20, 0.06), 0 14px 36px -8px rgba(60, 44, 20, 0.24), 0 32px 72px -28px rgba(60, 44, 20, 0.28)",
+      "dark": "0 2px 6px rgba(0, 0, 0, 0.4), 0 18px 48px -10px rgba(0, 0, 0, 0.6)"
+    },
+    "inset": {
+      "$type": "shadow",
+      "light": "inset 0 1px 2px rgba(60, 44, 20, 0.06)",
+      "dark": "inset 0 1px 2px rgba(0, 0, 0, 0.28)"
+    }
+  },
+  "blur": {
+    "overlay": {
+      "$type": "string",
+      "light": "blur(24px) saturate(160%)",
+      "dark": "blur(24px) saturate(140%)",
+      "$description": "只给浮层"
+    }
+  },
+  "focus": {
+    "ring": {
+      "$type": "color",
+      "light": "#80570D",
+      "dark": "#E8BF6A",
+      "$description": "键盘焦点，独立于装饰与图表强调色"
+    }
+  }
+}

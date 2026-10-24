@@ -1,0 +1,78 @@
+{
+  "$description": "品牌层：使用方项目换品牌只换这个文件。默认品牌「墨金」：金只给钱、选中和需要你看的地方；朱只给红点、亏损和阻断。",
+  "$name": "ink-gold",
+  "brand": {
+    "accent": {
+      "$type": "color",
+      "light": "#80570D",
+      "dark": "#D9AE57",
+      "$description": "金额重点、选中、链接"
+    },
+    "accent-bright": {
+      "$type": "color",
+      "light": "#C8962E",
+      "dark": "#E8BF6A",
+      "$description": "图形强调；小字用 accent，焦点用 focus-ring"
+    },
+    "accent-soft": {
+      "$type": "color",
+      "light": "#F8F3E9",
+      "dark": "rgba(217, 174, 87, 0.14)",
+      "$description": "淡金底，只用于需要你看的状态"
+    },
+    "critical": {
+      "$type": "color",
+      "light": "#AE2F1D",
+      "dark": "#F77B68",
+      "$description": "红点、亏损、阻断"
+    },
+    "critical-soft": {
+      "$type": "color",
+      "light": "#FBF0ED",
+      "dark": "rgba(247, 123, 104, 0.12)"
+    }
+  },
+  "viz": {
+    "$description": "图表色板：单序列用 neutral 加一个 accent 高亮；多序列才启用 series。",
+    "neutral": {
+      "$type": "color",
+      "light": "rgba(60, 44, 20, 0.12)",
+      "dark": "rgba(255, 245, 230, 0.14)"
+    },
+    "accent": {
+      "$type": "color",
+      "light": "#C8962E",
+      "dark": "#E8BF6A"
+    },
+    "series-1": {
+      "$type": "color",
+      "light": "#9A6A12",
+      "dark": "#D9AE57"
+    },
+    "series-2": {
+      "$type": "color",
+      "light": "#5E574E",
+      "dark": "#B9B0A4"
+    },
+    "series-3": {
+      "$type": "color",
+      "light": "#C8962E",
+      "dark": "#E8BF6A"
+    },
+    "series-4": {
+      "$type": "color",
+      "light": "#857D72",
+      "dark": "#8C8478"
+    },
+    "series-5": {
+      "$type": "color",
+      "light": "#6E5634",
+      "dark": "#C2A47A"
+    },
+    "series-6": {
+      "$type": "color",
+      "light": "#B4ACA1",
+      "dark": "#5E574E"
+    }
+  }
+}

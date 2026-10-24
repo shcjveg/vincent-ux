@@ -1,0 +1,321 @@
+{
+  "$description": "内部设计变量格式，借鉴 DTCG 的 $value / $type；CSS 字符串和 light/dark 是本项目约定，不是标准交换格式。",
+  "font": {
+    "family": {
+      "sans": {
+        "$type": "fontFamily",
+        "$value": "-apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Segoe UI', sans-serif"
+      },
+      "num": {
+        "$type": "fontFamily",
+        "$value": "'DIN Alternate', 'DIN Condensed', 'Avenir Next', -apple-system, sans-serif",
+        "$description": "金额、百分比、件数的大号展示"
+      },
+      "mono": {
+        "$type": "fontFamily",
+        "$value": "'SF Mono', ui-monospace, Menlo, Consolas, monospace"
+      }
+    },
+    "size": {
+      "xs": {
+        "$type": "dimension",
+        "$value": "11px",
+        "$description": "角标、计数"
+      },
+      "sm": {
+        "$type": "dimension",
+        "$value": "12px",
+        "$description": "辅助说明、表头、标签"
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "13px",
+        "$description": "正文、列表、按钮"
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "14px",
+        "$description": "卡片标题、强调正文"
+      },
+      "xl": {
+        "$type": "dimension",
+        "$value": "16px",
+        "$description": "说明卡标题、区块标题"
+      },
+      "2xl": {
+        "$type": "dimension",
+        "$value": "22px",
+        "$description": "页面标题"
+      },
+      "3xl": {
+        "$type": "dimension",
+        "$value": "26px",
+        "$description": "首页标题、数字展示"
+      },
+      "display": {
+        "$type": "dimension",
+        "$value": "44px",
+        "$description": "引导页大标题"
+      }
+    },
+    "weight": {
+      "regular": {
+        "$type": "fontWeight",
+        "$value": 400
+      },
+      "medium": {
+        "$type": "fontWeight",
+        "$value": 500
+      },
+      "semibold": {
+        "$type": "fontWeight",
+        "$value": 600
+      },
+      "bold": {
+        "$type": "fontWeight",
+        "$value": 700
+      }
+    },
+    "leading": {
+      "tight": {
+        "$type": "number",
+        "$value": 1.3
+      },
+      "normal": {
+        "$type": "number",
+        "$value": 1.55
+      },
+      "relaxed": {
+        "$type": "number",
+        "$value": 1.7
+      }
+    }
+  },
+  "space": {
+    "$description": "4px 主刻度，2px 半档用于紧凑控件；1px 仅作光学修正。检查刻度由本文件生成。",
+    "0": {
+      "$type": "dimension",
+      "$value": "0px"
+    },
+    "1": {
+      "$type": "dimension",
+      "$value": "4px"
+    },
+    "2": {
+      "$type": "dimension",
+      "$value": "8px"
+    },
+    "3": {
+      "$type": "dimension",
+      "$value": "12px"
+    },
+    "4": {
+      "$type": "dimension",
+      "$value": "16px"
+    },
+    "5": {
+      "$type": "dimension",
+      "$value": "20px"
+    },
+    "6": {
+      "$type": "dimension",
+      "$value": "24px"
+    },
+    "8": {
+      "$type": "dimension",
+      "$value": "32px"
+    },
+    "10": {
+      "$type": "dimension",
+      "$value": "40px"
+    },
+    "12": {
+      "$type": "dimension",
+      "$value": "48px"
+    },
+    "px": {
+      "$type": "dimension",
+      "$value": "1px"
+    },
+    "0-5": {
+      "$type": "dimension",
+      "$value": "2px"
+    },
+    "1-5": {
+      "$type": "dimension",
+      "$value": "6px"
+    },
+    "2-5": {
+      "$type": "dimension",
+      "$value": "10px"
+    },
+    "3-5": {
+      "$type": "dimension",
+      "$value": "14px"
+    },
+    "4-5": {
+      "$type": "dimension",
+      "$value": "18px"
+    },
+    "5-5": {
+      "$type": "dimension",
+      "$value": "22px"
+    },
+    "7": {
+      "$type": "dimension",
+      "$value": "28px"
+    },
+    "14": {
+      "$type": "dimension",
+      "$value": "56px"
+    },
+    "18": {
+      "$type": "dimension",
+      "$value": "72px"
+    },
+    "24": {
+      "$type": "dimension",
+      "$value": "96px"
+    }
+  },
+  "radius": {
+    "xs": {
+      "$type": "dimension",
+      "$value": "6px",
+      "$description": "标签内小块、复选框"
+    },
+    "sm": {
+      "$type": "dimension",
+      "$value": "8px",
+      "$description": "小按钮、输入框"
+    },
+    "md": {
+      "$type": "dimension",
+      "$value": "10px",
+      "$description": "按钮、分段控件、列表行"
+    },
+    "lg": {
+      "$type": "dimension",
+      "$value": "14px",
+      "$description": "卡片"
+    },
+    "xl": {
+      "$type": "dimension",
+      "$value": "18px",
+      "$description": "外壳面板、浮层"
+    },
+    "full": {
+      "$type": "dimension",
+      "$value": "999px",
+      "$description": "胶囊、圆点"
+    }
+  },
+  "size": {
+    "control": {
+      "sm": {
+        "$type": "dimension",
+        "$value": "32px"
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "34px"
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "42px"
+      }
+    },
+    "hit": {
+      "$type": "dimension",
+      "$value": "32px",
+      "$description": "最小点击区域（桌面）"
+    },
+    "icon": {
+      "sm": {
+        "$type": "dimension",
+        "$value": "14px"
+      },
+      "md": {
+        "$type": "dimension",
+        "$value": "16px"
+      },
+      "lg": {
+        "$type": "dimension",
+        "$value": "18px"
+      }
+    }
+  },
+  "motion": {
+    "duration": {
+      "fast": {
+        "$type": "duration",
+        "$value": "120ms",
+        "$description": "悬停、按下"
+      },
+      "base": {
+        "$type": "duration",
+        "$value": "180ms",
+        "$description": "展开、切换"
+      },
+      "slow": {
+        "$type": "duration",
+        "$value": "280ms",
+        "$description": "浮层进出、导览移动"
+      }
+    },
+    "ease": {
+      "standard": {
+        "$type": "cubicBezier",
+        "$value": [
+          0.2,
+          0,
+          0,
+          1
+        ]
+      },
+      "out": {
+        "$type": "cubicBezier",
+        "$value": [
+          0,
+          0,
+          0.2,
+          1
+        ]
+      }
+    }
+  },
+  "z": {
+    "base": {
+      "$type": "number",
+      "$value": 0
+    },
+    "sticky": {
+      "$type": "number",
+      "$value": 10
+    },
+    "float": {
+      "$type": "number",
+      "$value": 40,
+      "$description": "右下角悬浮入口"
+    },
+    "overlay": {
+      "$type": "number",
+      "$value": 60,
+      "$description": "下拉、提示"
+    },
+    "modal": {
+      "$type": "number",
+      "$value": 80,
+      "$description": "导览蒙版、确认框"
+    },
+    "toast": {
+      "$type": "number",
+      "$value": 100
+    },
+    "popover": {
+      "$type": "number",
+      "$value": 90,
+      "$description": "下拉和提示高于模态内容，低于 toast"
+    }
+  }
+}

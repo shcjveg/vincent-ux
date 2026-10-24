@@ -1,0 +1,464 @@
+/* vincent-ux v1.3.0 · templates/css/templates.css */
+/* 模板：应用与页面的骨架。依赖 tokens.css 与 components/css/*。
+   结构：.vx-app > .vx-nav（可收起）+ .vx-chat（按需出现）+ .vx-render（.vx-tabs + .vx-render-body > .vx-page） */
+
+/* ---------- 应用外壳：三栏，各栏按需出现或隐藏 ---------- */
+.vx-app {
+  display: flex;
+  /* 外壳固定为一屏高，只有渲染区内部滚动；嵌在别的容器里时由容器覆盖为 100% */
+  position: relative;
+  height: 100dvh;
+  padding: var(--vx-space-2-5);
+  gap: var(--vx-space-2-5);
+  background: var(--vx-surface-canvas);
+}
+
+/* 左栏：品牌 · 功能导航 + 对话导航（可滚动）· 账户，实色承载区 */
+.vx-nav {
+  width: 224px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--vx-space-2) var(--vx-space-2) var(--vx-space-2-5);
+  border-radius: var(--vx-radius-xl);
+  background: var(--vx-surface-shell);
+  transition: width var(--vx-motion-duration-base);
+}
+
+.vx-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--vx-space-2-5);
+  padding: var(--vx-space-2) var(--vx-space-1-5) var(--vx-space-3-5) var(--vx-space-2-5);
+}
+
+.vx-nav-brand-text {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.vx-nav-brand-name {
+  font-size: var(--vx-font-size-lg);
+  font-weight: var(--vx-font-weight-semibold);
+  letter-spacing: 0.5px;
+}
+
+.vx-nav-brand-sub {
+  display: block;
+  margin-top: var(--vx-space-px);
+  font-size: var(--vx-font-size-xs);
+  color: var(--vx-text-tertiary);
+}
+
+.vx-nav-brand .vx-icon-btn {
+  margin-left: auto;
+}
+
+.vx-nav-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.vx-nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vx-space-0-5);
+}
+
+.vx-nav-group + .vx-nav-group {
+  margin-top: var(--vx-space-4);
+}
+
+.vx-nav-group-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 24px;
+  padding: 0 var(--vx-space-1) var(--vx-space-1) var(--vx-space-2-5);
+  font-size: var(--vx-font-size-sm);
+  color: var(--vx-text-tertiary);
+}
+
+.vx-nav-group-title .vx-icon-btn {
+  width: 24px;
+  height: 24px;
+}
+
+.vx-nav-group-title .vx-icon-btn svg {
+  width: var(--vx-size-icon-sm);
+  height: var(--vx-size-icon-sm);
+}
+
+/* 导航项：图标 + 名称 + 红点或计数；选中是一档填充 */
+.vx-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--vx-space-2-5);
+  width: 100%;
+  height: var(--vx-size-control-md);
+  padding: 0 var(--vx-space-2-5);
+  border-radius: var(--vx-radius-md);
+  text-align: left;
+  font-size: var(--vx-font-size-md);
+  color: var(--vx-text-secondary);
+  transition: background var(--vx-motion-duration-fast), color var(--vx-motion-duration-fast);
+}
+
+.vx-nav-item:hover {
+  background: var(--vx-fill-hover);
+  color: var(--vx-text-primary);
+}
+
+.vx-nav-item[aria-current='page'],
+.vx-nav-item[aria-current='true'] {
+  background: var(--vx-fill-selected);
+  color: var(--vx-text-primary);
+  font-weight: var(--vx-font-weight-medium);
+}
+
+/* 当前项不带红点（patterns/todo-and-badge.md）：组件层负责，页面照常渲染红点即可。
+   待办总入口的计数用 .vx-badge，不受影响 */
+.vx-nav-item[aria-current] .vx-dot,
+.vx-tab[aria-selected='true'] .vx-dot {
+  display: none;
+}
+
+.vx-nav-item svg {
+  width: var(--vx-size-icon-md);
+  height: var(--vx-size-icon-md);
+  flex-shrink: 0;
+  color: var(--vx-text-tertiary);
+}
+
+.vx-nav-item[aria-current] svg {
+  color: var(--vx-text-primary);
+}
+
+.vx-nav-item-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 对话项：更紧凑，右侧是时间 */
+.vx-nav-item--sub {
+  height: 30px;
+}
+
+.vx-nav-item--sub svg {
+  width: var(--vx-size-icon-sm);
+  height: var(--vx-size-icon-sm);
+}
+
+.vx-nav-item-meta {
+  font-size: var(--vx-font-size-xs);
+  font-weight: var(--vx-font-weight-regular);
+  color: var(--vx-text-tertiary);
+}
+
+.vx-nav-empty {
+  padding: var(--vx-space-0-5) var(--vx-space-2-5);
+  font-size: var(--vx-font-size-sm);
+  color: var(--vx-text-tertiary);
+}
+
+/* 账户：左栏底部，凹面一块 */
+.vx-nav-account {
+  display: flex;
+  align-items: center;
+  gap: var(--vx-space-2-5);
+  margin-top: auto;
+  padding: var(--vx-space-2-5);
+  border-radius: var(--vx-radius-lg);
+  background: var(--vx-surface-inset);
+}
+
+.vx-nav-account-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.vx-nav-account-name {
+  font-size: var(--vx-font-size-md);
+  font-weight: var(--vx-font-weight-semibold);
+}
+
+.vx-nav-account-sub {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--vx-font-size-xs);
+  color: var(--vx-text-tertiary);
+}
+
+/* 收起：<div class="vx-app" data-nav="collapsed">，只剩图标，红点仍在，计数隐藏 */
+.vx-app[data-nav='collapsed'] .vx-nav {
+  width: 56px;
+}
+
+.vx-app[data-nav='collapsed'] .vx-nav-brand {
+  flex-direction: column;
+  padding: var(--vx-space-2) 0 var(--vx-space-3-5);
+}
+
+.vx-app[data-nav='collapsed'] .vx-nav-brand .vx-icon-btn {
+  margin-left: 0;
+}
+
+.vx-app[data-nav='collapsed'] .vx-nav-item {
+  justify-content: center;
+  padding: 0;
+  position: relative;
+}
+
+.vx-app[data-nav='collapsed'] :is(.vx-nav-item-label, .vx-nav-item-meta, .vx-nav-brand-text, .vx-nav-group-title, .vx-nav-account-text, .vx-nav-empty, .vx-nav-item .vx-count) {
+  display: none;
+}
+
+.vx-app[data-nav='collapsed'] .vx-nav-item .vx-dot {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+}
+
+.vx-app[data-nav='collapsed'] .vx-nav-item .vx-badge {
+  position: absolute;
+  top: 1px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 var(--vx-space-1);
+  line-height: 16px;
+  font-size: var(--vx-font-size-xs);
+}
+
+.vx-app[data-nav='collapsed'] .vx-nav-account {
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--vx-space-2) 0;
+  background: transparent;
+}
+
+/* 中栏：对话，浮层面板，默认不出现 */
+.vx-app > .vx-chat {
+  width: 380px;
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+/* 右栏：渲染区，浏览器式页签 + 页面 */
+.vx-render {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--vx-radius-xl);
+  background: var(--vx-surface-shell);
+  overflow: hidden;
+}
+
+.vx-tabs-meta {
+  margin-left: auto;
+  font-size: var(--vx-font-size-sm);
+  color: var(--vx-text-tertiary);
+  white-space: nowrap;
+}
+
+.vx-render-body {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: var(--vx-space-24); /* 给右下角悬浮入口留位置：最后一屏内容滚到它上方 */
+  container-type: inline-size;
+  container-name: render;
+}
+
+/* ---------- 右下角悬浮入口：唯一的全局派活入口 ---------- */
+.vx-ask {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--vx-space-2);
+  height: 44px;
+  padding: 0 var(--vx-space-4-5) 0 var(--vx-space-4);
+  border-radius: var(--vx-radius-full);
+  background: linear-gradient(180deg, var(--vx-ink-top), var(--vx-ink-base));
+  color: var(--vx-text-on-strong);
+  font-size: var(--vx-font-size-lg);
+  font-weight: var(--vx-font-weight-medium);
+  box-shadow: var(--vx-shadow-overlay);
+  z-index: var(--vx-z-float);
+  transition: transform var(--vx-motion-duration-fast);
+}
+
+.vx-ask:hover {
+  transform: translateY(-1px);
+}
+
+.vx-ask svg {
+  width: var(--vx-size-icon-lg);
+  height: var(--vx-size-icon-lg);
+}
+
+/* ---------- 页面骨架：页头 → 要处理的 → 参考信息（收起） ---------- */
+.vx-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vx-space-6);
+  max-width: 1180px;
+  width: 100%;
+  padding: var(--vx-space-6) var(--vx-space-8) var(--vx-space-14);
+}
+
+.vx-page--narrow {
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+/* 列表 + 详情：左列是深一档的面，不用竖线分栏 */
+.vx-split {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: var(--vx-space-4);
+  align-items: start;
+}
+
+.vx-split > * { min-width: 0; }
+
+.vx-split-list {
+  padding: var(--vx-space-2);
+  border-radius: var(--vx-radius-lg);
+  background: var(--vx-fill-quiet);
+  overflow-y: auto;
+}
+
+/* 列表栏里的行本身就有内边距，不再向外溢出 */
+.vx-split-list .vx-row {
+  width: 100%;
+  margin-inline: 0;
+}
+
+/* ---------- 引导页骨架：整屏铺开，每屏只问一件事 ---------- */
+.vx-onboard {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: var(--vx-space-7) clamp(var(--vx-space-7), 6vw, var(--vx-space-24)) var(--vx-space-8);
+  background: var(--vx-surface-shell);
+}
+
+/* 固定步骤外壳：正文独立滚动，操作锚点不随选项数量变化。 */
+.vx-onboard--fixed { height: 100dvh; min-height: 0; grid-template-rows: auto minmax(0, 1fr) auto; }
+.vx-onboard--fixed > .vx-onboard-main { overflow-y: auto; min-height: 0; }
+
+.vx-onboard-top,
+.vx-onboard-foot {
+  width: min(960px, 100%);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vx-space-6);
+}
+
+.vx-onboard-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: var(--vx-space-10) 0;
+}
+
+.vx-onboard-step {
+  width: min(960px, 100%);
+  animation: vx-step-in var(--vx-motion-duration-slow) var(--vx-motion-ease-out);
+}
+
+@keyframes vx-step-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.vx-onboard-step h1 {
+  font-size: clamp(var(--vx-font-size-3xl), 5vw, var(--vx-font-size-display));
+  font-weight: var(--vx-font-weight-bold);
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.vx-onboard-step h2 {
+  font-size: clamp(var(--vx-font-size-2xl), 3vw, var(--vx-font-size-3xl));
+  font-weight: var(--vx-font-weight-semibold);
+  letter-spacing: -0.3px;
+}
+
+.vx-onboard-step > p {
+  max-width: 640px;
+  margin-top: var(--vx-space-2-5);
+  font-size: var(--vx-font-size-lg);
+  color: var(--vx-text-secondary);
+}
+
+.vx-progress {
+  display: flex;
+  gap: var(--vx-space-1-5);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.vx-progress li {
+  width: 28px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--vx-fill-selected);
+  transition: background var(--vx-motion-duration-base);
+}
+
+.vx-progress li[data-state='done'] {
+  background: var(--vx-text-tertiary);
+}
+
+.vx-progress li[data-state='current'] {
+  background: var(--vx-ink-base);
+}
+
+/* 键盘焦点不能依赖 hover；页签和关闭按钮保持并列语义。 */
+.vx-app[data-nav='collapsed'] .vx-nav-item-label {
+  display: block; position: absolute; width: 1px; height: 1px; padding: 0;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+}
+.vx-app { container-type: inline-size; container-name: app; }
+@container app (max-width: 1200px) {
+  .vx-app > .vx-nav { width: 56px; }
+  .vx-nav-brand { flex-direction: column; padding: var(--vx-space-2) 0; }
+  .vx-nav-brand-text, .vx-nav-account-text, .vx-nav-group-title, .vx-nav-item-meta, .vx-nav-empty, .vx-nav-item .vx-count { display: none; }
+  /* 自动压缩时宿主仍可能处于展开状态：保留分组动作，收起说明文字。 */
+  .vx-app:not([data-nav='collapsed']) .vx-nav-group-title { display: flex; justify-content: center; padding: 0; }
+  .vx-nav-group-title > span { display: none; }
+  .vx-nav-item-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .vx-nav-item { justify-content: center; position: relative; padding: 0; }
+  .vx-nav-item .vx-badge { position: absolute; right: 0; top: 0; }
+  .vx-nav-account { flex-direction: column; padding: var(--vx-space-2) 0; justify-content: center; }
+  .vx-app > .vx-chat { width: 300px; }
+}
+@container app (max-width: 720px) {
+  .vx-app > .vx-chat { position: absolute; inset: var(--vx-space-2); width: auto; z-index: var(--vx-z-overlay); }
+  .vx-page { padding: var(--vx-space-5) var(--vx-space-4); }
+}
+@container render (max-width: 640px) {
+  .vx-split { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* 窄内容区缩减外缘，保留组件内部节奏。 */
+@container render (max-width: 640px) {
+  .vx-page { padding-inline: var(--vx-space-4); }
+}

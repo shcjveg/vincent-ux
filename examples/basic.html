@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>vincent-ux 接入示例</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <main class="vx-page vx-page--narrow">
+    <header class="vx-pagehead"><div><h1>内容库</h1><p>先筛选，再查看需要处理的内容。</p></div></header>
+    <form class="vx-card vx-stack" id="filters">
+      <label class="vx-field"><span class="vx-field-label">搜索内容</span><input name="q" type="search" class="vx-input" placeholder="输入标题" /></label>
+      <label class="vx-field"><span class="vx-field-label">状态</span><select name="status" class="vx-select"><option value="">全部状态</option><option value="draft">草稿</option></select></label>
+      <div class="vx-cluster"><button type="submit" class="vx-btn vx-btn--primary"><svg class="vx-icon" aria-hidden="true"><use href="../icons/dist/sprite.svg#search" /></svg>筛选</button><button type="reset" class="vx-btn">清除条件</button></div>
+      <p class="vx-meta" role="status" id="result">这是可独立使用的 HTML 接入示例。</p>
+    </form>
+  </main>
+  <script>
+    document.querySelector('#filters').addEventListener('submit', event => {
+      event.preventDefault(); document.querySelector('#result').textContent = '条件已准备好；由你的应用查询并展示结果。';
+    });
+    document.querySelector('#filters').addEventListener('reset', () => { document.querySelector('#result').textContent = '已清除筛选条件。'; });
+  </script>
+</body>
+</html>

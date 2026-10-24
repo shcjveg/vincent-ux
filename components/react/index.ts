@@ -1,0 +1,23 @@
+// vincent-ux v1.3.0 · components/react/index.ts
+// React 组件：只收需要状态或可访问性逻辑的组件，以及用来固定一条容易写走样的规则的组件；纯外观直接用 CSS 类名（见 components/css/）。
+export { Icon, type IconName } from './Icon'
+export { Fold } from './Fold'
+export { Segmented } from './Segmented'
+export { Select, type SelectOption } from './Select'
+export { Tip, TipProvider } from './Tip'
+export { DecisionCard, type DecisionOption } from './DecisionCard'
+export { Guide, type GuideStep } from './Guide'
+export { AgentAction } from './AgentAction'
+
+export { Button, type ButtonProps } from './Button'
+export { Field } from './Field'
+export { Checkbox } from './Checkbox'
+export { Switch } from './Switch'
+export { RadioGroup } from './RadioGroup'
+export { Dialog } from './Dialog'
+export { Tabs, type TabItem } from './Tabs'
+export { TableScroll } from './TableScroll'
+export { SearchField } from './SearchField'
+export { FilterBar, type ActiveFilter } from './FilterBar'
+export { Collection } from './Collection'
+export { Pagination } from './Pagination'

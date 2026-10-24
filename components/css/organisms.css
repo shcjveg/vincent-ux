@@ -1,0 +1,945 @@
+/* vincent-ux v1.3.0 · components/css/organisms.css */
+/* 组织：完成一块完整内容的组件。依赖 tokens.css、base.css、atoms.css、molecules.css。 */
+
+/* ---------- 页头：一个标题 + 一句结论 + 页面级动作 ---------- */
+.vx-pagehead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--vx-space-6);
+}
+
+.vx-pagehead h1,
+.vx-pagehead h2 {
+  font-size: var(--vx-font-size-2xl);
+  font-weight: var(--vx-font-weight-semibold);
+  letter-spacing: -0.2px;
+}
+
+.vx-pagehead p {
+  margin-top: var(--vx-space-1-5);
+  max-width: 680px;
+  font-size: var(--vx-font-size-md);
+  color: var(--vx-text-secondary);
+}
+
+.vx-pagehead-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vx-space-2);
+  flex-shrink: 0;
+}
+
+/* 小节标题：没有卡片包裹的一组内容 */
+.vx-section-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--vx-space-2);
+  margin-bottom: var(--vx-space-3);
+  font-size: var(--vx-font-size-lg);
+  font-weight: var(--vx-font-weight-semibold);
+}
+
+.vx-section-title :is(.vx-count, .vx-meta) {
+  font-weight: var(--vx-font-weight-regular);
+}
+
+/* ---------- 卡片：纯白，无描边，靠比承载区更亮浮起 ---------- */
+.vx-card {
+  min-width: 0;
+  background: var(--vx-surface-card);
+  border-radius: var(--vx-radius-lg);
+  box-shadow: var(--vx-shadow-card);
+}
+
+/* 直接放内容时使用 padded；有 head/body 分区时由分区提供留白。 */
+.vx-card--padded { padding: var(--vx-space-5); }
+
+.vx-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--vx-space-3);
+  padding: var(--vx-space-5) var(--vx-space-5) var(--vx-space-1);
+}
+
+.vx-card-head h3 {
+  font-size: var(--vx-font-size-lg);
+  font-weight: var(--vx-font-weight-semibold);
+}
+
+.vx-card-extra {
+  display: flex;
+  flex-wrap: wrap;
+  min-width: 0;
+  align-items: center;
+  gap: var(--vx-space-2);
+  font-size: var(--vx-font-size-sm);
+  color: var(--vx-text-tertiary);
+}
+
+.vx-card-body {
+  padding: var(--vx-space-3) var(--vx-space-5) var(--vx-space-5);
+}
+
+/* 无标题的卡片正文仍保留完整顶部留白。 */
+.vx-card-body:first-child { padding-top: var(--vx-space-5); }
+
+/* 卡片里的次级分区：和上方内容只隔一段留白 */
+* + .vx-card-section {
+  margin-top: var(--vx-space-4);
+}
+
+/* 卡片里嵌套的块：淡填充，不画框 */
+.vx-nested {
+  border-radius: var(--vx-radius-sm);
+  background: var(--vx-fill-quiet);
+  padding: var(--vx-space-3) var(--vx-space-3-5);
+  font-size: var(--vx-font-size-md);
+  color: var(--vx-text-secondary);
+}
+
+/* ---------- 指标卡：标签 · 数字 · 变化 · 说明 ---------- */
+.vx-stat {
+  padding: var(--vx-space-4) var(--vx-space-4-5);
+  border-radius: var(--vx-radius-lg);
+  background: var(--vx-surface-card);
+  box-shadow: var(--vx-shadow-card);
+}
+
+/* 可点的指标卡：去往明细 */
+button.vx-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  text-align: left;
+  transition: background var(--vx-motion-duration-fast);
+}
+
+button.vx-stat:hover {
+  background: var(--vx-surface-card-hover);
+}
+
+.vx-stat-label {
+  font-size: var(--vx-font-size-sm);
+  color: var(--vx-text-tertiary);
+}
+
+.vx-stat-value {
+  display: flex;
+  align-items: baseline;
+  gap: var(--vx-space-2);
+  margin-top: var(--vx-space-1-5);
+  font-family: var(--vx-font-family-num);
+  font-size: var(--vx-font-size-3xl);
+  font-weight: var(--vx-font-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 值是钱且要人看时用强调色；值是一段文字（如渠道名）时用正文字体 */
+.vx-stat-value--accent {
+  color: var(--vx-brand-accent);
+}
+
+.vx-stat-value--text {
+  margin-top: var(--vx-space-2);
+  font-family: inherit;
+  font-size: var(--vx-font-size-xl);
+  font-weight: var(--vx-font-weight-semibold);
+}
+
+.vx-stat-delta {
+  font-family: var(--vx-font-family-num);
+  font-size: var(--vx-font-size-md);
+  font-weight: var(--vx-font-weight-semibold);
+  color: var(--vx-text-tertiary);
+}
+
+.vx-stat-delta--up {
+  color: var(--vx-brand-accent);
+}
+
+.vx-stat-delta--down {
+  color: var(--vx-brand-critical);
+}
+
+.vx-stat-note {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vx-space-1);
+  margin-top: var(--vx-space-1);
+  font-size: var(--vx-font-size-sm);
+  color: var(--vx-text-tertiary);
+}
+
+.vx-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--vx-space-3);
+}
+
+/* 同一结论里的并列指标共享承载面，避免卡片里再套一组卡片。 */
+.vx-stats--inline { gap: var(--vx-space-5); }
+.vx-stats--inline > .vx-stat { padding: 0; background: transparent; box-shadow: none; border-radius: 0; min-width: 0; }
+.vx-stats--inline .vx-stat-value { font-size: var(--vx-font-size-2xl); }
+
+/* ---------- 决定卡：结论 · 说明 · 推荐 · 选项 · 时限与依据 ---------- */
+.vx-decision {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vx-space-3);
+  padding: var(--vx-space-5);
+  border-radius: var(--vx-radius-lg);
+  background: var(--vx-surface-card);
+  box-shadow: var(--vx-shadow-card);
+}
+
+.vx-decision-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--vx-space-3);
+}
+
+.vx-decision h4 {
+  font-size: var(--vx-font-size-lg);
+  font-weight: var(--vx-font-weight-semibold);
+  line-height: 1.45;
+}
+
+.vx-decision p {
+  max-width: 88ch;
+  font-size: var(--vx-font-size-md);
+  color: var(--vx-text-secondary);
+}
+
+.vx-decision-rec {
+  max-width: 88ch;
+  font-size: var(--vx-font-size-md);
+  color: var(--vx-text-primary);
+}
+
+.vx-decision-rec b {
+  margin-right: var(--vx-space-1-5);
+  font-weight: var(--vx-font-weight-semibold);
+}
+
+.vx-decision-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vx-space-2);
+}
+
+.vx-decision-actions .vx-spacer {
+  flex: 1;
+}
+
+.vx-decision-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vx-space-1-5) var(--vx-space-3);
+  font-size: var(--vx-font-size-sm);
+  color: var(--vx-text-tertiary);
+}
+
+.vx-decision-due {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--vx-space-1);
+  color: var(--vx-text-secondary);
+}
+
+.vx-decision > .vx-fold {
+  margin-top: calc(-1 * var(--vx-space-1));
+}
+
+.vx-decision[data-done='true'] {
+  background: var(--vx-fill-quiet);
+  box-shadow: none;
+}
+
+.vx-decision[data-done='true'] h4,
+.vx-decision[data-done='true'] p {
+  color: var(--vx-text-tertiary);
+}
+
+.vx-decision[data-done='true'] h4 {
+  font-weight: var(--vx-font-weight-medium);
+}
+
+.vx-decision[data-done='true'] p svg {
+  vertical-align: -2px;
+  color: var(--vx-text-secondary);
+}
+
+/* 决定卡里的次按钮：卡片嵌在卡片里时回到卡片色，避免凹面叠在淡填充上 */
+.vx-card .vx-decision:not([data-done='true']) .vx-btn:not(.vx-btn--primary):not(.vx-btn--ghost) {
+  background: var(--vx-surface-card);
+}
+
+.vx-card .vx-decision:not([data-done='true']) .vx-btn:not(.vx-btn--primary):not(.vx-btn--ghost):hover {
+  background: var(--vx-surface-card-hover);
+}
+
+/* 嵌在卡片里的决定卡：淡填充代替阴影 */
+.vx-card .vx-decision {
+  background: var(--vx-fill-quiet);
+  box-shadow: none;
+}
+
+/* ---------- 数据表格：唯一保留行线的地方；表头淡填充，无竖线、无外框 ---------- */
+.vx-table-wrap {
+  overflow-x: auto;
+}
+
+.vx-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--vx-font-size-md);
+}
+
+.vx-table th {
+  position: sticky;
+  top: 0;
+  padding: var(--vx-space-2) var(--vx-space-3);
+  text-align: left;
+  font-size: var(--vx-font-size-sm);
+  font-weight: var(--vx-font-weight-medium);
+  color: var(--vx-text-tertiary);
+  white-space: nowrap;
+  background: var(--vx-fill-quiet);
+}
+
+.vx-table th:first-child {
+  border-radius: var(--vx-radius-sm) 0 0 var(--vx-radius-sm);
+}
+
+.vx-table th:last-child {
+  border-radius: 0 var(--vx-radius-sm) var(--vx-radius-sm) 0;
+}
+
+.vx-table th[aria-sort] {
+  cursor: pointer;
+  user-select: none;
+}
+
+.vx-table th[aria-sort='ascending']::after {
+  content: ' ↑';
+}
+
+.vx-table th[aria-sort='descending']::after {
+  content: ' ↓';
+}
+
+.vx-table td {
+  padding: var(--vx-space-3);
+  vertical-align: middle;
+  box-shadow: inset 0 -1px 0 var(--vx-line-faint);
+}
+
+.vx-table tbody tr:last-child td {
+  box-shadow: none;
+}
+
+.vx-table tbody tr[data-clickable='true'] {
+  cursor: pointer;
+}
+
+.vx-table tbody tr[data-clickable='true']:hover td {
+  background: var(--vx-fill-hover);
+}
+
+/* 行的主名称 */
+.vx-table .vx-cell-title {
+  font-weight: var(--vx-font-weight-semibold);
+  color: var(--vx-text-primary);
+}
+
+.vx-table .vx-num,
+.vx-table td.num,
+.vx-table th.num {
+  text-align: right;
+  font-family: var(--vx-font-family-num);
+  font-variant-numeric: tabular-nums;
+}
+
+.vx-table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--vx-space-3);
+  margin-bottom: var(--vx-space-3);
+}
+
+/* ---------- 流程步骤：一件事分几步走，每步一张面；当前步亮，做完的步收成一行，没到的步变灰 ----------
+   结构：<ol class="vx-flow"><li class="vx-flow-step" data-state="done|current|todo"><div class="vx-flow-head"><span class="vx-flow-no">1</span><h4>…</h4><span class="vx-flow-meta">…</span></div><div class="vx-flow-body">…</div></li></ol>
+   当前步里放这一屏唯一的主按钮 */
+.vx-flow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vx-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.vx-flow-step {
+  padding: var(--vx-space-3-5) var(--vx-space-4-5) var(--vx-space-4);
+  border-radius: var(--vx-radius-lg);
+  background: var(--vx-surface-card);
+  box-shadow: var(--vx-shadow-card);
+}
+
+.vx-flow-step[data-state='done'],
+.vx-flow-step[data-state='todo'] {
+  background: var(--vx-fill-quiet);
+  box-shadow: none;
+}
+
+.vx-flow-head {
+  display: flex;
+  align-items: center;
+  gap: var(--vx-space-3);
+}
+
+.vx-flow-head h4 {
+  font-size: var(--vx-font-size-lg);
+  font-weight: var(--vx-font-weight-semibold);
+}
+
+.vx-flow-step[data-state='todo'] .vx-flow-head h4 {
+  color: var(--vx-text-tertiary);
+  font-weight: var(--vx-font-weight-medium);
+}
+
+.vx-flow-no {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  font-family: var(--vx-font-family-num);
+  font-size: var(--vx-font-size-xs);
+  background: var(--vx-fill-selected);
+  color: var(--vx-text-secondary);
+}
+
+.vx-flow-step[data-state='current'] .vx-flow-no {
+  background: var(--vx-ink-base);
+  color: var(--vx-text-on-strong);
+}
+
+.vx-flow-meta {
+  margin-left: auto;
+  font-size: var(--vx-font-size-sm);
+  color: var(--vx-text-tertiary);
+}
+
+.vx-flow-body {
+  margin: var(--vx-space-3) 0 0 var(--vx-space-8);
+}
+
+/* ---------- 抽屉与对话框：浮层 + 蒙版（共用一套浮层面） ---------- */
+.vx-scrim {
+  position: fixed;
+  inset: 0;
+  background: var(--vx-surface-scrim);
+  z-index: var(--vx-z-modal);
+  animation: vx-fade var(--vx-motion-duration-base);
+}
+
+.vx-drawer {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  bottom: 10px;
+  width: min(480px, calc(100vw - 20px));
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--vx-radius-xl);
+  background: var(--vx-surface-overlay-strong);
+  -webkit-backdrop-filter: var(--vx-blur-overlay);
+  backdrop-filter: var(--vx-blur-overlay);
+  box-shadow: var(--vx-shadow-overlay);
+  z-index: calc(var(--vx-z-modal) + 1);
+  animation: vx-drawer-in var(--vx-motion-duration-slow) var(--vx-motion-ease-out);
+}
+
+.vx-dialog {
+  position: fixed;
+  /* 固定顶部起点；正文增减不重新垂直居中。 */
+  top: clamp(24px, 12dvh, 96px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(440px, calc(100vw - 32px));
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - clamp(24px, 12dvh, 96px) - 24px);
+  padding: 0;
+  border-radius: var(--vx-radius-xl);
+  background: var(--vx-surface-overlay-strong);
+  -webkit-backdrop-filter: var(--vx-blur-overlay);
+  backdrop-filter: var(--vx-blur-overlay);
+  box-shadow: var(--vx-shadow-overlay);
+  z-index: calc(var(--vx-z-modal) + 1);
+}
+
+.vx-overlay-head {
+  display: flex;
+  align-items: center;
+  gap: var(--vx-space-2);
+  padding: var(--vx-space-5) var(--vx-space-5) var(--vx-space-2);
+  font-size: var(--vx-font-size-xl);
+  font-weight: var(--vx-font-weight-semibold);
+}
+
+.vx-overlay-head .vx-icon-btn {
+  margin-left: auto;
+}
+
+.vx-overlay-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--vx-space-2) var(--vx-space-5) var(--vx-space-5);
+}
+
+.vx-overlay-foot {
+  display: flex;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+  justify-content: flex-end;
+  gap: var(--vx-space-2);
+  padding: var(--vx-space-1) var(--vx-space-5) var(--vx-space-5);
+}
+
+/* ---------- 上传区：凹面，拖入时亮一档 ---------- */
+.vx-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--vx-space-2);
+  padding: var(--vx-space-8) var(--vx-space-4);
+  border-radius: var(--vx-radius-lg);
+  background: var(--vx-surface-inset);
+  box-shadow: var(--vx-shadow-inset);
+  text-align: center;
+  font-size: var(--vx-font-size-md);
+  color: var(--vx-text-tertiary);
+  cursor: pointer;
+  transition: background var(--vx-motion-duration-fast);
+}
+
+.vx-dropzone[data-over='true'] {
+  background: var(--vx-brand-accent-soft);
+  color: var(--vx-brand-accent);
+}
+
+/* ---------- 对话面板：浮层里的消息流 ---------- */
+.vx-chat {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-radius: var(--vx-radius-xl);
+  background: var(--vx-surface-overlay);
+  -webkit-backdrop-filter: var(--vx-blur-overlay);
+  backdrop-filter: var(--vx-blur-overlay);
+  box-shadow: var(--vx-shadow-overlay);
+}
+
+.vx-chat-head {
+  display: flex;
+  align-items: center;
+  gap: var(--vx-space-2);
+  height: 54px;
+  padding: 0 var(--vx-space-2-5) 0 var(--vx-space-4);
+  flex-shrink: 0;
+  font-weight: var(--vx-font-weight-semibold);
+}
+
+.vx-chat-head > svg {
+  color: var(--vx-text-tertiary);
+}
+
+.vx-chat-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vx-chat-context {
+  margin: 0 var(--vx-space-4);
+  padding: var(--vx-space-1-5) var(--vx-space-2-5);
+  border-radius: var(--vx-radius-sm);
+  background: var(--vx-fill-quiet);
+  font-size: var(--vx-font-size-sm);
+  color: var(--vx-text-tertiary);
+}
+
+.vx-chat-body {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--vx-space-4);
+  padding: var(--vx-space-4);
+}
+
+.vx-msg {
+  max-width: 88%;
+  font-size: var(--vx-font-size-md);
+  line-height: var(--vx-font-leading-relaxed);
+}
+
+.vx-msg--user {
+  align-self: flex-end;
+  padding: var(--vx-space-2) var(--vx-space-3);
+  border-radius: var(--vx-radius-lg) var(--vx-radius-lg) 4px var(--vx-radius-lg);
+  background: var(--vx-fill-selected);
+}
+
+.vx-msg--user {
+  white-space: pre-wrap;
+}
+
+.vx-msg--ai {
+  align-self: stretch;
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--vx-space-2);
+}
+
+.vx-msg--ai > p {
+  white-space: pre-wrap;
+}
+
+/* AI 回复里的结构化结果：一块卡片面，标题 + 要点 + 动作 */
+.vx-msg-block {
+  padding: var(--vx-space-3) var(--vx-space-3-5);
+  border-radius: var(--vx-radius-md);
+  background: var(--vx-surface-card);
+  box-shadow: var(--vx-shadow-card);
+}
+
+.vx-msg-block-title {
+  margin-bottom: var(--vx-space-1-5);
+  font-weight: var(--vx-font-weight-semibold);
+  color: var(--vx-text-primary);
+}
+
+.vx-msg-block .vx-cluster {
+  margin-top: var(--vx-space-2-5);
+}
+
+/* 输入区：一整块凹面。上沿贴上下文小块，中间是输入，底边一行是附属图标，发送是唯一的实心按钮 */
+.vx-composer {
+  margin: var(--vx-space-3);
+  padding: var(--vx-space-2) var(--vx-space-2) var(--vx-space-1-5) var(--vx-space-3);
+  border-radius: var(--vx-radius-lg);
+  background: var(--vx-surface-inset);
+  box-shadow: var(--vx-shadow-inset);
+  transition: box-shadow var(--vx-motion-duration-fast);
+}
+
+.vx-composer:focus-within {
+  box-shadow: var(--vx-shadow-inset), 0 0 0 2px var(--vx-brand-accent-soft);
+}
+
+.vx-composer-context {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vx-space-1-5);
+  margin: var(--vx-space-0-5) 0 var(--vx-space-1-5);
+}
+
+.vx-composer textarea {
+  display: block;
+  width: 100%;
+  min-height: 40px;
+  padding: var(--vx-space-0-5) var(--vx-space-1) 0 0;
+  border: 0;
+  outline: none;
+  resize: none;
+  background: transparent;
+  font-size: var(--vx-font-size-md);
+  line-height: var(--vx-font-leading-normal);
+}
+
+.vx-composer textarea::placeholder {
+  color: var(--vx-text-tertiary);
+}
+
+.vx-composer-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--vx-space-0-5);
+  margin-left: calc(-1 * var(--vx-space-1-5));
+}
+
+.vx-composer-bar .vx-spacer {
+  flex: 1;
+}
+
+.vx-composer-hint {
+  padding-left: var(--vx-space-1-5);
+  font-size: var(--vx-font-size-xs);
+  color: var(--vx-text-tertiary);
+}
+
+.vx-composer-send {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--vx-ink-base);
+  color: var(--vx-text-on-strong);
+}
+
+.vx-composer-send:disabled {
+  background: var(--vx-fill-selected);
+  color: var(--vx-text-tertiary);
+  cursor: default;
+}
+
+.vx-composer-send svg {
+  width: var(--vx-size-icon-md);
+  height: var(--vx-size-icon-md);
+}
+
+/* 建议是一句完整的话，竖排，左对齐，读起来像清单 */
+.vx-suggestions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--vx-space-1-5);
+  padding: 0 var(--vx-space-4) var(--vx-space-1);
+}
+
+.vx-suggestion {
+  max-width: 100%;
+  padding: var(--vx-space-1) var(--vx-space-3);
+  text-align: left;
+  border-radius: var(--vx-radius-full);
+  background: var(--vx-fill-quiet);
+  font-size: var(--vx-font-size-sm);
+  color: var(--vx-text-secondary);
+}
+
+.vx-suggestion:hover {
+  background: var(--vx-fill-selected);
+  color: var(--vx-text-primary);
+}
+
+/* 执行步骤：AI 助理做事的过程，默认安静；完成后收起成一行 */
+.vx-steps-toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--vx-space-1-5);
+  width: 100%;
+  text-align: left;
+  font-size: var(--vx-font-size-sm);
+  color: var(--vx-text-secondary);
+}
+
+.vx-steps-toggle svg {
+  width: var(--vx-size-icon-sm);
+  height: var(--vx-size-icon-sm);
+  color: var(--vx-text-tertiary);
+  transition: transform var(--vx-motion-duration-base);
+}
+
+.vx-steps-toggle[aria-expanded='true'] svg {
+  transform: rotate(180deg);
+}
+
+.vx-steps-toggle + .vx-steps {
+  margin-top: var(--vx-space-2);
+}
+
+.vx-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vx-space-1-5);
+  padding: var(--vx-space-3);
+  border-radius: var(--vx-radius-md);
+  background: var(--vx-fill-quiet);
+  font-size: var(--vx-font-size-sm);
+  color: var(--vx-text-secondary);
+}
+
+.vx-step {
+  display: flex;
+  align-items: center;
+  gap: var(--vx-space-2);
+}
+
+.vx-step[data-state='todo'] {
+  color: var(--vx-text-tertiary);
+}
+
+.vx-step .vx-dot {
+  background: var(--vx-text-disabled);
+}
+
+.vx-step[data-state='done'] .vx-dot {
+  background: var(--vx-text-secondary);
+}
+
+.vx-step[data-state='running'] .vx-dot {
+  background: var(--vx-brand-accent-bright);
+  animation: vx-breathe 1.4s ease-in-out infinite;
+}
+
+/* ---------- 导览：非模态；蒙层透传操作，说明卡与目标保持可用 ---------- */
+body:has(.vx-guide) [data-tour] { scroll-margin: var(--vx-space-6); }
+.vx-guide { position: fixed; inset: 0; z-index: var(--vx-z-modal); pointer-events: none; }
+.vx-guide-mask { position: absolute; inset: 0; background: var(--vx-surface-scrim); }
+
+.vx-guide-hole {
+  position: fixed;
+  transition-property: none;
+  border-radius: var(--vx-radius-lg);
+  box-shadow: 0 0 0 9999px var(--vx-surface-scrim);
+  outline: 1px solid var(--vx-line-control);
+  pointer-events: none;
+  z-index: var(--vx-z-modal);
+  /* 位置由脚本逐帧靠近目标，这里不再加过渡，避免和逐帧移动打架；只在出现时淡入 */
+  animation: vx-fade var(--vx-motion-duration-base);
+}
+
+/* 说明文字换步骤时轻轻淡入，不整卡闪 */
+.vx-guide-copy {
+  margin-top: var(--vx-space-4);
+  animation: vx-fade var(--vx-motion-duration-base) var(--vx-motion-ease-out);
+}
+
+.vx-guide-card {
+  position: fixed;
+  transition-property: none;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  width: min(500px, calc(100vw - 32px));
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+  pointer-events: auto;
+  padding: var(--vx-space-5);
+  border-radius: var(--vx-radius-xl);
+  background: var(--vx-surface-overlay-strong);
+  -webkit-backdrop-filter: var(--vx-blur-overlay);
+  backdrop-filter: var(--vx-blur-overlay);
+  box-shadow: var(--vx-shadow-overlay);
+  z-index: calc(var(--vx-z-modal) + 1);
+}
+
+.vx-guide-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--vx-space-2);
+  font-size: var(--vx-font-size-sm);
+  color: var(--vx-text-tertiary);
+}
+
+.vx-guide-title {
+  font-size: var(--vx-font-size-xl);
+  font-weight: var(--vx-font-weight-semibold);
+}
+
+.vx-guide-text {
+  margin-top: var(--vx-space-1);
+  font-size: var(--vx-font-size-md);
+  line-height: var(--vx-font-leading-relaxed);
+  color: var(--vx-text-secondary);
+}
+
+.vx-guide-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vx-space-2);
+  margin-top: var(--vx-space-6);
+}
+
+.vx-guide-actions .vx-spacer {
+  flex: 1;
+}
+
+@keyframes vx-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes vx-drawer-in {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+
+@keyframes vx-breathe {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* 结果浏览：列表和卡片网格共享内容，切换视图不改变筛选或选择。 */
+.vx-collection { display: flex; flex-direction: column; gap: var(--vx-space-3); }
+.vx-browse-list, .vx-browse-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--vx-space-3); }
+.vx-browse-grid { gap: var(--vx-space-4); grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); }
+.vx-browse-item { min-width: 0; padding: var(--vx-space-4); border-radius: var(--vx-radius-lg); background: var(--vx-surface-card); }
+.vx-browse-list .vx-browse-item { display: flex; align-items: center; flex-wrap: wrap; gap: var(--vx-space-3); }
+.vx-browse-grid .vx-browse-item { display: flex; flex-direction: column; gap: var(--vx-space-3); padding: var(--vx-space-5); }
+.vx-browse-item-main > .vx-body { margin-top: var(--vx-space-1); }
+.vx-browse-item-main { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.vx-browse-item-main > a { color: var(--vx-text-primary); font-weight: var(--vx-font-weight-semibold); }
+.vx-collection .vx-skeleton { height: 64px; }
+.vx-collection .vx-empty { gap: var(--vx-space-2); }
+.vx-overlay-body { min-height: 0; }
+.vx-overlay-body > .vx-body { margin-bottom: var(--vx-space-3); }
+.vx-dialog .vx-overlay-head, .vx-drawer .vx-overlay-head { flex-shrink: 0; }
+.vx-tab-panel { padding: var(--vx-space-4); }
+
+/* 页签控件与关闭当前页签按钮并列，避免 tablist 中混入非页签控件。 */
+.vx-tabs-bar { display: flex; align-items: center; gap: var(--vx-space-1); }
+.vx-tabset { min-width: 0; }
+.vx-tabset--workspace { display: flex; flex: 1; flex-direction: column; min-height: 0; }
+.vx-tabset--workspace > .vx-tabs-bar { flex-shrink: 0; }
+.vx-tabset--workspace > .vx-tab-panel { flex: 1; display: flex; flex-direction: column; min-height: 0; padding: 0; overflow: hidden; }
+.vx-tabs-actions { display: flex; align-items: center; gap: var(--vx-space-1); margin-left: auto; padding-right: var(--vx-space-2); min-width: 0; }
+.vx-tabs-actions > .vx-meta, .vx-tabs-actions > .vx-tabs-meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vx-tabs-actions > button { flex-shrink: 0; }
+.vx-tab[aria-selected='true'] .vx-dot { display: none; }
+.vx-tabs { display: flex; align-items: center; gap: var(--vx-space-1); min-height: 46px; padding: 0 var(--vx-space-2-5); flex-shrink: 0; overflow-x: auto; }
+.vx-tabs-bar .vx-tabs { flex-shrink: 1; min-width: 0; }
+.vx-tab { display: inline-flex; align-items: center; max-width: 200px; height: var(--vx-size-control-md); flex-shrink: 0; border-radius: var(--vx-radius-sm); font-size: var(--vx-font-size-md); color: var(--vx-text-secondary); transition: background var(--vx-motion-duration-fast); }
+.vx-tab:hover { background: var(--vx-fill-hover); }
+.vx-tab[aria-selected='true'], .vx-tab[data-active='true'] { background: var(--vx-surface-card); color: var(--vx-text-primary); box-shadow: var(--vx-shadow-card); }
+.vx-tab-label { display: inline-flex; align-items: center; gap: var(--vx-space-1-5); min-width: 0; padding: 0 var(--vx-space-3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vx-tab-label:disabled { opacity: 0.45; }
+.vx-tab-close { display: grid; place-items: center; width: var(--vx-size-hit); height: var(--vx-size-hit); flex-shrink: 0; border-radius: var(--vx-radius-sm); color: var(--vx-text-tertiary); }
+.vx-tab-close svg { width: 12px; height: 12px; }
+.vx-tab-close:hover { background: var(--vx-fill-selected); color: var(--vx-text-primary); }
+
+.vx-result-title { font-weight: var(--vx-font-weight-semibold); text-align: left; text-decoration: underline; text-underline-offset: 0.18em; min-height: var(--vx-size-hit); }
+
+.vx-table-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; border-radius: var(--vx-radius-sm); }
+.vx-table-scroll > table { min-width: var(--table-min-width, 640px); }
+.vx-table-action { min-height: var(--vx-size-hit); font: inherit; font-weight: var(--vx-font-weight-semibold); color: var(--vx-text-primary); text-align: left; text-decoration: underline; text-underline-offset: 0.18em; }
+
+@media (forced-colors: active) {
+  .vx-guide-hole { outline-color: Highlight; }
+  .vx-guide-card { border: 1px solid CanvasText; }
+}

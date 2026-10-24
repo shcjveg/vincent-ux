@@ -1,0 +1,473 @@
+/* vincent-ux v1.3.0 · components/css/atoms.css */
+/* 原子：按钮、图标、标签、红点、缩略图与头像、输入框、开关、复选框、数字、骨架、转圈。依赖 tokens.css、base.css。 */
+
+/* ---------- 按钮：主（墨）· 次（凹面）· 文字 ---------- */
+.vx-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--vx-space-2);
+  height: var(--vx-size-control-md);
+  padding: 0 var(--vx-space-3-5);
+  border-radius: var(--vx-radius-md);
+  background: var(--vx-surface-inset);
+  color: var(--vx-text-primary);
+  font-size: var(--vx-font-size-md);
+  white-space: nowrap;
+  transition: background var(--vx-motion-duration-fast), transform var(--vx-motion-duration-fast);
+}
+
+.vx-btn:hover {
+  background: color-mix(in srgb, var(--vx-surface-inset), var(--vx-text-primary) 5%);
+}
+
+.vx-btn:active {
+  transform: translateY(0.5px);
+}
+
+.vx-btn:disabled,
+.vx-btn[aria-disabled='true'] {
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+}
+
+.vx-btn svg {
+  width: var(--vx-size-icon-sm);
+  height: var(--vx-size-icon-sm);
+}
+
+.vx-btn--primary {
+  background: linear-gradient(180deg, var(--vx-ink-top), var(--vx-ink-base));
+  color: var(--vx-text-on-strong);
+  font-weight: var(--vx-font-weight-medium);
+}
+
+.vx-btn--primary:hover {
+  background: linear-gradient(180deg, var(--vx-ink-top), var(--vx-ink-base));
+  filter: brightness(1.12);
+}
+
+.vx-btn--ghost {
+  background: transparent;
+  color: var(--vx-text-secondary);
+}
+
+.vx-btn--ghost:hover {
+  background: var(--vx-fill-hover);
+  color: var(--vx-text-primary);
+}
+
+.vx-btn--danger {
+  color: var(--vx-brand-critical);
+}
+
+.vx-btn--sm {
+  height: var(--vx-size-control-sm);
+  padding: 0 var(--vx-space-3);
+  font-size: var(--vx-font-size-sm);
+  border-radius: var(--vx-radius-sm);
+}
+
+.vx-btn--lg {
+  height: var(--vx-size-control-lg);
+  padding: 0 var(--vx-space-5-5);
+  font-size: var(--vx-font-size-lg);
+  border-radius: var(--vx-radius-lg);
+}
+
+/* 卡片里嵌套的淡填充块上，次按钮回到卡片色，避免凹面叠凹面 */
+.vx-nested .vx-btn:not(.vx-btn--primary):not(.vx-btn--ghost) {
+  background: var(--vx-surface-card);
+}
+
+.vx-btn[data-loading='true'] {
+  pointer-events: none;
+  color: transparent;
+  position: relative;
+}
+
+.vx-btn[data-loading='true']::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-color: var(--vx-text-tertiary) transparent var(--vx-text-tertiary) transparent;
+  animation: vx-spin 0.8s linear infinite;
+}
+
+.vx-btn--primary[data-loading='true']::after {
+  border-color: var(--vx-text-on-strong) transparent var(--vx-text-on-strong) transparent;
+}
+
+/* ---------- 图标：纯 HTML 页面用 <svg class="vx-icon"><use href="…/sprite.svg#含义"/></svg> ---------- */
+.vx-icon {
+  width: var(--vx-size-icon-md);
+  height: var(--vx-size-icon-md);
+  flex-shrink: 0;
+}
+
+.vx-icon--sm {
+  width: var(--vx-size-icon-sm);
+  height: var(--vx-size-icon-sm);
+}
+
+.vx-icon--lg {
+  width: var(--vx-size-icon-lg);
+  height: var(--vx-size-icon-lg);
+}
+
+/* ---------- 图标按钮：外壳与工具栏用，平时无底，悬停一档填充；必须带 aria-label ---------- */
+.vx-icon-btn {
+  width: var(--vx-size-control-md);
+  height: var(--vx-size-control-md);
+  display: inline-grid;
+  place-items: center;
+  border-radius: var(--vx-radius-md);
+  color: var(--vx-text-secondary);
+  transition: background var(--vx-motion-duration-fast), color var(--vx-motion-duration-fast);
+}
+
+.vx-icon-btn:hover {
+  background: var(--vx-fill-hover);
+  color: var(--vx-text-primary);
+}
+
+.vx-icon-btn[aria-pressed='true'] {
+  background: var(--vx-fill-selected);
+  color: var(--vx-text-primary);
+}
+
+.vx-icon-btn svg {
+  width: var(--vx-size-icon-md);
+  height: var(--vx-size-icon-md);
+}
+
+/* 展开箭头：父级 aria-expanded 或自身 data-open 为真时转向；表格行、自定义展开处用 */
+.vx-chev {
+  width: var(--vx-size-icon-sm);
+  height: var(--vx-size-icon-sm);
+  flex-shrink: 0;
+  color: var(--vx-text-tertiary);
+  transition: transform var(--vx-motion-duration-base);
+}
+
+.vx-chev[data-open='true'],
+[aria-expanded='true'] > .vx-chev {
+  transform: rotate(180deg);
+}
+
+/* ---------- 开关按钮：行尾切换一个属性（置顶、关注），图标 + 状态文字，开着时一档填充 ---------- */
+.vx-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--vx-space-1);
+  height: var(--vx-size-control-sm);
+  padding: 0 var(--vx-space-2-5);
+  border-radius: var(--vx-radius-sm);
+  font-size: var(--vx-font-size-sm);
+  color: var(--vx-text-tertiary);
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background var(--vx-motion-duration-fast), color var(--vx-motion-duration-fast);
+}
+
+button.vx-toggle:hover {
+  background: var(--vx-fill-hover);
+  color: var(--vx-text-primary);
+}
+
+.vx-toggle[aria-pressed='true'],
+.vx-toggle[data-state='fixed'] {
+  background: var(--vx-fill-selected);
+  color: var(--vx-text-primary);
+}
+
+.vx-toggle svg {
+  width: var(--vx-size-icon-sm);
+  height: var(--vx-size-icon-sm);
+}
+
+/* ---------- 标签：中性 · 强调（金）· 危急（朱）---------- */
+.vx-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--vx-space-1);
+  height: 22px;
+  padding: 0 var(--vx-space-2);
+  border-radius: var(--vx-radius-full);
+  font-size: var(--vx-font-size-sm);
+  line-height: 1;
+  white-space: nowrap;
+  background: var(--vx-fill-quiet);
+  color: var(--vx-text-secondary);
+}
+
+.vx-tag--accent {
+  background: var(--vx-brand-accent-soft);
+  color: var(--vx-brand-accent);
+}
+
+.vx-tag--critical {
+  background: var(--vx-brand-critical-soft);
+  color: var(--vx-brand-critical);
+}
+
+/* 谁做的：自动 / AI 助理，安静的灰，固定宽度便于对齐 */
+.vx-by {
+  min-width: 48px;
+  text-align: center;
+  font-size: var(--vx-font-size-xs);
+  padding: var(--vx-space-px) var(--vx-space-2);
+  border-radius: var(--vx-radius-full);
+  background: var(--vx-fill-quiet);
+  color: var(--vx-text-tertiary);
+  flex-shrink: 0;
+}
+
+/* ---------- 红点与计数：只在必要时出现 ---------- */
+.vx-badge {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 var(--vx-space-1);
+  border-radius: var(--vx-radius-full);
+  background: var(--vx-brand-critical);
+  color: var(--vx-text-on-critical);
+  font-family: var(--vx-font-family-num);
+  font-size: var(--vx-font-size-xs);
+  line-height: 18px;
+  text-align: center;
+}
+
+.vx-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--vx-brand-critical);
+  flex-shrink: 0;
+}
+
+/* 跟在文字前的红点：和文字基线居中，留一点间距 */
+.vx-dot--lead {
+  margin-right: var(--vx-space-2);
+  vertical-align: 2px;
+}
+
+.vx-dot--accent {
+  background: var(--vx-brand-accent-bright);
+}
+
+.vx-dot--neutral {
+  background: var(--vx-text-disabled);
+}
+
+.vx-count {
+  font-family: var(--vx-font-family-num);
+  font-size: var(--vx-font-size-sm);
+  color: var(--vx-text-tertiary);
+}
+
+/* ---------- 缩略图与头像：对象的识别图，淡填充方块 / 圆，不描边 ---------- */
+.vx-thumb {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: var(--vx-radius-md);
+  background: var(--vx-fill-quiet);
+  font-size: var(--vx-font-size-2xl);
+}
+
+.vx-thumb > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vx-thumb--sm {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--vx-radius-sm);
+  font-size: var(--vx-font-size-xl);
+}
+
+.vx-thumb--lg {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--vx-radius-lg);
+  font-size: var(--vx-font-size-3xl);
+}
+
+.vx-avatar {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--vx-fill-selected);
+  font-size: var(--vx-font-size-sm);
+  font-weight: var(--vx-font-weight-semibold);
+  color: var(--vx-text-secondary);
+}
+
+/* ---------- 输入：凹面，不描边 ---------- */
+.vx-input,
+.vx-textarea,
+.vx-select {
+  width: 100%;
+  height: var(--vx-size-control-md);
+  padding: 0 var(--vx-space-3);
+  border: 1px solid var(--vx-line-control);
+  border-radius: var(--vx-radius-sm);
+  background: var(--vx-surface-inset);
+  box-shadow: var(--vx-shadow-inset);
+  color: var(--vx-text-primary);
+  font-size: var(--vx-font-size-md);
+  transition: box-shadow var(--vx-motion-duration-fast);
+}
+
+.vx-textarea {
+  height: auto;
+  min-height: 84px;
+  padding: var(--vx-space-2-5) var(--vx-space-3);
+  line-height: var(--vx-font-leading-normal);
+  resize: vertical;
+}
+
+.vx-input::placeholder,
+.vx-textarea::placeholder {
+  color: var(--vx-text-tertiary);
+}
+
+.vx-input:focus-visible,
+.vx-textarea:focus-visible,
+.vx-select:focus-visible {
+  outline: 2px solid var(--vx-focus-ring);
+  outline-offset: 2px;
+}
+
+.vx-input[aria-invalid='true'],
+.vx-textarea[aria-invalid='true'] {
+  border-color: var(--vx-brand-critical);
+  box-shadow: var(--vx-shadow-inset);
+}
+
+.vx-input:disabled,
+.vx-textarea:disabled {
+  opacity: 0.55;
+}
+
+/* ---------- 开关：32px 命中区内保留紧凑轨道 ---------- */
+.vx-switch { position: relative; display: inline-block; width: 44px; height: var(--vx-size-hit); flex-shrink: 0; background: transparent; border-radius: var(--vx-radius-full); }
+.vx-switch::before { content: ''; position: absolute; width: 30px; height: 18px; left: 7px; top: 7px; border-radius: var(--vx-radius-full); background: var(--vx-surface-inset); border: 1px solid var(--vx-line-control); }
+.vx-switch::after { content: ''; position: absolute; width: 14px; height: 14px; top: 9px; left: 9px; border-radius: 50%; background: var(--vx-text-secondary); transition: transform var(--vx-motion-duration-base) var(--vx-motion-ease-standard); }
+.vx-switch[aria-checked='true']::before, .vx-switch-input:checked + .vx-switch::before { background: var(--vx-ink-base); border-color: var(--vx-ink-base); }
+.vx-switch[aria-checked='true']::after, .vx-switch-input:checked + .vx-switch::after { transform: translateX(12px); background: var(--vx-text-on-strong); }
+.vx-switch-input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: inherit; }
+.vx-switch-input:focus-visible + .vx-switch { outline: 2px solid var(--vx-focus-ring); outline-offset: 2px; border-radius: var(--vx-radius-sm); }
+
+/* ---------- 复选框（原生 input 换皮） ---------- */
+.vx-check {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  border-radius: var(--vx-radius-xs);
+  background: var(--vx-surface-inset);
+  box-shadow: var(--vx-shadow-inset);
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.vx-check:checked {
+  background: var(--vx-ink-base);
+  box-shadow: none;
+}
+
+.vx-check:checked::after {
+  content: '';
+  width: 8px;
+  height: 4.5px;
+  border-left: 2px solid var(--vx-text-on-strong);
+  border-bottom: 2px solid var(--vx-text-on-strong);
+  transform: translateY(-1px) rotate(-45deg);
+}
+
+/* ---------- 数字：金额正墨负朱 ---------- */
+.vx-money {
+  font-family: var(--vx-font-family-num);
+  font-variant-numeric: tabular-nums;
+}
+
+.vx-money--neg {
+  color: var(--vx-brand-critical);
+}
+
+.vx-money--accent {
+  color: var(--vx-brand-accent);
+}
+
+/* ---------- 加载：骨架与转圈 ---------- */
+.vx-skeleton {
+  display: block;
+  height: 12px;
+  border-radius: var(--vx-radius-xs);
+  background: linear-gradient(90deg, var(--vx-fill-quiet) 0%, var(--vx-fill-selected) 50%, var(--vx-fill-quiet) 100%);
+  background-size: 200% 100%;
+  animation: vx-shimmer 1.4s ease-in-out infinite;
+}
+
+.vx-spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--vx-fill-selected);
+  border-top-color: var(--vx-text-secondary);
+  animation: vx-spin 0.8s linear infinite;
+}
+
+@keyframes vx-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes vx-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+/* 控件的视觉大小与命中区域分开；带标签的整行可点击。 */
+.vx-control-label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--vx-space-2);
+  min-width: var(--vx-size-hit);
+  min-height: var(--vx-size-hit);
+  padding: var(--vx-space-0-5) var(--vx-space-1);
+  cursor: pointer;
+}
+.vx-control-label:has(:disabled) { opacity: 0.45; cursor: not-allowed; }
+.vx-check, .vx-radio { border: 1px solid var(--vx-line-control); }
+.vx-check:checked, .vx-check:indeterminate { border-color: var(--vx-ink-base); background: var(--vx-ink-base); }
+.vx-check:indeterminate::after { content: ''; width: 8px; height: 2px; background: var(--vx-text-on-strong); }
+.vx-radio { appearance: none; width: 16px; height: 16px; margin: 0; border-radius: 50%; background: var(--vx-surface-inset); }
+.vx-radio:checked { border: 5px solid var(--vx-ink-base); background: var(--vx-text-on-strong); }
+.vx-radio-group { display: flex; flex-wrap: wrap; gap: var(--vx-space-2); padding: 0; margin: 0; border: 0; }
+.vx-radio-group legend { margin-bottom: var(--vx-space-1); }
+.vx-btn[data-loading='true']:disabled { opacity: 1; }

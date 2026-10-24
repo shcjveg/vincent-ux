@@ -1,0 +1,203 @@
+/* 展示页自己的排版，不属于设计系统，不要拷到项目里 */
+
+/* ---------- 版面 ---------- */
+.sc {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.sc-toc {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 28px 16px;
+  overflow-y: auto;
+  background: var(--vx-surface-shell);
+}
+
+.sc-toc h1 {
+  font-size: var(--vx-font-size-lg);
+  font-weight: var(--vx-font-weight-semibold);
+}
+
+.sc-toc .vx-text-3 {
+  display: block;
+  margin: 2px 0 20px;
+  font-size: var(--vx-font-size-sm);
+}
+
+.sc-toc a {
+  display: block;
+  padding: 5px 8px;
+  border-radius: var(--vx-radius-sm);
+  font-size: var(--vx-font-size-md);
+  color: var(--vx-text-secondary);
+  text-decoration: none;
+}
+
+.sc-toc a:hover {
+  background: var(--vx-fill-hover);
+  color: var(--vx-text-primary);
+}
+
+.sc-theme {
+  margin-top: 20px;
+}
+
+.sc-main {
+  padding: 40px 48px 96px;
+  max-width: 1080px;
+}
+
+.sc-sec {
+  padding: 32px 0;
+}
+
+.sc-sec h2 {
+  font-size: var(--vx-font-size-2xl);
+  font-weight: var(--vx-font-weight-semibold);
+}
+
+.sc-lead {
+  margin: 6px 0 20px;
+  max-width: 680px;
+  color: var(--vx-text-secondary);
+}
+
+.sc-board {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vx-space-5);
+  padding: var(--vx-space-6);
+  border-radius: var(--vx-radius-xl);
+  background: var(--vx-surface-shell);
+}
+
+.sc-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vx-space-3);
+}
+
+/* ---------- 面分层、色板、文字 ---------- */
+.sc-surfaces {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--vx-space-3);
+  padding: var(--vx-space-4);
+  border-radius: var(--vx-radius-xl);
+  background: var(--vx-surface-canvas);
+}
+
+.sc-surface {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 2px;
+  height: 120px;
+  padding: var(--vx-space-3);
+  border-radius: var(--vx-radius-lg);
+  font-size: var(--vx-font-size-sm);
+}
+
+.sc-surface b,
+.sc-swatch b {
+  font-weight: var(--vx-font-weight-medium);
+}
+
+.sc-surface code,
+.sc-swatch code,
+.sc-type-row code {
+  font-family: var(--vx-font-family-mono);
+  font-size: var(--vx-font-size-xs);
+  color: var(--vx-text-tertiary);
+}
+
+.sc-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--vx-space-3);
+}
+
+.sc-swatch {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--vx-font-size-sm);
+}
+
+.sc-swatch i {
+  height: 48px;
+  border-radius: var(--vx-radius-md);
+  box-shadow: inset 0 0 0 1px var(--vx-line-faint);
+}
+
+.sc-type {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vx-space-3);
+}
+
+.sc-type-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--vx-space-6);
+}
+
+.sc-type-row code {
+  width: 140px;
+  flex-shrink: 0;
+}
+
+/* ---------- 图标 ---------- */
+.sc-icons {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 6px;
+}
+
+.sc-icon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--vx-radius-sm);
+  background: var(--vx-fill-quiet);
+  font-size: var(--vx-font-size-sm);
+}
+
+/* ---------- 模板演示框：把应用外壳装进页面里，悬浮入口相对框定位 ---------- */
+.sc-frame {
+  height: 560px;
+  border-radius: var(--vx-radius-xl);
+  overflow: hidden;
+  transform: translateZ(0);
+  box-shadow: var(--vx-shadow-card);
+}
+
+.sc-frame .vx-app {
+  height: 100%;
+}
+
+.sc-frame .vx-chat {
+  width: 340px;
+  flex-shrink: 0;
+}
+
+.sc-frame .vx-chat[hidden],
+.sc-frame .vx-ask[hidden] {
+  display: none;
+}
+
+.sc-main { max-width: 1240px; }
+.sc-test-tools summary { color: var(--vx-text-secondary); cursor: pointer; }
+.sc-test-tools > .vx-cluster { margin-top: var(--vx-space-3); }
+.sc-frame .vx-app > .vx-chat { width: min(340px, 100%); }
+@container app (max-width: 720px) { .sc-frame .vx-app > .vx-chat { width: auto; } }
+@media (max-width: 1100px) { .sc-main { padding: var(--vx-space-6); } .sc { grid-template-columns: 160px minmax(0, 1fr); } }
+.sc-interaction-card > .vx-btn { align-self: flex-start; }
+/* 刻意使用局部合成与裁剪，确认 Guide 的 portal 仍以视口为基准。 */
+.sc-guide-sample { transform: translateZ(0); overflow: hidden; }
+.sc-demo-separated { margin-top: var(--vx-space-6); }

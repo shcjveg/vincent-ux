@@ -1,0 +1,133 @@
+/* vincent-ux v1.3.0 · tokens/dist/tokens.css */
+
+:root {
+  color-scheme: light dark;
+  --vx-font-family-sans: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Segoe UI', sans-serif;
+  --vx-font-family-num: 'DIN Alternate', 'DIN Condensed', 'Avenir Next', -apple-system, sans-serif;
+  --vx-font-family-mono: 'SF Mono', ui-monospace, Menlo, Consolas, monospace;
+  --vx-font-size-xs: 11px;
+  --vx-font-size-sm: 12px;
+  --vx-font-size-md: 13px;
+  --vx-font-size-lg: 14px;
+  --vx-font-size-xl: 16px;
+  --vx-font-size-2xl: 22px;
+  --vx-font-size-3xl: 26px;
+  --vx-font-size-display: 44px;
+  --vx-font-weight-regular: 400;
+  --vx-font-weight-medium: 500;
+  --vx-font-weight-semibold: 600;
+  --vx-font-weight-bold: 700;
+  --vx-font-leading-tight: 1.3;
+  --vx-font-leading-normal: 1.55;
+  --vx-font-leading-relaxed: 1.7;
+  --vx-space-0: 0px;
+  --vx-space-1: 4px;
+  --vx-space-2: 8px;
+  --vx-space-3: 12px;
+  --vx-space-4: 16px;
+  --vx-space-5: 20px;
+  --vx-space-6: 24px;
+  --vx-space-7: 28px;
+  --vx-space-8: 32px;
+  --vx-space-10: 40px;
+  --vx-space-12: 48px;
+  --vx-space-14: 56px;
+  --vx-space-18: 72px;
+  --vx-space-24: 96px;
+  --vx-space-px: 1px;
+  --vx-space-0-5: 2px;
+  --vx-space-1-5: 6px;
+  --vx-space-2-5: 10px;
+  --vx-space-3-5: 14px;
+  --vx-space-4-5: 18px;
+  --vx-space-5-5: 22px;
+  --vx-radius-xs: 6px;
+  --vx-radius-sm: 8px;
+  --vx-radius-md: 10px;
+  --vx-radius-lg: 14px;
+  --vx-radius-xl: 18px;
+  --vx-radius-full: 999px;
+  --vx-size-control-sm: 32px;
+  --vx-size-control-md: 34px;
+  --vx-size-control-lg: 42px;
+  --vx-size-hit: 32px;
+  --vx-size-icon-sm: 14px;
+  --vx-size-icon-md: 16px;
+  --vx-size-icon-lg: 18px;
+  --vx-motion-duration-fast: 120ms;
+  --vx-motion-duration-base: 180ms;
+  --vx-motion-duration-slow: 280ms;
+  --vx-motion-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --vx-motion-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --vx-z-base: 0;
+  --vx-z-sticky: 10;
+  --vx-z-float: 40;
+  --vx-z-overlay: 60;
+  --vx-z-modal: 80;
+  --vx-z-toast: 100;
+  --vx-z-popover: 90;
+  --vx-surface-canvas: light-dark(#E3DED4, #141210);
+  --vx-surface-shell: light-dark(#F2EFE9, #1C1A17);
+  --vx-surface-card: light-dark(#FFFFFF, #262320);
+  --vx-surface-card-hover: light-dark(#FBFAF7, #2C2925);
+  --vx-surface-inset: light-dark(#EBE7DE, #1B1916);
+  --vx-surface-overlay: light-dark(rgba(255, 255, 255, 0.84), rgba(40, 37, 33, 0.84));
+  --vx-surface-overlay-strong: light-dark(rgba(255, 255, 255, 0.92), rgba(44, 41, 37, 0.94));
+  --vx-surface-scrim: light-dark(rgba(28, 24, 20, 0.42), rgba(0, 0, 0, 0.56));
+  --vx-fill-hover: light-dark(rgba(60, 44, 20, 0.05), rgba(255, 245, 230, 0.06));
+  --vx-fill-selected: light-dark(rgba(60, 44, 20, 0.09), rgba(255, 245, 230, 0.11));
+  --vx-fill-quiet: light-dark(rgba(60, 44, 20, 0.04), rgba(255, 245, 230, 0.04));
+  --vx-text-primary: light-dark(#1C1814, #F3EEE7);
+  --vx-text-secondary: light-dark(#5E574E, #B9B0A4);
+  --vx-text-tertiary: light-dark(#655D52, #A39A8D);
+  --vx-text-disabled: light-dark(#B4ACA1, #5E574E);
+  --vx-text-on-strong: light-dark(#FFFFFF, #1C1814);
+  --vx-text-on-critical: light-dark(#FFFFFF, #1C1814);
+  --vx-line-faint: light-dark(rgba(60, 44, 20, 0.06), rgba(255, 245, 230, 0.08));
+  --vx-line-control: light-dark(#80766A, #A39A8D);
+  --vx-ink-base: light-dark(#1C1814, #F3EEE7);
+  --vx-ink-top: light-dark(#2E2822, #FFFFFF);
+  --vx-focus-ring: light-dark(#80570D, #E8BF6A);
+  --vx-brand-accent: light-dark(#80570D, #D9AE57);
+  --vx-brand-accent-bright: light-dark(#C8962E, #E8BF6A);
+  --vx-brand-accent-soft: light-dark(#F8F3E9, rgba(217, 174, 87, 0.14));
+  --vx-brand-critical: light-dark(#AE2F1D, #F77B68);
+  --vx-brand-critical-soft: light-dark(#FBF0ED, rgba(247, 123, 104, 0.12));
+  --vx-viz-neutral: light-dark(rgba(60, 44, 20, 0.12), rgba(255, 245, 230, 0.14));
+  --vx-viz-accent: light-dark(#C8962E, #E8BF6A);
+  --vx-viz-series-1: light-dark(#9A6A12, #D9AE57);
+  --vx-viz-series-2: light-dark(#5E574E, #B9B0A4);
+  --vx-viz-series-3: light-dark(#C8962E, #E8BF6A);
+  --vx-viz-series-4: light-dark(#857D72, #8C8478);
+  --vx-viz-series-5: light-dark(#6E5634, #C2A47A);
+  --vx-viz-series-6: light-dark(#B4ACA1, #5E574E);
+  --vx-shadow-card: 0 1px 2px rgba(60, 44, 20, 0.05), 0 4px 14px -6px rgba(60, 44, 20, 0.07);
+  --vx-shadow-overlay: 0 2px 4px rgba(60, 44, 20, 0.06), 0 14px 36px -8px rgba(60, 44, 20, 0.24), 0 32px 72px -28px rgba(60, 44, 20, 0.28);
+  --vx-shadow-inset: inset 0 1px 2px rgba(60, 44, 20, 0.06);
+  --vx-blur-overlay: blur(24px) saturate(160%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --vx-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --vx-shadow-overlay: 0 2px 6px rgba(0, 0, 0, 0.4), 0 18px 48px -10px rgba(0, 0, 0, 0.6);
+    --vx-shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.28);
+    --vx-blur-overlay: blur(24px) saturate(140%);
+  }
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --vx-shadow-card: 0 1px 2px rgba(60, 44, 20, 0.05), 0 4px 14px -6px rgba(60, 44, 20, 0.07);
+  --vx-shadow-overlay: 0 2px 4px rgba(60, 44, 20, 0.06), 0 14px 36px -8px rgba(60, 44, 20, 0.24), 0 32px 72px -28px rgba(60, 44, 20, 0.28);
+  --vx-shadow-inset: inset 0 1px 2px rgba(60, 44, 20, 0.06);
+  --vx-blur-overlay: blur(24px) saturate(160%);
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --vx-shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --vx-shadow-overlay: 0 2px 6px rgba(0, 0, 0, 0.4), 0 18px 48px -10px rgba(0, 0, 0, 0.6);
+  --vx-shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.28);
+  --vx-blur-overlay: blur(24px) saturate(140%);
+}

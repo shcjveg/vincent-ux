@@ -1,0 +1,218 @@
+/* vincent-ux v1.3.0 · components/css/base.css */
+/* 基础重置与全局排版。依赖 tokens/dist/tokens.css。 */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  font-family: var(--vx-font-family-sans);
+  font-size: var(--vx-font-size-md);
+  line-height: var(--vx-font-leading-normal);
+  color: var(--vx-text-primary);
+  background: var(--vx-surface-canvas);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+a {
+  color: var(--vx-brand-accent);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--vx-focus-ring);
+  outline-offset: 2px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--vx-fill-selected);
+  border-radius: 4px;
+}
+
+/* 文字层级：标题 · 正文 · 说明，加一个数字。页面里的字只用这几档，层级靠字重和明度，不靠颜色和框 */
+.vx-title {
+  font-size: var(--vx-font-size-lg);
+  font-weight: var(--vx-font-weight-semibold);
+  line-height: var(--vx-font-leading-normal);
+  color: var(--vx-text-primary);
+}
+
+.vx-body {
+  font-size: var(--vx-font-size-md);
+  line-height: var(--vx-font-leading-normal);
+  color: var(--vx-text-secondary);
+}
+
+.vx-meta {
+  font-size: var(--vx-font-size-sm);
+  line-height: var(--vx-font-leading-normal);
+  color: var(--vx-text-tertiary);
+}
+
+/* 只改颜色、不改字号 */
+.vx-text-2 {
+  color: var(--vx-text-secondary);
+}
+
+.vx-text-3 {
+  color: var(--vx-text-tertiary);
+}
+
+/* 语气：元素用 data-tone 声明语义（accent = 钱、选中、等你动手；critical = 亏损、阻断、已超时），
+   自己和子元素的样式用 --vx-tone / --vx-tone-soft 取色。页面样式只认语气，不直接用品牌色 */
+[data-tone='accent'] {
+  --vx-tone: var(--vx-brand-accent);
+  --vx-tone-soft: var(--vx-brand-accent-soft);
+}
+
+[data-tone='critical'] {
+  --vx-tone: var(--vx-brand-critical);
+  --vx-tone-soft: var(--vx-brand-critical-soft);
+}
+
+/* 强调色文字：只给钱和「等你动手」的那一个状态 */
+.vx-text-accent {
+  color: var(--vx-brand-accent);
+}
+
+/* 危急色文字：只给亏损、过期、阻断 */
+.vx-text-critical {
+  color: var(--vx-brand-critical);
+}
+
+/* 临近的时限：墨色加粗，不用危急色（颜色语义见 principles/visual.md）。全系统只有这一条规则；
+   .vx-todo-due--now（v1.1 起）与决定卡的紧急时限是它的别名 */
+.vx-due,
+.vx-todo-due--now,
+.vx-decision-due[data-urgent='true'] {
+  color: var(--vx-text-primary);
+  font-weight: var(--vx-font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.vx-num {
+  font-family: var(--vx-font-family-num);
+  font-variant-numeric: tabular-nums;
+}
+
+.vx-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* hidden 同时用于纯 HTML 与受控组件，不能被 flex/grid 覆盖。 */
+[hidden] { display: none !important; }
+
+:where(button, input, select, textarea):disabled { cursor: not-allowed; }
+
+@media (forced-colors: active) {
+  :focus-visible { outline: 2px solid Highlight; }
+  :is(.vx-input, .vx-textarea, .vx-select, .vx-trigger, .vx-btn, .vx-check, .vx-radio) { border: 1px solid ButtonText; }
+}
+
+/* 通用布局 */
+.vx-grid {
+  display: grid;
+  gap: var(--vx-space-4);
+}
+
+.vx-grid--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.vx-grid--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.vx-grid--4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* 纵向内容组：16px；独立区块：24px。见 principles/visual.md 的间距约定。 */
+.vx-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vx-space-4);
+}
+
+.vx-stack--lg {
+  gap: var(--vx-space-6);
+}
+
+/* 横向一组：按钮、标签、小块排成一行，放不下就换行 */
+.vx-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vx-space-2);
+}
+
+.vx-spacer {
+  flex: 1;
+}
+
+@container render (max-width: 860px) {
+  .vx-grid--3,
+  .vx-grid--4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container render (max-width: 560px) {
+  .vx-grid--2,
+  .vx-grid--3,
+  .vx-grid--4 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
