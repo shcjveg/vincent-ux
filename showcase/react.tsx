@@ -1,7 +1,8 @@
 import { useState } from 'react'
+import { WorkspaceDemo, ComponentStatesDemo } from './WorkspaceDemo'
 import { createRoot } from 'react-dom/client'
-import { Button, Checkbox, Collection, DecisionCard, Dialog, Field, FilterBar, Fold, Guide, Icon,
-  Pagination, RadioGroup, SearchField, Segmented, Select, Switch, TableScroll, Tabs, Tip, TipProvider, type GuideStep } from '../components/react'
+import { EmptyState, Button, Checkbox, Collection, DecisionCard, Dialog, Field, FilterBar, Fold, Guide, Icon,
+  Breadcrumbs, DateFilter, SortMenu, TaskStatus, TaskCard, ActionMenu, AttentionTitle, ActionSummary, Metric, ObjectPreview, SectionCard, SectionAction, SectionHeader, Pagination, RadioGroup, SearchField, Segmented, Select, Switch, TableScroll, Tabs, Tip, TipProvider, type GuideStep } from '../components/react'
 
 type Item = { id: string; title: string; type: string; status: string; summary: string }
 const content: Item[] = [
@@ -48,9 +49,8 @@ function BrowserDemo() {
     <div data-tour="browse-search">
       <FilterBar filters={filters} onClear={reset}>
         <SearchField label="搜索内容" placeholder="搜索标题" value={query} onChange={change(setQuery)} />
-        <Select label="内容类型" value={type} onChange={change(setType)} options={['全部', '报告', '模板', '笔记'].map(value => ({ value, label: value === '全部' ? '全部类型' : value }))} />
-        <Select label="内容状态" value={status} onChange={change(setStatus)} options={['全部', '草稿', '已完成'].map(value => ({ value, label: value === '全部' ? '全部状态' : value }))} />
-        <Select label="排序" value={sort} onChange={change(setSort)} options={['默认顺序', '标题排序'].map(value => ({ value, label: value }))} />
+        <Select variant="filter" allValue="全部" label="内容类型" value={type} onChange={change(setType)} options={['全部', '报告', '模板', '笔记'].map(value => ({ value, label: value }))} />
+        <Select variant="filter" allValue="全部" label="内容状态" value={status} onChange={change(setStatus)} options={['全部', '草稿', '已完成'].map(value => ({ value, label: value }))} />
       </FilterBar>
     </div>
     <div className="vx-cluster">
@@ -63,7 +63,7 @@ function BrowserDemo() {
       <Segmented label="浏览方式" value={layout} options={[{ id: 'list', label: '列表' }, { id: 'grid', label: '卡片' }]} onChange={setLayout} />
     </div>
     <div data-tour="browse-results">
-      <Collection items={shown} getKey={item => item.id} layout={layout} total={filtered.length} label="内容结果"
+      <Collection items={shown} getKey={item => item.id} layout={layout} total={filtered.length} label="内容结果" actions={<Select label="排序" value={sort} onChange={change(setSort)} options={['默认顺序','标题排序'].map(value=>({value,label:value}))}/>}
         loading={loading} error={error} onRetry={reload} emptyTitle="没有匹配的内容" emptyDescription="试试其他关键词，或清除筛选条件。"
         emptyAction={<Button onClick={reset}>清除筛选</Button>}
         renderItem={item => <>
@@ -100,6 +100,7 @@ function InteractionDemo() {
   const [pending, setPending] = useState<string>()
   const [decisionError, setDecisionError] = useState<string>()
   const [done, setDone] = useState<string>()
+  const [decisionNote,setDecisionNote]=useState('')
   const [tab, setTab] = useState('overview')
   const [detailsTab, setDetailsTab] = useState(true)
   const error = Number(price) > 0 ? undefined : '售价要大于 0'
@@ -128,14 +129,16 @@ function InteractionDemo() {
       </Dialog>
       <Tabs label="内容页签" variant="workspace" actions={<span className="vx-meta">工作区操作</span>} value={tab} onChange={setTab} onClose={() => setDetailsTab(false)} items={[
         { value: 'overview', label: '概览', content: <p className="vx-body">方向键切换页签，关闭后焦点回到相邻页签。</p> },
-        ...(detailsTab ? [{ value: 'detail', label: '明细', closable: true, content: <p className="vx-body">可按 Delete 关闭本页签。</p> }] : []),
+        ...(detailsTab ? [{ value: 'detail', label: '明细', closable: true, indicator:<span className="vx-dot" aria-hidden="true"/>, content: <p className="vx-body">可按 Delete 关闭本页签。</p> }] : []),
       ]} />
       {!detailsTab && <Button size="sm" onClick={() => setDetailsTab(true)}>恢复明细页签</Button>}
     </div>
-    <DecisionCard title="是否应用新的发布设置？" summary="将更新 2 个发布渠道的默认设置。" impact="影响：仅作用于之后的新内容；已经发布的内容保持原样。"
+    <DecisionCard attention title="是否应用新的发布设置？" summary="将更新 2 个发布渠道的默认设置。" impact="影响：仅作用于之后的新内容；已经发布的内容保持原样。"
       recommendation="先应用于新草稿，确认后再发布。" options={[{ id: 'apply', label: '应用设置', recommended: true }, { id: 'later', label: '稍后处理' }]}
+      execution={{mode:'automatic',description:'保存已确认的渠道默认设置。'}} onCustomConfirm={text=>setDone(`已交给 AI 准备：${text}`)} onAsk={choice=>setDecisionNote(`带入会话：${choice??'当前事项'}`)} onTakeover={()=>setDecisionNote('人工接管：查看原始渠道设置')}
       pending={pending} error={decisionError} done={done} evidence={['来源：当前设置', '核对时间：刚刚']}
       onChoose={id => { if (pending) return; setPending(id); window.setTimeout(() => { setPending(undefined); if (!decisionError) setDecisionError('连接中断，尚未应用。请重试。'); else { setDecisionError(undefined); setDone(id === 'apply' ? '已应用设置' : '已安排稍后处理') } }, 700) }} />
+    {decisionNote&&<p role="status">{decisionNote}</p>}
     <section className="vx-card vx-card--padded vx-stack" data-testid="table-demo">
       <h3 className="vx-title">同一任务里的指标与明细</h3>
       <div className="vx-stats vx-stats--inline">
@@ -163,15 +166,32 @@ const weeklyTasks: ExampleTask[] = [
   { title: '整理月度经营记录', hint: '周日完成', detail: '汇总已确认的数据和需要补充说明的变化。' },
 ]
 function MoleculesDemo() {
+  const [metricPeriod,setMetricPeriod]=useState('30')
+  const [metricCompare,setMetricCompare]=useState('previous')
+  const [objectOpen,setObjectOpen]=useState(false)
   const [detail, setDetail] = useState<ExampleTask | null>(null)
   const taskRow = (task: ExampleTask) => <button type="button" className="vx-todo" key={task.title} onClick={() => setDetail(task)}>
     <span className="vx-todo-main"><span className="vx-todo-title">{task.title}</span><span className="vx-todo-hint">{task.hint}</span></span>
     <span className="vx-todo-go" aria-hidden="true"><Icon name="next" size="sm" /></span>
   </button>
   return <div className="vx-stack vx-stack--lg" data-testid="molecules-demo">
+    <div style={{containerType:'inline-size',containerName:'render'}} data-testid="metrics-demo">
+      <section className="vx-card" aria-label="指标示例">
+        <SectionHeader title="工作概况" controls={<><Select label="指标期间" variant="inline" value={metricPeriod} onChange={setMetricPeriod} options={[{value:'7',label:'近 7 天'},{value:'30',label:'近 30 天'}]}/><Select label="指标对比" variant="inline" value={metricCompare} onChange={setMetricCompare} options={[{value:'previous',label:`环比前 ${metricPeriod} 天`},{value:'none',label:'不比较'}]}/></>}/>
+        <div className="vx-card-body"><TipProvider><div className="vx-metrics vx-metrics--overview vx-stats--inline">
+          {[{label:'已完成任务',value:metricPeriod==='30'?'1,284':'312',help:'期间内已收到成功回执的任务数。',delta:'12.4%',direction:'up' as const},{label:'处理时长',value:metricPeriod==='30'?'3.2 分钟':'2.8 分钟',help:'从开始执行到收到回执的平均时长。',delta:'8.6%',direction:'down' as const},{label:'成功率',value:metricPeriod==='30'?'98.6%':'99.1%',help:'成功完成的任务 ÷ 全部已结束任务。',delta:'Δ +1.2%',direction:'up' as const},{label:'待处理',value:'12',help:'等待你判断或补充资料的任务数。',delta:'—',direction:undefined}].map(m=><Metric key={m.label} label={m.label} value={m.value} help={m.help} source="任务执行日志（示例）" comparison={metricCompare==='none'?undefined:{value:m.delta,direction:m.direction,sentiment:m.direction?'positive':'neutral',difference:m.label==='成功率',label:`环比前 ${metricPeriod} 天 ${m.delta}`}}/>)}
+        </div></TipProvider></div>
+      </section>
+    </div>
+    <SectionCard title="报告摘要" aria-label="板块卡片示例" controls={<span className="vx-meta">近 7 天</span>} chatAction={{label:'讨论这份报告',onClick:()=>setObjectOpen(true)}} actions={<SectionAction onClick={()=>setObjectOpen(true)}>打开报告</SectionAction>}><div className="vx-section-columns"><div className="vx-section-pane"><p>查看本周完成情况与需要继续处理的事项。</p></div><div className="vx-section-pane"><Metric label="已完成" value="128" help="期间内收到成功回执的任务数。" source="任务日志"/></div></div></SectionCard>
+    <section className="vx-card vx-card--padded" aria-label="对象摘要示例">
+      <ActionSummary items={[{id:'approval',label:'方案确认',count:8,urgentCount:2,onSelect:()=>setObjectOpen(true)},{id:'content',label:'内容审核',count:3,onSelect:()=>setObjectOpen(true)},{id:'review',label:'结果复核',count:0,onSelect:()=>setObjectOpen(true)}]}/>
+      <ObjectPreview title="便携收纳盒" summary="折叠款 · 中号" preview={<><p>可折叠收纳，适用于桌面小物。</p><dl><dt>规格</dt><dd>中号</dd><dt>颜色</dt><dd>米白、灰色</dd></dl></>} onOpen={()=>setObjectOpen(true)} detailOpen={objectOpen}/>
+      <Dialog variant="drawer" open={objectOpen} onOpenChange={setObjectOpen} title="对象详情"><p>便携收纳盒 · 折叠款</p><p>在此查看完整规格与来源链接。</p></Dialog>
+    </section>
     <section className="vx-card vx-card--padded vx-todos" aria-label="待办示例">
-      <Fold summary="现在处理" count={`${urgentTasks.length} 件`} defaultOpen className="vx-todo-group">{urgentTasks.map(taskRow)}</Fold>
-      <Fold summary="本周内" count={`${weeklyTasks.length} 件`}>{weeklyTasks.map(taskRow)}</Fold>
+      <Fold summary={<AttentionTitle count={urgentTasks.length}>现在处理</AttentionTitle>} defaultOpen className="vx-todo-group">{urgentTasks.map(taskRow)}</Fold>
+      <Fold summary={<AttentionTitle count={weeklyTasks.length}>本周内</AttentionTitle>}>{weeklyTasks.map(taskRow)}</Fold>
     </section>
     <section className="vx-card vx-card--padded vx-stack" aria-label="商品资质示例">
       <h3 className="vx-title">商品资质</h3>
@@ -198,11 +218,14 @@ const featureTour: GuideStep[] = [
 function GuideDemo() {
   const [open, setOpen] = useState(false)
   const [visits, setVisits] = useState(0)
+  const [banner, setBanner] = useState(false)
+  const [completed, setCompleted] = useState(false)
+  const [routeOpen, setRouteOpen] = useState(false)
   const [name, setName] = useState('内容工作台')
   const [view, setView] = useState('list')
   const [saved, setSaved] = useState('')
   return <div className="vx-stack vx-stack--lg" data-testid="guide-demo" data-visits={visits}>
-    <div className="vx-cluster"><Button onClick={() => setOpen(true)}>开始功能导览</Button><span className="vx-meta">3 步，可随时退出</span></div>
+    <div className="vx-cluster"><Button onClick={() => { setBanner(false); setOpen(true) }}>开始功能导览</Button><Button onClick={() => { setBanner(true); setSaved(''); setCompleted(false); setOpen(true) }}>体验底部横向导览</Button><Button onClick={() => setRouteOpen(true)}>选择使用路线</Button><span className="vx-meta">3 步，可随时退出</span></div>
     <div className="vx-card vx-card--padded vx-stack sc-guide-sample">
       <div data-tour="guide-workspace"><Field label="工作区名称" hint="这只是本地交互示例。">{props => <input {...props} className="vx-input" value={name} onChange={e => setName(e.target.value)} />}</Field></div>
       <div className="vx-stack" data-tour="guide-preference">
@@ -213,7 +236,9 @@ function GuideDemo() {
         </div>
       </div>
       <div className="vx-cluster"><Button variant="primary" data-tour="guide-save" onClick={() => setSaved(`已保存：${name || '未命名工作区'} · ${view === 'list' ? '精简列表' : '摘要卡片'}`)}>保存浏览偏好</Button><span className="vx-meta" role="status">{saved}</span></div>
-      {open && <Guide name="浏览偏好导览" steps={featureTour.map(s => ({ ...s, go: () => setVisits(n => n + 1) }))} onExit={() => setOpen(false)} />}
+      {open && <Guide variant={banner ? 'banner' : 'card'} name="浏览偏好导览" steps={featureTour.map((s, i) => ({ ...s, ready: !banner || i !== 2 || !!saved, go: () => setVisits(n => n + 1) }))} onExit={() => setOpen(false)} onComplete={() => { setOpen(false); setCompleted(true) }} />}
+      {completed && <p role="status">导览已完成</p>}
+      <Dialog variant="stage" open={routeOpen} onOpenChange={setRouteOpen} title="选择使用路线" description="选择接下来要做的事。" actions={<Button onClick={() => setRouteOpen(false)}>返回工作区</Button>}><div className="vx-grid vx-grid--2"><button className="vx-choice" onClick={() => setRouteOpen(false)}><b>设置工作区</b><span className="vx-choice-desc">先连接资料，再安排工作方式。</span></button><button className="vx-choice" onClick={() => setRouteOpen(false)}><b>开始处理工作</b><span className="vx-choice-desc">从已有任务和进展继续。</span></button></div></Dialog>
     </div>
   </div>
 }
@@ -224,3 +249,48 @@ createRoot(document.getElementById('interaction-demo')!).render(<InteractionDemo
 createRoot(document.getElementById('guide-demo')!).render(<GuideDemo />)
 
 createRoot(document.getElementById('molecules-demo')!).render(<MoleculesDemo />)
+
+function AccountMenuDemo() {
+  const [result, setResult] = useState('')
+  return <><ActionMenu label="用户菜单" className="vx-nav-account" items={[
+    {label:'工作区导览',icon:'guide',onClick:()=>setResult('已打开导览示例')},
+    {label:'恢复示例',icon:'refresh',onClick:()=>setResult('示例已恢复')},
+    {label:'切换账户',icon:'switch-user',onClick:()=>setResult('已打开账户选择示例')},
+  ]}><span className="vx-avatar">示</span><span className="vx-nav-account-text"><span className="vx-nav-account-name">示例用户</span><span className="vx-nav-account-sub">示例团队 · 管理员</span></span><Icon name="more" className="vx-nav-account-more"/></ActionMenu><span className="vx-sr-only" role="status">{result}</span></>
+}
+createRoot(document.getElementById('react-account-demo')!).render(<AccountMenuDemo />)
+
+function TaskCardDemo(){
+ const [handled,setHandled]=useState(''),[history,setHistory]=useState(false),[revision,setRevision]=useState(1)
+ const [completedChoice,setCompletedChoice]=useState<{id:string;text:string}>(),[completedAction,setCompletedAction]=useState<'continue'|'takeover'>()
+ const [pending,setPending]=useState<'continue'|'takeover'>(),[error,setError]=useState<string>(),[failNext,setFailNext]=useState(false),[attempts,setAttempts]=useState(0)
+ const [sort,setSort]=useState<'asc'|'desc'>('desc'),[date,setDate]=useState({from:'',to:'',preset:''}),[dateField,setDateField]=useState('updated')
+ const fields=[{id:'updated',label:'更新时间'},...(history?[{id:'handled',label:'处理时间'}]:[])]
+ const submit=(choice:{id:string;text:string},action:'continue'|'takeover')=>{
+  if(pending)return
+  setPending(action);setError(undefined);setAttempts(n=>n+1)
+  window.setTimeout(()=>{
+   setPending(undefined)
+   if(failNext){setError('暂时无法提交，请重试。');setFailNext(false);return}
+   setHandled(action==='continue'?choice.text:'人工接管');setCompletedChoice(choice);setCompletedAction(action)
+  },600)
+ }
+ return <div className="vx-stack" data-testid="task-card-demo">
+  {history?<Breadcrumbs headingLevel={2} items={[{label:'待办事项',onClick:()=>setHistory(false)},{label:'历史已办'}]}/>:<SectionHeader title="待办事项" actions={<Button variant="ghost" onClick={()=>setHistory(true)}><Icon name="history"/>历史已办</Button>}/>}
+  <div className="vx-filterbar"><DateFilter value={date} field={dateField} fields={fields} onChange={(value,field)=>{setDate({...value,preset:value.preset??''});setDateField(field)}}/></div>
+  <div className="vx-results-head"><span className="vx-meta">{(history?!!handled:!handled)?1:0} 项</span><SortMenu order={sort} onChange={setSort}/></div>
+  {(history?!!handled:!handled)?<TaskCard title="资料已补齐，请确认采用当前方案继续准备。" attention={!history} status={<TaskStatus type="工作方案审批" urgency={{label:'紧急',due:history?undefined:'今天需处理',urgent:!history}} timestamps={[{label:'于',suffix:'更新',dateTime:'2026-10-25T10:00:00',text:'10/25 10:00'}]}/>}
+
+   background={<p>本次范围与约束已经整理，确认后继续准备执行所需资料。{revision>1?`补充要求已写回当前卡片，建议版本 ${revision}。`:''}</p>}
+   facts={<dl><div><dt>范围</dt><dd>当前项目与本次资料版本</dd></div></dl>}
+   options={[{id:'prepare',label:'采用当前方案',description:'按当前范围继续准备，实际结果等待回执。',recommended:true}]}
+   onContinue={choice=>submit(choice,'continue')} onTakeover={choice=>submit(choice,'takeover')} onDiscuss={()=>{if(!history)setRevision(n=>n+1)}}
+   completedChoice={completedChoice} completedAction={completedAction}
+   pending={pending} error={error} done={history}/>:<EmptyState message={history?'还没有处理记录':'当前没有待办事项'}/>}
+  <details className="sc-test-tools"><summary>体验提交状态</summary><div className="vx-cluster"><Checkbox label="下次提交失败" checked={failNext} disabled={!!pending||!!handled} onChange={e=>setFailNext(e.target.checked)}/><span className="vx-meta">提交尝试：{attempts}</span></div></details>
+ </div>
+}
+createRoot(document.getElementById('task-card-demo')!).render(<TaskCardDemo />)
+
+createRoot(document.getElementById('session-workspace-demo')!).render(<WorkspaceDemo />)
+createRoot(document.getElementById('component-states-demo')!).render(<ComponentStatesDemo />)

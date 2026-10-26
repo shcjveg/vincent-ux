@@ -1,12 +1,12 @@
 // 由 icons/icons.json 生成 icons/dist/sprite.svg：给没有构建步骤的纯 HTML 页面离线使用
-// 用法：node scripts/build-icons.mjs <含 lucide-react 的 node_modules 目录>
+// 用法：node scripts/build-icons.mjs [含 lucide-react 的 node_modules 目录]，默认当前项目依赖
 // 页面里：<svg class="vx-icon"><use href="icons/dist/sprite.svg#chat"/></svg>（id 是含义名）
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
-const NM = process.argv[2]
+const NM = process.argv[2] ?? join(ROOT, 'node_modules')
 if (!NM || !existsSync(join(NM, 'lucide-react'))) {
   console.error('用法：node scripts/build-icons.mjs <含 lucide-react 的 node_modules 目录>')
   process.exit(2)

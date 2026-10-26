@@ -82,12 +82,14 @@ if (!process.argv.slice(2).length) {
     for (const [surface, value] of surfaces) {
       for (const under of ['canvas', 'card']) {
         const bg = blend(rgb(value[mode]), rgb(t.surface[under][mode]))
+        for (const k of ['positive', 'negative']) if (t.data?.[k]) verify(`${mode} data-${k} / ${surface}`, t.data[k][mode], bg, 4.5)
         for (const k of ['primary', 'secondary', 'tertiary']) verify(`${mode} text-${k} / ${surface}`, t.text[k][mode], bg, 4.5)
         for (const k of ['accent', 'critical']) verify(`${mode} brand-${k} / ${surface}`, b.brand[k][mode], bg, 4.5)
         verify(`${mode} focus / ${surface}`, t.focus.ring[mode], bg, 3)
         verify(`${mode} control / ${surface}`, t.line.control[mode], bg, 3)
       }
     }
+    for (const surface of ['shell', 'card']) verify(`${mode} text-muted / ${surface}`, t.text.muted[mode], rgb(t.surface[surface][mode]), 4.5)
     for (const tone of ['accent', 'critical']) {
       const bg = blend(rgb(b.brand[`${tone}-soft`][mode]), rgb(t.surface.card[mode]))
       verify(`${mode} ${tone} / soft`, b.brand[tone][mode], bg, 4.5)

@@ -57,3 +57,14 @@ test('辅助文字退回 3:1 时检查必须失败', () => temporary(dir => {
   assert.equal(result.status, 1)
   assert.match(result.stdout, /text-tertiary/)
 }))
+
+test('图标清单、React 语义与同步的 HTML 精灵图保持完整一致', () => temporary(dir => {
+  const spec=JSON.parse(readFileSync(join(root,'icons/icons.json'),'utf8'))
+  const meanings=Object.values(spec.meanings).flatMap(group=>Object.keys(group).filter(key=>!key.startsWith('$'))).sort()
+  const source=readFileSync(join(root,'components/react/Icon.tsx'),'utf8').split('const ICONS = {')[1].split('} satisfies')[0]
+  const react=[...source.matchAll(/(?:'([^']+)'|\b([a-zA-Z][a-zA-Z0-9]*)):\s*\w+/g)].map(match=>match[1]??match[2]).sort()
+  assert.deepEqual(react,meanings)
+  assert.equal(sync(dir,'--no-react').status,0)
+  const sprite=readFileSync(join(dir,'icons/sprite.svg'),'utf8')
+  assert.deepEqual([...sprite.matchAll(/<symbol id="([^"]+)"/g)].map(match=>match[1]).sort(),meanings)
+}))

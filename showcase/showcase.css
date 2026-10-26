@@ -201,3 +201,19 @@
 /* 刻意使用局部合成与裁剪，确认 Guide 的 portal 仍以视口为基准。 */
 .sc-guide-sample { transform: translateZ(0); overflow: hidden; }
 .sc-demo-separated { margin-top: var(--vx-space-6); }
+
+.demo-account-mount { margin-top: auto; }
+
+.sc-session-workspace { height:560px;min-width:0; }
+.sc-long-action { width:180px;max-width:100%; }
+.sc-long-action .vx-btn { max-width:100%;white-space:normal; }
+
+@media(max-width:740px) {
+ .sc { display:block; }
+ .sc-toc { position:static;height:auto;display:flex;align-items:center;gap:8px;overflow-x:auto;padding:12px 16px; }
+ .sc-toc h1,.sc-toc a,.sc-theme { flex-shrink:0;white-space:nowrap; }
+ .sc-toc [data-version] { display:none; }
+ .sc-theme { margin:0; }
+ .sc-main { padding:16px; }
+ .sc-board { padding:16px; }
+}

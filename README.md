@@ -56,7 +56,7 @@ npm run sync -- ../my-app/src/vincent-ux
 | 组织内容浏览、AI 分工与关键决策 | [交互模式](patterns/README.md) |
 | 搭建导航、对话和多页签工作区 | [页面模板](templates/README.md) |
 
-让 AI 也用同一套设计语言：[Agent 使用说明](SKILL.md)。
+最近规则的组件、示例与验证入口见[沉淀覆盖表](docs/coverage.md)。让 AI 也用同一套设计语言：[Agent 使用说明](SKILL.md)。
 
 ## 开源
 

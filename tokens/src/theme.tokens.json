@@ -35,7 +35,7 @@
       "$type": "color",
       "light": "rgba(255, 255, 255, 0.84)",
       "dark": "rgba(40, 37, 33, 0.84)",
-      "$description": "浮层：对话面板、下拉、说明卡"
+      "$description": "浮层：下拉、预览与说明卡"
     },
     "overlay-strong": {
       "$type": "color",
@@ -103,6 +103,12 @@
       "light": "#FFFFFF",
       "dark": "#1C1814",
       "$description": "红点、危急色块上的文字"
+    },
+    "muted": {
+      "$type": "color",
+      "light": "#736B60",
+      "dark": "#948A7D",
+      "$description": "低优先级空状态提示；仅用于 shell 与 card 承载面，普通小字保持 4.5:1"
     }
   },
   "line": {
@@ -164,6 +170,20 @@
       "light": "#80570D",
       "dark": "#E8BF6A",
       "$description": "键盘焦点，独立于装饰与图表强调色"
+    }
+  },
+  "data": {
+    "positive": {
+      "$type": "color",
+      "light": "#226B48",
+      "dark": "#82C9A1",
+      "$description": "指标有利变化；方向仍由箭头表达"
+    },
+    "negative": {
+      "$type": "color",
+      "light": "#A33C36",
+      "dark": "#EF9991",
+      "$description": "指标不利变化；不是告警级别"
     }
   }
 }

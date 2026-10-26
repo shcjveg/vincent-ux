@@ -1,4 +1,4 @@
-/* vincent-ux v1.3.0 · templates/css/templates.css */
+/* vincent-ux v1.4.0 · templates/css/templates.css */
 /* 模板：应用与页面的骨架。依赖 tokens.css 与 components/css/*。
    结构：.vx-app > .vx-nav（可收起）+ .vx-chat（按需出现）+ .vx-render（.vx-tabs + .vx-render-body > .vx-page） */
 
@@ -7,10 +7,10 @@
   display: flex;
   /* 外壳固定为一屏高，只有渲染区内部滚动；嵌在别的容器里时由容器覆盖为 100% */
   position: relative;
-  height: 100dvh;
+  height: calc(100dvh - var(--vx-guide-space, 0px));
   padding: var(--vx-space-2-5);
-  gap: var(--vx-space-2-5);
-  background: var(--vx-surface-canvas);
+  gap: 0;
+  background: var(--vx-surface-shell);
 }
 
 /* 左栏：品牌 · 功能导航 + 对话导航（可滚动）· 账户，实色承载区 */
@@ -21,7 +21,7 @@
   flex-direction: column;
   padding: var(--vx-space-2) var(--vx-space-2) var(--vx-space-2-5);
   border-radius: var(--vx-radius-xl);
-  background: var(--vx-surface-shell);
+  background: transparent;
   transition: width var(--vx-motion-duration-base);
 }
 
@@ -78,7 +78,7 @@
   min-height: 24px;
   padding: 0 var(--vx-space-1) var(--vx-space-1) var(--vx-space-2-5);
   font-size: var(--vx-font-size-sm);
-  color: var(--vx-text-tertiary);
+  color: var(--vx-text-secondary);
 }
 
 .vx-nav-group-title .vx-icon-btn {
@@ -118,12 +118,7 @@
   font-weight: var(--vx-font-weight-medium);
 }
 
-/* 当前项不带红点（patterns/todo-and-badge.md）：组件层负责，页面照常渲染红点即可。
-   待办总入口的计数用 .vx-badge，不受影响 */
-.vx-nav-item[aria-current] .vx-dot,
-.vx-tab[aria-selected='true'] .vx-dot {
-  display: none;
-}
+/* 是否显示提醒由待办状态决定，选中、悬停或聚焦不会清除提醒。 */
 
 .vx-nav-item svg {
   width: var(--vx-size-icon-md);
@@ -183,11 +178,13 @@
 }
 
 .vx-nav-account-name {
+  display: block;
   font-size: var(--vx-font-size-md);
   font-weight: var(--vx-font-weight-semibold);
 }
 
 .vx-nav-account-sub {
+  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -243,14 +240,19 @@
   background: transparent;
 }
 
-/* 中栏：对话，浮层面板，默认不出现 */
+/* 中栏与右栏共享工作面；对话按需出现。 */
 .vx-app > .vx-chat {
-  width: 380px;
+  width: 360px;
+  border-radius: var(--vx-radius-xl) 0 0 var(--vx-radius-xl);
+  box-shadow: none;
   overflow: hidden;
   position: relative;
   z-index: 2;
   flex-shrink: 0;
 }
+
+.vx-app > .vx-chat + .vx-render { border-radius: 0 var(--vx-radius-xl) var(--vx-radius-xl) 0; }
+.vx-app > .vx-chat + .vx-render > .vx-tabset { border-left: 1px solid var(--vx-line-faint); }
 
 /* 右栏：渲染区，浏览器式页签 + 页面 */
 .vx-render {
@@ -272,6 +274,7 @@
 }
 
 .vx-render-body {
+  position: relative;
   flex: 1;
   overflow-y: auto;
   padding-bottom: var(--vx-space-24); /* 给右下角悬浮入口留位置：最后一屏内容滚到它上方 */
@@ -347,16 +350,27 @@
 }
 
 /* ---------- 引导页骨架：整屏铺开，每屏只问一件事 ---------- */
+.vx-onboard-shell { min-height: 100dvh; display: grid; align-content: center; background: var(--vx-surface-shell); }
 .vx-onboard {
-  min-height: 100vh;
+  min-height: 0;
+  width: 100%;
   display: grid;
-  grid-template-rows: auto 1fr auto;
-  padding: var(--vx-space-7) clamp(var(--vx-space-7), 6vw, var(--vx-space-24)) var(--vx-space-8);
+  grid-template-rows: auto auto auto;
+  padding: var(--vx-space-7) clamp(var(--vx-space-4), 6vw, var(--vx-space-24)) var(--vx-space-8);
   background: var(--vx-surface-shell);
 }
 
+/* 内容型引导：动作紧随正文，剩余留白在任务之后，不把按钮推到屏幕边缘。 */
+.vx-onboard:not(.vx-onboard--fixed) {
+  padding-block: clamp(var(--vx-space-7), 6dvh, var(--vx-space-14));
+}
+.vx-onboard:not(.vx-onboard--fixed) > .vx-onboard-foot {
+  align-self: start;
+  justify-content: flex-start;
+}
+
 /* 固定步骤外壳：正文独立滚动，操作锚点不随选项数量变化。 */
-.vx-onboard--fixed { height: 100dvh; min-height: 0; grid-template-rows: auto minmax(0, 1fr) auto; }
+.vx-onboard--fixed { height: min(100dvh, 860px); min-height: 0; grid-template-rows: auto minmax(0, 1fr) auto; }
 .vx-onboard--fixed > .vx-onboard-main { overflow-y: auto; min-height: 0; }
 
 .vx-onboard-top,
@@ -378,7 +392,20 @@
 
 .vx-onboard-step {
   width: min(960px, 100%);
+  min-width: 0;
   animation: vx-step-in var(--vx-motion-duration-slow) var(--vx-motion-ease-out);
+}
+
+@media (max-width: 640px) {
+  .vx-onboard { padding-block: var(--vx-space-5); }
+  .vx-onboard-top, .vx-onboard-foot { flex-wrap: wrap; gap: var(--vx-space-3); }
+  .vx-onboard-main { padding-block: var(--vx-space-6); }
+  .vx-onboard-foot > .vx-cluster { flex: 1; justify-content: flex-end; }
+}
+
+@media (max-height: 600px) {
+  .vx-onboard { padding-block: var(--vx-space-4); }
+  .vx-onboard-main { padding-block: var(--vx-space-6); }
 }
 
 @keyframes vx-step-in {
@@ -437,22 +464,14 @@
   overflow: hidden; clip-path: inset(50%); white-space: nowrap;
 }
 .vx-app { container-type: inline-size; container-name: app; }
+/* 用户选择决定展开状态，容器宽度只改变布局方式。 */
 @container app (max-width: 1200px) {
-  .vx-app > .vx-nav { width: 56px; }
-  .vx-nav-brand { flex-direction: column; padding: var(--vx-space-2) 0; }
-  .vx-nav-brand-text, .vx-nav-account-text, .vx-nav-group-title, .vx-nav-item-meta, .vx-nav-empty, .vx-nav-item .vx-count { display: none; }
-  /* 自动压缩时宿主仍可能处于展开状态：保留分组动作，收起说明文字。 */
-  .vx-app:not([data-nav='collapsed']) .vx-nav-group-title { display: flex; justify-content: center; padding: 0; }
-  .vx-nav-group-title > span { display: none; }
-  .vx-nav-item-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-  .vx-nav-item { justify-content: center; position: relative; padding: 0; }
-  .vx-nav-item .vx-badge { position: absolute; right: 0; top: 0; }
-  .vx-nav-account { flex-direction: column; padding: var(--vx-space-2) 0; justify-content: center; }
   .vx-app > .vx-chat { width: 300px; }
 }
-@container app (max-width: 720px) {
-  .vx-app > .vx-chat { position: absolute; inset: var(--vx-space-2); width: auto; z-index: var(--vx-z-overlay); }
-  .vx-page { padding: var(--vx-space-5) var(--vx-space-4); }
+@container app (max-width: 960px) {
+  .vx-app > .vx-chat { position: absolute; inset: var(--vx-space-2) auto var(--vx-space-2) var(--vx-space-2); width: min(420px, calc(100% - 32px)); z-index: var(--vx-z-overlay); border-radius: var(--vx-radius-xl); box-shadow: var(--vx-shadow-overlay); }
+  .vx-app > .vx-chat + .vx-render { border-radius: var(--vx-radius-xl); }
+  .vx-app > .vx-chat + .vx-render > .vx-tabset { border-left: 0; }
 }
 @container render (max-width: 640px) {
   .vx-split { grid-template-columns: minmax(0, 1fr); }
@@ -462,3 +481,75 @@
 @container render (max-width: 640px) {
   .vx-page { padding-inline: var(--vx-space-4); }
 }
+
+@media (max-width:740px) {
+  .vx-app:not([data-nav='collapsed']) ~ .vx-ask { visibility:hidden; pointer-events:none; }
+}
+
+/* 已打开但未固定的导航项，关闭后从临时入口移除。 */
+.vx-nav-entry { position: relative; border-radius: var(--vx-radius-md); }
+.vx-nav-entry:hover { background: var(--vx-fill-hover); }
+.vx-nav-entry > .vx-nav-item { padding-right: 38px; }
+.vx-nav-entry > .vx-nav-close { position: absolute; right: 3px; top: 50%; transform: translateY(-50%); display: grid; place-items: center; width: 28px; height: 28px; border-radius: var(--vx-radius-sm); color: var(--vx-text-secondary); opacity: 0; pointer-events: none; transition: opacity var(--vx-motion-duration-fast), background var(--vx-motion-duration-fast); }
+.vx-nav-entry:hover > .vx-nav-close, .vx-nav-entry:focus-within > .vx-nav-close { opacity: 1; pointer-events: auto; }
+.vx-nav-entry > .vx-nav-close:hover { background: var(--vx-fill-selected); color: var(--vx-text-primary); }
+.vx-app[data-nav='collapsed'] .vx-nav-entry > .vx-nav-item { padding:0; }
+.vx-app[data-nav='collapsed'] .vx-nav-entry > .vx-nav-close { display:none; }
+@media (hover: none) { .vx-nav-entry > .vx-nav-close { opacity: 1; pointer-events: auto; } }
+
+/* 应用入口底面在文字与关闭操作之后留一个短尾，避免填满整个侧栏。 */
+.vx-nav-group > .vx-nav-item:not(.vx-nav-item--sub), .vx-nav-group > .vx-nav-entry { width: calc(100% - var(--vx-space-5)); }
+.vx-app[data-nav='collapsed'] .vx-nav-group > .vx-nav-item, .vx-app[data-nav='collapsed'] .vx-nav-group > .vx-nav-entry { width: 100%; }
+.vx-nav-empty { max-width: 180px; font-size: var(--vx-font-size-xs); color: var(--vx-text-muted); line-height: var(--vx-font-leading-relaxed); }
+
+/* Narrow workspaces reserve the full canvas for the current task; navigation is modal. */
+.vx-tabs-leading { flex-shrink: 0; display: flex; padding-left: var(--vx-space-2); }
+.vx-workspace-overlay { position: fixed; z-index: calc(var(--vx-z-modal) + 1); display: flex; min-height: 0; overflow: hidden; background: var(--vx-surface-card); box-shadow: var(--vx-shadow-overlay); }
+.vx-workspace-overlay--nav { inset: 0 auto 0 0; width: min(300px, calc(100% - 48px)); background: var(--vx-surface-shell); border-radius: 0 var(--vx-radius-xl) var(--vx-radius-xl) 0; padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
+.vx-workspace-overlay--nav > .vx-nav { width: 100%; min-height: 0; border-radius: 0; }
+.vx-workspace-overlay--panel { inset: var(--vx-space-2) auto var(--vx-space-2) var(--vx-space-2); width: min(420px, calc(100% - 32px)); border-radius: var(--vx-radius-xl); }
+.vx-workspace-overlay--panel > .vx-chat { width: 100%; min-height: 0; border-radius: inherit; }
+@media (max-width: 740px) {
+  .vx-app { padding: env(safe-area-inset-top) 0 0; }
+  .vx-render { border-radius: 0; }
+  .vx-tabs-meta { display: none; }
+  .vx-tabset--workspace > .vx-tabs-bar { gap: 0; }
+  .vx-tabset--workspace > .vx-tabs-bar .vx-tabs-viewport { flex: 1; }
+  .vx-tabset--workspace > .vx-tabs-bar .vx-tabs { padding-inline: var(--vx-space-1); }
+  .vx-page { padding: var(--vx-space-4) var(--vx-space-3); gap: var(--vx-space-4); }
+  .vx-ask { right: var(--vx-space-3); bottom: calc(var(--vx-space-3) + env(safe-area-inset-bottom)); }
+  .vx-nav-item, .vx-nav-item--sub { min-height: 44px; }
+  .vx-nav-brand .vx-icon-btn, .vx-nav-account .vx-icon-btn, .vx-tabs-leading .vx-icon-btn, .vx-chat-head .vx-icon-btn { min-width: 44px; min-height: 44px; }
+  .vx-nav-group-title { min-height: 44px; }
+  .vx-nav-group-title .vx-icon-btn { width: 44px; height: 44px; }
+  .vx-chat-body { min-height: 0; overscroll-behavior: contain; }
+  .vx-suggestions { max-height: 24dvh; overflow-y: auto; }
+  .vx-composer { flex-shrink: 0; }
+  .vx-composer textarea { font-size: 16px; }
+}
+@media (hover: none) and (pointer: coarse) {
+  .vx-composer-hint { visibility: hidden; }
+}
+
+button.vx-nav-account { width: 100%; text-align: left; cursor: pointer; }
+button.vx-nav-account:hover, button.vx-nav-account[data-popup-open] { background: var(--vx-fill-hover); }
+.vx-nav-account-more { flex-shrink: 0; color: var(--vx-text-secondary); }
+.vx-app[data-nav='collapsed'] .vx-nav-account-more { display:none; }
+
+@media (max-width: 600px) {
+  .vx-workspace-overlay--panel { inset: 0; width: 100%; border-radius: 0; padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
+}
+
+/* 图标轨道按同一中线排列，分组只用一条短线，不增加承载面。 */
+.vx-app[data-nav='collapsed'] .vx-nav-group[data-nav-section='apps']:has(.vx-nav-item)::before,
+.vx-app[data-nav='collapsed'] .vx-nav-group[data-nav-section='sessions']::before { content:'';display:block;width:20px;height:1px;flex-shrink:0;background:var(--vx-text-tertiary);opacity:.3;margin:var(--vx-space-2) auto var(--vx-space-3); }
+.vx-app[data-nav='collapsed'] .vx-nav-group[data-nav-section='apps']:not(:has(.vx-nav-item)) { display:none; }
+.vx-app[data-nav='collapsed'] .vx-nav-account { min-height:44px; }
+
+/* A closed render pane leaves one full-width conversation; reopen stays in its header. */
+.vx-app[data-render='closed'] > .vx-chat { position:relative;inset:auto;flex:1;width:auto;min-width:0;border-radius:var(--vx-radius-xl);box-shadow:none; }
+.vx-app[data-render='closed'] > .vx-render { display:none; }
+.vx-app[data-render='closed'] .vx-chat-body, .vx-app[data-render='closed'] .vx-suggestions { width:100%;max-width:912px;align-self:center;box-sizing:border-box; }
+.vx-app[data-render='closed'] .vx-composer { width:calc(100% - 32px);max-width:880px;align-self:center;box-sizing:border-box; }
+.vx-workspace-close { flex-shrink:0; }
+@media(max-width:740px) { .vx-tabs-actions .vx-workspace-close { min-width:44px;min-height:44px; } }

@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.3.0 · patterns/README.md -->
+<!-- vincent-ux v1.4.0 · patterns/README.md -->
 
 # 交互模式
 
@@ -12,7 +12,9 @@
 | `actor-mark.md` 谁做的 | 自动完成和 AI 完成的事怎么标、怎么不打扰 |
 | `write-levels.md` 写操作三级 | AI 能自己动手到什么程度 |
 | `delegate.md` 带上下文派活 | 人怎么把一件事交给 AI |
-| `page-chat-flow.md` 页面与对话双向流转 | 图形界面和对话怎么互相跳 |
+| `page-chat-flow.md` 页面与对话双向流转 | 会话、页签与业务状态如何归属；关闭、恢复、定位与焦点如何衔接 |
 | `nav-overflow.md` 导航围绕任务 | 主入口怎样降低理解门槛，专业工具怎样按需出现 |
 | `browse.md` 内容浏览与筛选 | 搜索、条件、列表／网格、分页与选择如何一起工作 |
 | `guide.md` 功能导览 | 说明卡、蒙层、目标高亮与退出怎样配合 |
+
+- [待办工作页](task-workspace.md)：类型与状态筛选、基础实例卡片、三种处理动作和历史二级页。
