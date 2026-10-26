@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.2 · patterns/nav-overflow.md -->
+<!-- vincent-ux v1.4.3 · patterns/nav-overflow.md -->
 
 # 导航围绕任务，工具按需出现
 

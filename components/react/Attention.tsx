@@ -1,4 +1,4 @@
-// vincent-ux v1.4.2 · components/react/Attention.tsx
+// vincent-ux v1.4.3 · components/react/Attention.tsx
 import type { ReactNode } from 'react'
 
 /** Entry dots guide navigation; endpoint corners and section counts identify actual pending work. */

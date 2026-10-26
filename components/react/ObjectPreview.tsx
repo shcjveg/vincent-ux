@@ -1,4 +1,4 @@
-// vincent-ux v1.4.2 · components/react/ObjectPreview.tsx
+// vincent-ux v1.4.3 · components/react/ObjectPreview.tsx
 import { PreviewCard } from '@base-ui/react/preview-card'
 import { useState, type ReactNode, type RefCallback } from 'react'
 import { Icon, type IconName } from './Icon'

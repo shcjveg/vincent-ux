@@ -1,6 +1,6 @@
 {
   "name": "vincent-ux",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "private": true,
   "description": "桌面级 agent 工作台的界面设计系统：原则、设计变量、图标、组件、模式、模板",
   "type": "module",

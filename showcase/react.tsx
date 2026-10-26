@@ -3,19 +3,19 @@ import { WorkspaceDemo, ComponentStatesDemo } from './WorkspaceDemo'
 import { BreadcrumbExamples } from './NavigationExamples'
 import { DisclosureExamples, ControlsExamples, OrganismsExamples } from './ComponentExamples'
 import { createRoot } from 'react-dom/client'
-import { EmptyState, Button, Checkbox, Collection, DecisionCard, Dialog, Field, FilterBar, Fold, Guide, Icon,
+import { DataTime, EmptyState, Button, Checkbox, Collection, DecisionCard, Dialog, Field, FilterBar, Fold, Guide, Icon,
   Breadcrumbs, DateFilter, SortMenu, TaskStatus, TaskCard, ActionMenu, AttentionTitle, ActionSummary, Metric, ObjectPreview, SectionCard, SectionAction, SectionHeader, Pagination, RadioGroup, SearchField, Segmented, Select, Switch, TableScroll, Tabs, Tip, TipProvider, type GuideStep } from '../components/react'
 
-type Item = { id: string; title: string; type: string; status: string; summary: string }
+type Item = { id: string; title: string; type: string; status: string; summary: string; updatedAt: string }
 const content: Item[] = [
-  { id: '1', title: '本周运营回顾', type: '报告', status: '已完成', summary: '关键变化、待办和下一步计划。' },
-  { id: '2', title: '内容发布检查表', type: '模板', status: '草稿', summary: '发布前逐项核对标题、图片和目标。' },
-  { id: '3', title: '访谈要点', type: '笔记', status: '已完成', summary: '整理用户提出的问题与需求。' },
-  { id: '4', title: '新项目启动清单', type: '模板', status: '已完成', summary: '明确范围、负责人和交付时间。' },
-  { id: '5', title: '月度数据复盘', type: '报告', status: '草稿', summary: '比较本月变化并补充原因。' },
-  { id: '6', title: '产品反馈汇总', type: '笔记', status: '草稿', summary: '归纳需要进一步验证的反馈。' },
-  { id: '7', title: '周会记录模板', type: '模板', status: '已完成', summary: '记录结论、负责人和截止日期。' },
-  { id: '8', title: '年度规划草案', type: '报告', status: '草稿', summary: '梳理年度重点与阶段性目标。' },
+  { id: '1', title: '本周运营回顾', type: '报告', status: '已完成', summary: '关键变化、待办和下一步计划。', updatedAt: '2026-10-26T10:00:00+08:00' },
+  { id: '2', title: '内容发布检查表', type: '模板', status: '草稿', summary: '发布前逐项核对标题、图片和目标。', updatedAt: '2026-10-25T09:00:00+08:00' },
+  { id: '3', title: '访谈要点', type: '笔记', status: '已完成', summary: '整理用户提出的问题与需求。', updatedAt: '2026-10-24T11:00:00+08:00' },
+  { id: '4', title: '新项目启动清单', type: '模板', status: '已完成', summary: '明确范围、负责人和交付时间。', updatedAt: '2026-10-24T11:00:00+08:00' },
+  { id: '5', title: '月度数据复盘', type: '报告', status: '草稿', summary: '比较本月变化并补充原因。', updatedAt: '2026-10-23T10:00:00+08:00' },
+  { id: '6', title: '产品反馈汇总', type: '笔记', status: '草稿', summary: '归纳需要进一步验证的反馈。', updatedAt: '2026-10-22T10:00:00+08:00' },
+  { id: '7', title: '周会记录模板', type: '模板', status: '已完成', summary: '记录结论、负责人和截止日期。', updatedAt: '2026-10-21T10:00:00+08:00' },
+  { id: '8', title: '年度规划草案', type: '报告', status: '草稿', summary: '梳理年度重点与阶段性目标。', updatedAt: '2026-10-20T10:00:00+08:00' },
 ]
 const tour: GuideStep[] = [
   { target: 'browse-search', title: '先找到内容', text: '输入标题，再按类型或状态缩小范围。' },
@@ -26,7 +26,7 @@ function BrowserDemo() {
   const [query, setQuery] = useState('')
   const [type, setType] = useState('全部')
   const [status, setStatus] = useState('全部')
-  const [sort, setSort] = useState('默认顺序')
+  const [order, setOrder] = useState<'asc' | 'desc'>('desc')
   const [layout, setLayout] = useState<'list' | 'grid'>('grid')
   const [page, setPage] = useState(1)
   const [selected, setSelected] = useState<string[]>([])
@@ -35,7 +35,8 @@ function BrowserDemo() {
   const [error, setError] = useState<string>()
   const [guide, setGuide] = useState<GuideStep[] | null>(null)
   const filtered = content.filter(item => item.title.includes(query.trim()) && (type === '全部' || item.type === type) && (status === '全部' || item.status === status))
-  if (sort === '标题排序') filtered.sort((a, b) => a.title.localeCompare(b.title, 'zh-CN'))
+  const direction = order === 'desc' ? -1 : 1
+  filtered.sort((a, b) => (Date.parse(a.updatedAt) - Date.parse(b.updatedAt)) * direction || a.id.localeCompare(b.id) * direction)
   const totalPages = Math.ceil(filtered.length / 6)
   const currentPage = Math.min(page, Math.max(1, totalPages))
   const shown = filtered.slice((currentPage - 1) * 6, currentPage * 6)
@@ -65,7 +66,7 @@ function BrowserDemo() {
       <Segmented label="浏览方式" value={layout} options={[{ id: 'list', label: '列表' }, { id: 'grid', label: '卡片' }]} onChange={setLayout} />
     </div>
     <div data-tour="browse-results">
-      <Collection items={shown} getKey={item => item.id} layout={layout} total={filtered.length} label="内容结果" actions={<Select label="排序" value={sort} onChange={change(setSort)} options={['默认顺序','标题排序'].map(value=>({value,label:value}))}/>}
+      <Collection items={shown} getKey={item => item.id} layout={layout} total={filtered.length} label="内容结果" actions={<SortMenu order={order} onChange={next=>{setOrder(next);setPage(1)}}/>}
         loading={loading} error={error} onRetry={reload} emptyTitle="没有匹配的内容" emptyDescription="试试其他关键词，或清除筛选条件。"
         emptyAction={<Button onClick={reset}>清除筛选</Button>}
         renderItem={item => <>
@@ -74,7 +75,7 @@ function BrowserDemo() {
             <button type="button" className="vx-result-title" onClick={() => setDetail(item)}>{item.title}</button>
             <p className="vx-body">{item.summary}</p>
           </div>
-          <div className="vx-cluster"><span className="vx-tag">{item.type}</span><span className="vx-tag">{item.status}</span></div>
+          <div className="vx-cluster"><span className="vx-tag">{item.type}</span><span className="vx-tag">{item.status}</span><DataTime text={item.updatedAt.slice(5,16).replace('T',' ')} dateTime={item.updatedAt} detail="示例记录更新时间 · 北京时间"/></div>
         </>} />
     </div>
     <Pagination page={currentPage} totalPages={totalPages} onChange={setPage} disabled={loading} />

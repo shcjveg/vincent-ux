@@ -1,4 +1,4 @@
-// vincent-ux v1.4.2 · components/react/Icon.tsx
+// vincent-ux v1.4.3 · components/react/Icon.tsx
 // 按含义引用图标：<Icon name="chat" />。含义表见 icons/icons.json；新增含义先登记再用。
 // 依赖：lucide-react
 import type { SVGProps } from 'react'

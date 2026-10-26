@@ -1,4 +1,4 @@
-// vincent-ux v1.4.2 · components/react/Pagination.tsx
+// vincent-ux v1.4.3 · components/react/Pagination.tsx
 export function Pagination({ page, totalPages, onChange, disabled = false }: {
   page: number; totalPages: number; onChange: (page: number) => void; disabled?: boolean
 }) {
