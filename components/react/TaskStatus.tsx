@@ -1,4 +1,4 @@
-// vincent-ux v1.4.0 · components/react/TaskStatus.tsx
+// vincent-ux v1.4.1 · components/react/TaskStatus.tsx
 import { Icon } from './Icon'
 export type TaskTimestamp={label:string;dateTime:string;text:string;detail?:string;suffix?:string}
 export function TaskStatus({type,urgency,timestamps=[]}:{type:string;urgency:{label:string;due?:string;urgent?:boolean};timestamps?:TaskTimestamp[]}){

@@ -15,6 +15,8 @@
         <span class="vx-text-3" data-version>展示与验收</span>
         <a href="#browse">浏览与筛选</a>
         <a href="#interactive">交互与状态</a>
+        <a href="#disclosure">收起与展开</a>
+        <a href="#breadcrumbs">面包屑与二级页</a>
         <a href="#session-workspace">会话与页面状态</a>
         <a href="#component-states">空状态与数据时间</a>
         <a href="#task-workspace">待办与历史</a>
@@ -44,6 +46,8 @@
         </section>
         <section class="sc-sec" id="session-workspace"><h2>会话与页面状态</h2><p class="sc-lead">在两个会话中分别填写草稿、浏览资料，试着切换页签或关闭整个右侧，再回到原来的进度。</p><div id="session-workspace-demo"></div></section>
         <section class="sc-sec" id="component-states"><h2>空状态与数据时间</h2><p class="sc-lead">同类空状态使用相同表达。只有来源提供可靠时间时才展示更新信息；表格保留完整操作并局部滚动。</p><div id="component-states-demo"></div></section>
+        <section class="sc-sec" id="breadcrumbs"><h2>面包屑与二级页</h2><p class="sc-lead">历史页的路径直接承担页面标题。点击一级标题返回原待办范围，再从页头进入历史；无记录时只保留路径和空状态。</p><div id="breadcrumbs-demo"></div></section>
+        <section class="sc-sec" id="disclosure"><h2>收起与展开</h2><p class="sc-lead">复用原型里的分组摘要、对象详情、编辑区、行内步骤和对话执行过程。操作下面的示例，查看收起与展开前后的内容与状态。</p><div id="disclosure-demo"></div></section>
         <section class="sc-sec" id="guide">
           <h2>选择卡与功能导览</h2><p class="sc-lead">选择卡用淡底和细边界表达选中。导览会逐步介绍下面页面中的真实功能：极简蒙层圈定当前位置，说明卡尽量停靠，遮挡目标时自动避让。</p>
           <div class="sc-board" id="guide-demo"></div>
@@ -146,61 +150,14 @@
           <h2>分子</h2>
           <p class="sc-lead">每行只保留一个重点、一句必要说明和一个操作。详细信息按需展开。</p>
           <div id="molecules-demo"></div>
-          <div class="sc-board sc-demo-separated" data-vx-region>
-            <div class="sc-row">
-              <div class="vx-seg" role="group" aria-label="视图">
-                <button aria-pressed="true">内容草稿</button><button>提交预检</button><button>发布记录</button>
-              </div>
-              <button class="vx-trigger">近 30 天<svg class="vx-icon vx-icon--sm"><use href="../icons/dist/sprite.svg#expand"/></svg></button>
-            </div>
-            <div class="vx-filterbar">
-              <button class="vx-btn vx-btn--sm"><svg class="vx-icon vx-icon--sm"><use href="../icons/dist/sprite.svg#filter"/></svg>更多筛选</button>
-              <span class="vx-chip">渠道：示例渠道 A<button aria-label="去掉这个条件"><svg class="vx-icon vx-icon--sm"><use href="../icons/dist/sprite.svg#close"/></svg></button></span>
-              <span class="vx-chip">状态：在售<button aria-label="去掉这个条件"><svg class="vx-icon vx-icon--sm"><use href="../icons/dist/sprite.svg#close"/></svg></button></span>
-            </div>
-            <div class="vx-grid vx-grid--2" style="max-width: 640px">
-              <label class="vx-field"><span class="vx-field-label" data-required="true">商品标题</span><input class="vx-input" value="示例收纳箱" /><span class="vx-field-help">按渠道习惯，AI 助理会改写成各渠道版本</span></label>
-              <label class="vx-field"><span class="vx-field-label">售价（美元）</span><input class="vx-input" aria-invalid="true" value="-1" /><span class="vx-field-error">售价要大于 0</span></label>
-            </div>
-            <div class="vx-callout vx-callout--critical"><div class="vx-callout-title">有 $2,000 被平台暂扣</div>示例独立站的放款被暂扣，处理材料在店铺风险里。</div>
-            <div class="vx-empty" data-vx-region>还没有绑定的店铺。绑上第一个店铺，订单和库存会自动同步进来。<button class="vx-btn vx-btn--primary">绑定店铺</button></div>
-            <div class="vx-pager"><button aria-label="上一页">‹</button><button aria-current="page">1</button><button>2</button><button>3</button><button aria-label="下一页">›</button><span>共 46 条</span></div>
-          </div>
+          <div id="controls-demo" class="sc-demo-separated"></div>
         </section>
 
         <section class="sc-sec" id="organisms">
           <h2>组织</h2>
-          <p class="sc-lead">决定卡把一件要你拍板的事讲清楚：结论、推荐、选项，依据默认收起。</p>
-          <div class="sc-board" data-vx-region>
-            <div class="vx-stats">
-              <div class="vx-stat"><div class="vx-stat-label">近 30 天销售额</div><div class="vx-stat-value">$50,000<span class="vx-stat-delta vx-stat-delta--up">+12%</span></div><div class="vx-stat-note">4 款商品在售</div></div>
-              <div class="vx-stat"><div class="vx-stat-label">净利润</div><div class="vx-stat-value vx-money--accent">$5,000</div><div class="vx-stat-note">净利率 10.0%</div></div>
-              <div class="vx-stat"><div class="vx-stat-label">广告占比</div><div class="vx-stat-value">18.0%<span class="vx-stat-delta vx-stat-delta--down">+2.1%</span></div><div class="vx-stat-note">保本线 25.0%</div></div>
-            </div>
-            <section class="vx-decision">
-              <div class="vx-decision-head"><h4>示例灯具广告占比 32%，毛利率 27%，怎么调</h4><span class="vx-tag">推广</span></div>
-              <p>近 30 天广告花 $3,200，占这款销售额的 32%，保本线是 27.0%，每卖一单亏 $0.50。</p>
-              <div class="vx-decision-rec"><b>推荐</b>先降关键词竞价 20%，把广告占比压到 27% 以下；两周不达标就停投。</div>
-              <div class="vx-decision-actions">
-                <button class="vx-btn vx-btn--primary vx-btn--sm">降竞价 20%</button>
-                <button class="vx-btn vx-btn--sm">直接停投</button>
-                <button class="vx-btn vx-btn--ghost vx-btn--sm"><svg class="vx-icon vx-icon--sm"><use href="../icons/dist/sprite.svg#chat"/></svg>再问问</button>
-              </div>
-              <div class="vx-decision-meta"><span class="vx-decision-due" data-urgent="true"><svg class="vx-icon vx-icon--sm"><use href="../icons/dist/sprite.svg#pending"/></svg>今天 18:00 前</span><span>涉及：示例灯具 · 示例渠道 A</span></div>
-            </section>
-            <div class="vx-card">
-              <div class="vx-card-head"><div class="vx-section-heading"><h3>各渠道投放现状</h3><span class="vx-meta">近 30 天</span></div></div>
-              <div class="vx-card-body vx-table-wrap">
-                <table class="vx-table">
-                  <thead><tr><th>渠道</th><th class="vx-num">花费</th><th class="vx-num">营收</th><th class="vx-num">广告占比</th><th>判断</th></tr></thead>
-                  <tbody>
-                    <tr><td>示例渠道 A</td><td class="vx-num">$2,000</td><td class="vx-num">$10,000</td><td class="vx-num">20.0%</td><td><span class="vx-tag">在线内</span></td></tr>
-                    <tr><td>示例渠道 B</td><td class="vx-num">$600</td><td class="vx-num">$2,000</td><td class="vx-num">30.0%</td><td><span class="vx-tag vx-tag--critical">高于保本线</span></td></tr>
-                    <tr><td>示例渠道 C</td><td class="vx-num">—</td><td class="vx-num">$1,000</td><td class="vx-num">0.0%</td><td><span class="vx-tag">未投放</span></td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
+          <p class="sc-lead">板块、指标和表格使用真实组件；AI 反馈与确认流程见“待办与历史”。</p>
+          <div id="organisms-demo"></div>
+          <div class="sc-board sc-demo-separated" data-vx-region>
             <div class="vx-grid vx-grid--2" style="max-width: 720px" data-choice-group="single">
               <button class="vx-choice" aria-pressed="true"><svg class="vx-icon"><use href="../icons/dist/sprite.svg#maker"/></svg><b>源头工厂</b><span class="vx-choice-desc">自己有工厂和货，想卖到海外</span></button>
               <button class="vx-choice" aria-pressed="false"><svg class="vx-icon"><use href="../icons/dist/sprite.svg#reseller"/></svg><b>渠道经销商</b><span class="vx-choice-desc">拿货转卖，在一个或几个平台开店</span></button>
@@ -225,55 +182,9 @@
 
         <section class="sc-sec" id="templates">
           <h2>模板</h2>
-          <p class="sc-lead">三栏外壳：左栏可收起，对话默认关闭、点右下角入口才打开，右侧是浏览器式页签。下面的框可以直接操作。</p>
-          <div class="sc-frame">
-            <div class="vx-app" data-demo-app>
-              <nav class="vx-nav" aria-label="导航">
-                <div class="vx-nav-brand">
-                  <span class="vx-nav-brand-text"><span class="vx-nav-brand-name">示例应用</span><span class="vx-nav-brand-sub">v1.3.0</span></span>
-                  <button class="vx-icon-btn" aria-label="收起侧栏" data-toggle-nav><svg class="vx-icon"><use href="../icons/dist/sprite.svg#collapse-sidebar"/></svg></button>
-                </div>
-                <div class="vx-nav-scroll">
-                  <div class="vx-nav-group" data-nav-section="primary">
-                    <button class="vx-nav-item" aria-current="page"><svg class="vx-icon"><use href="../icons/dist/sprite.svg#todo"/></svg><span class="vx-nav-item-label">今日要务</span></button>
-                    <button class="vx-nav-item"><svg class="vx-icon"><use href="../icons/dist/sprite.svg#product"/></svg><span class="vx-nav-item-label">商品</span></button>
-                    <button class="vx-nav-item"><svg class="vx-icon"><use href="../icons/dist/sprite.svg#ship"/></svg><span class="vx-nav-item-label">订单发货</span><span class="vx-dot"></span></button>
-                    <button class="vx-nav-item"><svg class="vx-icon"><use href="../icons/dist/sprite.svg#apps"/></svg><span class="vx-nav-item-label">更多应用</span></button>
-                  </div>
-                  <div class="vx-nav-group" data-nav-section="apps">
-                    <div class="vx-nav-group-title"><span>常用应用</span><a class="vx-icon-btn" href="#browse" aria-label="管理常用应用" title="管理常用应用"><svg class="vx-icon"><use href="../icons/dist/sprite.svg#settings"/></svg></a></div>
-                    <p class="vx-nav-empty">从应用目录置顶常用应用</p>
-                  </div>
-                  <div class="vx-nav-group" data-nav-section="sessions">
-                    <div class="vx-nav-group-title"><span>对话</span><button class="vx-icon-btn" aria-label="新对话"><svg class="vx-icon"><use href="../icons/dist/sprite.svg#add"/></svg></button></div>
-                    <button class="vx-nav-item vx-nav-item--sub"><svg class="vx-icon"><use href="../icons/dist/sprite.svg#chat"/></svg><span class="vx-nav-item-label">今日要务 · 派活</span><span class="vx-nav-item-meta">刚刚</span></button>
-                  </div>
-                </div>
-                <div id="react-account-demo" class="demo-account-mount"></div>
-              </nav>
-              <aside class="vx-chat" data-demo-chat hidden>
-                <div class="vx-chat-head"><svg class="vx-icon"><use href="../icons/dist/sprite.svg#chat"/></svg><span class="vx-chat-title">今日要务 · 派活</span><button class="vx-icon-btn" aria-label="收起对话" data-close-chat><svg class="vx-icon"><use href="../icons/dist/sprite.svg#collapse-sidebar"/></svg></button></div>
-                <div class="vx-chat-body"><div class="vx-msg vx-msg--ai">我看到今天有 4 件事等你，6 件杂事已经做完。想让我做什么？</div></div>
-                <div class="vx-composer">
-                  <div class="vx-composer-context"><span class="vx-context-attachment"><svg class="vx-icon vx-icon--sm"><use href="../icons/dist/sprite.svg#todo"/></svg><span>今日要务</span></span></div>
-                  <textarea aria-label="交代要做的事" placeholder="交代要做的事，AI 助理做完回报给你" rows="2"></textarea>
-                  <div class="vx-composer-bar"><button class="vx-icon-btn" aria-label="添加附件"><svg class="vx-icon"><use href="../icons/dist/sprite.svg#add"/></svg></button><span class="vx-spacer"></span><button class="vx-composer-send" aria-label="发送" disabled><svg class="vx-icon"><use href="../icons/dist/sprite.svg#send"/></svg></button></div>
-                </div>
-              </aside>
-              <div class="vx-render">
-                <div class="vx-tabs" role="group" aria-label="应用页签外观示例">
-                  <div class="vx-tab" data-active="true"><button class="vx-tab-label">今日要务</button></div>
-                  <div class="vx-tab" data-active="false"><button class="vx-tab-label">推广投放<span class="vx-dot"></span></button><button class="vx-tab-close" aria-label="关闭页签"><svg class="vx-icon"><use href="../icons/dist/sprite.svg#close"/></svg></button></div>
-                </div>
-                <div class="vx-render-body">
-                  <div class="vx-page vx-page--narrow">
-                    <div class="vx-pagehead"><div><h2>今日要务</h2></div></div>
-                  </div>
-                </div>
-              </div>
-              <button class="vx-ask" data-open-chat><svg class="vx-icon"><use href="../icons/dist/sprite.svg#chat"/></svg>交给 AI 助理</button>
-            </div>
-          </div>
+          <p class="sc-lead">导航、会话、工作页面与对话统一使用上方的真实 React 工作区，不再维护一套静态模拟。</p>
+          <a class="vx-btn" href="#session-workspace">操作工作区示例</a>
+          <p class="vx-body">桌面与窄屏、收起／恢复、会话草稿与页签状态均在同一个示例中验证。</p>
         </section>
         <section class="sc-sec" id="task-workspace"><h2>待办实例与历史</h2><div class="sc-board" id="task-card-demo"></div></section>
       </main>

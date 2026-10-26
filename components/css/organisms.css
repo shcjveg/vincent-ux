@@ -1,4 +1,4 @@
-/* vincent-ux v1.4.0 · components/css/organisms.css */
+/* vincent-ux v1.4.1 · components/css/organisms.css */
 /* 组织：完成一块完整内容的组件。依赖 tokens.css、base.css、atoms.css、molecules.css。 */
 
 /* ---------- 页头：一个标题 + 一句结论 + 页面级动作 ---------- */
@@ -761,6 +761,9 @@ button.vx-stat:hover {
   font-size: var(--vx-font-size-sm);
   color: var(--vx-text-secondary);
 }
+
+/* 过程标题与完成数量同一行；无需使用方再以行内样式清掉标题底部留白。 */
+.vx-steps-toggle > .vx-msg-block-title { margin: 0; }
 
 .vx-steps-toggle svg {
   width: var(--vx-size-icon-sm);

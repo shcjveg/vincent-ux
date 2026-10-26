@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { WorkspaceDemo, ComponentStatesDemo } from './WorkspaceDemo'
+import { BreadcrumbExamples } from './NavigationExamples'
+import { DisclosureExamples, ControlsExamples, OrganismsExamples } from './ComponentExamples'
 import { createRoot } from 'react-dom/client'
 import { EmptyState, Button, Checkbox, Collection, DecisionCard, Dialog, Field, FilterBar, Fold, Guide, Icon,
   Breadcrumbs, DateFilter, SortMenu, TaskStatus, TaskCard, ActionMenu, AttentionTitle, ActionSummary, Metric, ObjectPreview, SectionCard, SectionAction, SectionHeader, Pagination, RadioGroup, SearchField, Segmented, Select, Switch, TableScroll, Tabs, Tip, TipProvider, type GuideStep } from '../components/react'
@@ -250,15 +252,6 @@ createRoot(document.getElementById('guide-demo')!).render(<GuideDemo />)
 
 createRoot(document.getElementById('molecules-demo')!).render(<MoleculesDemo />)
 
-function AccountMenuDemo() {
-  const [result, setResult] = useState('')
-  return <><ActionMenu label="用户菜单" className="vx-nav-account" items={[
-    {label:'工作区导览',icon:'guide',onClick:()=>setResult('已打开导览示例')},
-    {label:'恢复示例',icon:'refresh',onClick:()=>setResult('示例已恢复')},
-    {label:'切换账户',icon:'switch-user',onClick:()=>setResult('已打开账户选择示例')},
-  ]}><span className="vx-avatar">示</span><span className="vx-nav-account-text"><span className="vx-nav-account-name">示例用户</span><span className="vx-nav-account-sub">示例团队 · 管理员</span></span><Icon name="more" className="vx-nav-account-more"/></ActionMenu><span className="vx-sr-only" role="status">{result}</span></>
-}
-createRoot(document.getElementById('react-account-demo')!).render(<AccountMenuDemo />)
 
 function TaskCardDemo(){
  const [handled,setHandled]=useState(''),[history,setHistory]=useState(false),[revision,setRevision]=useState(1)
@@ -294,3 +287,9 @@ createRoot(document.getElementById('task-card-demo')!).render(<TaskCardDemo />)
 
 createRoot(document.getElementById('session-workspace-demo')!).render(<WorkspaceDemo />)
 createRoot(document.getElementById('component-states-demo')!).render(<ComponentStatesDemo />)
+
+createRoot(document.getElementById('disclosure-demo')!).render(<DisclosureExamples />)
+createRoot(document.getElementById('controls-demo')!).render(<ControlsExamples />)
+createRoot(document.getElementById('organisms-demo')!).render(<OrganismsExamples />)
+
+createRoot(document.getElementById('breadcrumbs-demo')!).render(<BreadcrumbExamples />)

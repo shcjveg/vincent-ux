@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.0 · patterns/README.md -->
+<!-- vincent-ux v1.4.1 · patterns/README.md -->
 
 # 交互模式
 

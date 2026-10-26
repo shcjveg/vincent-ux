@@ -1,4 +1,4 @@
-// 展示页的交互：主题切换、收起区、模板演示。色板、间距、图标从生成产物读取，保证和源数据一致
+// 展示页的交互：主题切换与纯 CSS 外观示例。色板、间距、图标从生成产物读取，保证和源数据一致
 import packageMetadata from '../package.json'
 document.querySelector('[data-version]').textContent = `v${packageMetadata.version} · 展示与验收`
 const spriteUrl = new URL('../icons/dist/sprite.svg', import.meta.url).href
@@ -15,48 +15,6 @@ for (const b of $$('[data-theme-set]')) {
     renderSwatches()
     for (const x of $$('[data-theme-set]')) x.setAttribute('aria-pressed', String(x === b))
   })
-}
-
-// 收起区
-for (const f of $$('[data-fold]')) {
-  const head = $('.vx-fold-head', f)
-  const body = $('.vx-fold-body', f)
-  const act = $('.vx-fold-act', f)
-  head.addEventListener('click', () => {
-    const open = head.getAttribute('aria-expanded') !== 'true'
-    head.setAttribute('aria-expanded', String(open))
-    f.dataset.open = String(open)
-    body.hidden = !open
-    // 行式收起区只有箭头；普通收起区的文字在计数之后
-    const word = [...act.childNodes].find((n) => n.nodeType === 3 && /展开|收起/.test(n.textContent))
-    if (word) word.textContent = open ? '收起' : '展开'
-  })
-}
-
-// 模板演示：收起左栏、打开 / 关闭对话；对话打开时右下角入口隐藏
-const app = $('[data-demo-app]')
-if (app) {
-  const chat = $('[data-demo-chat]', app)
-  const ask = $('[data-open-chat]', app)
-  $('[data-toggle-nav]', app).addEventListener('click', (e) => {
-    const collapsed = app.dataset.nav !== 'collapsed'
-    app.dataset.nav = collapsed ? 'collapsed' : ''
-    e.currentTarget.setAttribute('aria-label', collapsed ? '展开侧栏' : '收起侧栏')
-    $('use', e.currentTarget).setAttribute('href', `${spriteUrl}#${collapsed ? 'expand-sidebar' : 'collapse-sidebar'}`)
-  })
-  ask.addEventListener('click', () => {
-    chat.hidden = false
-    ask.hidden = true
-    $('textarea', chat).focus()
-  })
-  $('[data-close-chat]', app).addEventListener('click', () => {
-    chat.hidden = true
-    ask.hidden = false
-    ask.focus()
-  })
-  const ta = $('textarea', chat)
-  const send = $('.vx-composer-send', chat)
-  ta.addEventListener('input', () => (send.disabled = !ta.value.trim()))
 }
 
 // 色板：名称与数值跟随当前主题

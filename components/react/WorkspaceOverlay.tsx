@@ -1,4 +1,4 @@
-// vincent-ux v1.4.0 · components/react/WorkspaceOverlay.tsx
+// vincent-ux v1.4.1 · components/react/WorkspaceOverlay.tsx
 import { Dialog } from '@base-ui/react/dialog'
 import { type ReactNode } from 'react'
 

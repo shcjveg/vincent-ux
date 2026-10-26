@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.0 · patterns/page-chat-flow.md -->
+<!-- vincent-ux v1.4.1 · patterns/page-chat-flow.md -->
 
 # 页面与对话双向流转
 

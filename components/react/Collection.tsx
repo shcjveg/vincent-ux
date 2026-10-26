@@ -1,4 +1,4 @@
-// vincent-ux v1.4.0 · components/react/Collection.tsx
+// vincent-ux v1.4.1 · components/react/Collection.tsx
 import type { Key, ReactNode } from 'react'
 import { EmptyState } from './EmptyState'
 import { Button } from './Button'

@@ -1,7 +1,7 @@
-/* vincent-ux v1.4.0 · components/css/molecules.css */
+/* vincent-ux v1.4.1 · components/css/molecules.css */
 /* 分子：由原子组成、单一用途的小件。依赖 tokens.css、base.css、atoms.css。 */
 
-/* ---------- 收起区：次要信息默认收起，全站唯一的展开样式 ---------- */
+/* ---------- 内容收纳：Fold 的分组与对象行，行内步骤和对话过程见各自语义结构 ---------- */
 .vx-fold-head {
   display: flex;
   align-items: center;

@@ -1,4 +1,4 @@
-// vincent-ux v1.4.0 · components/react/SortMenu.tsx
+// vincent-ux v1.4.1 · components/react/SortMenu.tsx
 import { Icon } from './Icon'
 
 export function SortMenu({label='更新时间',order,onChange}:{label?:string;order:'asc'|'desc';onChange:(order:'asc'|'desc')=>void}){

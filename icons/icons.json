@@ -1,5 +1,5 @@
 {
-  "$source": "vincent-ux v1.4.0 · icons/icons.json",
+  "$source": "vincent-ux v1.4.1 · icons/icons.json",
   "$description": "图标层：页面按含义引用，不直接挑图标。底层用 lucide（https://lucide.dev），名称为 lucide 的 kebab-case 名。新增含义时先在这里登记。",
   "$library": "lucide",
   "sizes": {

@@ -1,4 +1,4 @@
-// vincent-ux v1.4.0 · components/react/RadioGroup.tsx
+// vincent-ux v1.4.1 · components/react/RadioGroup.tsx
 import type { ReactNode } from 'react'
 
 export function RadioGroup<T extends string>({ label, name, value, options, onChange, disabled, required }: {

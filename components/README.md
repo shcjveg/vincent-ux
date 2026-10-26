@@ -1,7 +1,27 @@
-<!-- vincent-ux v1.4.0 · components/README.md -->
+<!-- vincent-ux v1.4.1 · components/README.md -->
 # 组件选用指南
 
 按「要做的事」分八组，一个组件只出现在一组里。每组先说什么情况用哪个，再说常见的误用。长什么样看 `showcase/index.html`；多个组件怎么配合看 `patterns/`；颜色语义看 `principles/visual.md`。带「React」的有交互组件，其余直接用类名。
+
+## 组件规范与展示入口
+
+从组件职责进入规范，再在展示页操作对应的真实组件。组合内的组件与独立入口都列在这里，避免只提供源码而没有可发现的使用方式。
+
+| 组件 | 规范与用途 | 展示入口 |
+|---|---|---|
+| `Breadcrumbs` | [面包屑与二级页](breadcrumbs.md)：路径替换页头、返回原范围、历史空态 | [面包屑](../showcase/index.html#breadcrumbs) |
+| `Fold` | [收起与展开](disclosure.md)：分组、详情、编辑、步骤与状态保留 | [收起与展开](../showcase/index.html#disclosure) |
+| `Button` / `Field` / `Checkbox` / `Switch` / `RadioGroup` / `Select` | 输入、字段关联、禁用与保存 | [交互与状态](../showcase/index.html#interactive)、[字段与范围](../showcase/index.html#molecules) |
+| `SearchField` / `FilterBar` / `Collection` / `Pagination` / `Segmented` | [浏览与筛选](../patterns/browse.md) | [浏览与筛选](../showcase/index.html#browse) |
+| `DateFilter` / `SortMenu` / `TaskStatus` / `TaskCard` | [待办与历史](../patterns/task-workspace.md) | [待办实例](../showcase/index.html#task-workspace) |
+| `Metric` / `DataTip` / `SectionHeader` / `SectionCard` / `SectionAction` / `TableScroll` | 数据范围、来源与板块组合 | [数据板块](../showcase/index.html#organisms)、[摘要与板块](../showcase/index.html#molecules) |
+| `EmptyState` / `DataTime` | [空状态与数据时间](#空状态数据时间与操作自适应) | [状态与时间](../showcase/index.html#component-states) |
+| `ObjectPreview` / `ActionSummary` / `Attention` / `AttentionTitle` | 对象辨认、摘要与[提醒](../patterns/todo-and-badge.md) | [摘要与分组](../showcase/index.html#molecules)、[收起与展开](../showcase/index.html#disclosure) |
+| `TextTip` / `Tip` / `TipProvider` | 口径与补充解释；Provider 提供提示上下文 | [板块说明](../showcase/index.html#molecules)、[交互](../showcase/index.html#interactive) |
+| `DecisionCard` / `ActionBar` / `AgentAction` | [决定](../patterns/decision.md)与[派活](../patterns/delegate.md)；ActionBar 组合在决定区 | [单次决定](../showcase/index.html#interactive)、[派活入口](../showcase/index.html#molecules) |
+| `Dialog` / `Guide` | 模态工作面与[功能导览](../patterns/guide.md) | [弹层](../showcase/index.html#interactive)、[选择与导览](../showcase/index.html#guide) |
+| `Tabs` / `WorkspaceOverlay` / `ActionMenu` / `useViewportQuery` | [外壳模板](../templates/README.md)、[会话状态](../patterns/page-chat-flow.md)；hook 控制断点 | [真实工作区](../showcase/index.html#session-workspace) |
+| `Icon` | [语义图标](../icons/README.md) | [图标目录](../showcase/index.html#icons) |
 
 ## 1. 文字、数字与标识
 
@@ -70,8 +90,8 @@
 | 一组内容不需要卡片包裹 | `.vx-section-title` 加留白 |
 | 一串同类对象 | `.vx-rows` > `.vx-row`；长列表要分隔时 `--ruled` |
 | 要点或步骤说明 | `.vx-list` |
-| 次要信息（已做完的、依据、明细） | `Fold`（React）/ `.vx-fold`，默认收起；有集合数量时带计数，末尾只留箭头 |
-| 列表里每行能展开看详情 | `Fold variant="row" summary="标题" description="必要说明"` |
+| 次要信息（已做完的、依据、明细） | `Fold`（React）/ `.vx-fold`；按实际用途设置摘要与默认状态，见[收起与展开](disclosure.md) |
+| 列表里每行能展开看详情 | `Fold variant="row" summary="标题" description="必要说明"`，展开后保留对象身份 |
 | 自己做的展开按钮要一个朝向提示 | `.vx-chev`，展开时自动翻转 |
 | 少量「名称：值」 | `.vx-kv`（窄处 `--stack`） |
 
@@ -161,7 +181,7 @@
 
 独立选择卡可用 `aria-pressed` 暴露多选状态，以淡底和细边界区分选中，不额外叠加复选框或对号。需要同时提供打开详情与批量选择的内容列表，保留真实复选框来区分动作。选项多时按用户理解分组到页签，每屏保留少量选项；用语义图标辅助扫读。批量添加入口降为可选下拉，清空操作靠近已选数量。
 
-行组件默认只用标题与说明两层；数量和操作沿用说明样式。`Fold` 优先传简短 `summary` 与 `description`，`side` 仅放正文未表达的必要信息。完整约束见 [组件内控制样式种类](../principles/visual.md#组件内控制样式种类)，避免把所有文字类、标签和强调方式同时装进一个组件。
+行组件默认只用标题与说明两层；数量和操作沿用说明样式。`Fold` 的分组摘要、对象身份、编辑区、行内步骤与对话过程分别按[收起与展开规范](disclosure.md)接入；`side` 仅放正文未表达的非交互信息。完整约束见 [组件内控制样式种类](../principles/visual.md#组件内控制样式种类)，避免把所有文字类、标签和强调方式同时装进一个组件。
 
 卡内的一组指标用 `.vx-stats.vx-stats--inline`，保留指标层级而不重复嵌套承载面。整页选择按[页面组合](../patterns/page-composition.md)。
 
@@ -207,7 +227,7 @@
 
 筛选选择器的全量项通过 `allValue` 标识，组件将其固定为第一项并统一显示“全部”，不写“全部类型”等复合名称。筛选默认使用全量值，已有页面上下文可保留；全量状态的触发器显示字段名。
 
-`Breadcrumbs`：`items` 提供路径标签与返回事件或链接；末项标记当前页，`headingLevel` 使末项承担页面标题。用于下钻时替换原页头，不新增独立标题行。
+`Breadcrumbs` 按[面包屑与二级页规范](breadcrumbs.md)替换原页头；父级返回对应范围，末项承担当前页标题。独立示例包含键盘返回与无历史记录状态。
 
 `Collection` 的数量位于结果区，`actions` 槽位可放排序；共用 `.vx-results-head` 实现左侧结果数、右侧排序，同一行呈现。有时间筛选时将其置于筛选组首项。
 
