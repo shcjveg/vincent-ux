@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { WorkspaceDemo, ComponentStatesDemo } from './WorkspaceDemo'
+import { BreadcrumbExamples } from './NavigationExamples'
 import { DisclosureExamples, ControlsExamples, OrganismsExamples } from './ComponentExamples'
 import { createRoot } from 'react-dom/client'
 import { EmptyState, Button, Checkbox, Collection, DecisionCard, Dialog, Field, FilterBar, Fold, Guide, Icon,
@@ -290,3 +291,5 @@ createRoot(document.getElementById('component-states-demo')!).render(<ComponentS
 createRoot(document.getElementById('disclosure-demo')!).render(<DisclosureExamples />)
 createRoot(document.getElementById('controls-demo')!).render(<ControlsExamples />)
 createRoot(document.getElementById('organisms-demo')!).render(<OrganismsExamples />)
+
+createRoot(document.getElementById('breadcrumbs-demo')!).render(<BreadcrumbExamples />)

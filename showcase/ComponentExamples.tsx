@@ -1,5 +1,5 @@
 import { useId, useRef, useState } from 'react'
-import { AttentionTitle, Button, EmptyState, Field, Fold, Icon, Metric, SectionCard, Select, Switch, TableScroll } from '../components/react'
+import { AgentAction, AttentionTitle, Button, EmptyState, Field, Fold, Icon, Metric, SectionCard, Select, Switch, TableScroll } from '../components/react'
 
 // These compositions use the same component contracts as the consuming prototype.
 export function DisclosureExamples() {
@@ -40,8 +40,8 @@ export function DisclosureExamples() {
 }
 
 export function ControlsExamples() {
- const [title,setTitle]=useState('示例资料'),[scope,setScope]=useState<string|null>('current')
- return <SectionCard title="字段与范围" data-testid="controls-examples"><div className="vx-grid vx-grid--2"><Field label="资料名称" required>{props=><input {...props} className="vx-input" value={title} onChange={e=>setTitle(e.target.value)}/>}</Field><Field label="适用范围">{props=><Select {...props} value={scope} onChange={setScope} options={[{value:'current',label:'当前项目'},{value:'team',label:'团队资料'}]}/>}</Field></div><EmptyState message="暂无附加记录"/></SectionCard>
+ const [title,setTitle]=useState('示例资料'),[scope,setScope]=useState<string|null>('current'),[message,setMessage]=useState('')
+ return <SectionCard title="字段与范围" data-testid="controls-examples"><div className="vx-grid vx-grid--2"><Field label="资料名称" required>{props=><input {...props} className="vx-input" value={title} onChange={e=>setTitle(e.target.value)}/>}</Field><Field label="适用范围">{props=><Select {...props} value={scope} onChange={setScope} options={[{value:'current',label:'当前项目'},{value:'team',label:'团队资料'}]}/>}</Field></div><EmptyState message="暂无附加记录"/><div className="vx-cluster"><AgentAction kind="ask" onClick={()=>setMessage(`示例核对请求：${title} · ${scope==='team'?'团队资料':'当前项目'}`)}>核对资料</AgentAction><AgentAction kind="draft" onClick={()=>setMessage(`示例起草请求：${title} · ${scope==='team'?'团队资料':'当前项目'}`)}>起草说明</AgentAction></div>{message&&<p className="vx-meta" role="status">{message}</p>}</SectionCard>
 }
 
 export function OrganismsExamples() {
