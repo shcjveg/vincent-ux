@@ -48,6 +48,9 @@
 .sc-main {
   padding: 40px 48px 96px;
   max-width: 1080px;
+  /* 与原型的正文容器同名，让组件按实际可用宽度响应。 */
+  container-type: inline-size;
+  container-name: render;
 }
 
 .sc-sec {

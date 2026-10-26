@@ -1,4 +1,4 @@
-// vincent-ux v1.4.0 · components/react/Checkbox.tsx
+// vincent-ux v1.4.1 · components/react/Checkbox.tsx
 import { useEffect, useRef, type InputHTMLAttributes, type ReactNode } from 'react'
 
 type CheckboxProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'size'> & {

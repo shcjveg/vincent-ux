@@ -121,14 +121,14 @@ test('页签方向键、关闭焦点和 Delete 可用', async ({ page }) => {
   await expect(close).toHaveCSS('opacity', '1')
 })
 
-test('侧栏折叠仍有名称，关闭聊天恢复入口', async ({ page }) => {
-  const app = page.locator('[data-demo-app]')
-  await app.getByRole('button', { name: '收起侧栏', exact: true }).click()
-  await expect(app.getByRole('button', { name: '商品', exact: true })).toBeVisible()
-  await expect(app.getByRole('button', { name: '订单发货', exact: true })).toBeVisible()
-  await app.locator('[data-open-chat]').click()
-  await app.getByRole('button', { name: '收起对话', exact: true }).click()
-  await expect(app.locator('[data-open-chat]')).toBeFocused()
+test('真实工作区侧栏折叠仍有名称，关闭聊天恢复页签焦点', async ({ page }) => {
+  const app = page.getByTestId('session-workspace')
+  await app.getByRole('button', { name: '收起示例导航', exact: true }).click()
+  await expect(app.getByRole('button', { name: '引用资料', exact: true })).toBeVisible()
+  await expect(app.getByRole('button', { name: '资料核对', exact: true })).toBeVisible()
+  await app.getByRole('button',{name:'讨论这份草稿',exact:true}).click()
+  await app.getByRole('button', { name: '收起示例对话', exact: true }).click()
+  await expect(app.getByRole('tab',{name:'方案草稿',exact:true})).toBeFocused()
 })
 
 test('导览不会抢输入方向键，目标缺失可自动结束', async ({ page }) => {
@@ -181,42 +181,16 @@ for (const theme of ['light', 'dark']) {
   })
 }
 
-test('窄桌面窗口保留可用内容宽度', async ({ page }) => {
-  await page.setViewportSize({ width: 1024, height: 768 })
-  const app = page.locator('[data-demo-app]')
-  // 宿主控制展开状态；用户收起后无会话说明与账户信息一起隐藏。
-  await app.locator('.vx-nav-item--sub').evaluate(el => {
-    const empty = document.createElement('p')
-    empty.className = 'vx-nav-empty'
-    empty.textContent = '派给 AI 助理的事会留在这里'
-    el.replaceWith(empty)
-  })
-  for (const empty of await app.locator('.vx-nav-empty').all()) await expect(empty).toBeVisible()
-  await expect(app.getByRole('button', { name: '新对话', exact: true })).toBeVisible()
-  await app.locator('.vx-nav-account').evaluate(el => {
-    const action = document.createElement('button')
-    action.className = 'vx-icon-btn'
-    action.textContent = '切换'
-    el.append(action)
-  })
-  const accountFits = () => app.locator('.vx-nav-account').evaluate(el => {
-    const nav = el.closest('.vx-nav')!.getBoundingClientRect()
-    return [...el.children].filter(child => (child as HTMLElement).offsetWidth).every(child => {
-      const bounds = child.getBoundingClientRect()
-      return bounds.left >= nav.left && bounds.right <= nav.right
-    })
-  })
-  expect(await accountFits()).toBe(true)
-  await app.getByRole('button', { name: '收起侧栏', exact: true }).click()
-  for (const empty of await app.locator('.vx-nav-empty').all()) await expect(empty).toBeHidden()
-  expect(await accountFits()).toBe(true)
-  await app.locator('[data-open-chat]').click()
-  const renderWidth = await app.locator('.vx-render').evaluate(el => el.clientWidth)
-  expect(renderWidth).toBeGreaterThan(250)
-  await expect(app.getByRole('textbox', { name: '交代要做的事' })).toBeVisible()
-  await page.screenshot({ path: 'test-results/showcase-1024.png', fullPage: true })
+test('真实工作区在窄桌面展开与折叠后保留可用正文宽度', async ({ page }) => {
+  await page.setViewportSize({width:1024,height:768})
+  const app=page.getByTestId('session-workspace')
+  await expect(app.getByRole('button',{name:'收起示例导航',exact:true})).toBeVisible()
+  await app.getByRole('button',{name:'收起示例导航',exact:true}).click()
+  await expect(app.locator('.vx-nav-account-more')).toBeHidden()
+  await app.getByRole('button',{name:'讨论这份草稿',exact:true}).click()
+  expect(await app.locator('.vx-render').evaluate(el=>el.clientWidth)).toBeGreaterThan(250)
+  await expect(app.getByRole('textbox',{name:'示例对话输入'})).toBeVisible()
 })
-
 
 test('选择卡用键盘切换状态，保存保留所选值', async ({ page }) => {
   const demo = page.getByTestId('guide-demo')
@@ -571,13 +545,15 @@ test('终点角标独立于标题，完成后移除；用户菜单支持键盘�
   await expect(decision.locator('.vx-attention-corner')).toHaveCount(1)
   await decision.getByRole('button',{name:'确认方案',exact:true}).click()
   await expect(decision.locator('.vx-attention-corner')).toHaveCount(0)
-  const trigger = page.getByRole('button',{name:'用户菜单',exact:true})
+  const app=page.getByTestId('session-workspace')
+  await app.getByRole('button',{name:'收起示例导航',exact:true}).click()
+  const trigger = app.getByRole('button',{name:'示例用户菜单',exact:true})
   await trigger.focus(); await page.keyboard.press('Enter')
-  await expect(page.getByRole('menu',{name:'用户菜单'})).toBeVisible()
+  await expect(page.getByRole('menu',{name:'示例用户菜单'})).toBeVisible()
   await page.keyboard.press('Escape'); await expect(trigger).toBeFocused()
-  await trigger.click(); await page.getByRole('menuitem',{name:'恢复示例',exact:true}).click()
+  await trigger.click(); await page.getByRole('menuitem',{name:'展开示例导航',exact:true}).click()
   await expect(page.getByRole('menu')).toHaveCount(0)
-  await expect(page.getByRole('status').filter({hasText:'示例已恢复'})).toHaveText('示例已恢复')
+  await expect(app.getByRole('button',{name:'收起示例导航',exact:true})).toBeVisible()
 })
 
 

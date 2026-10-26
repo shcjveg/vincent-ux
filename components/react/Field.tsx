@@ -1,4 +1,4 @@
-// vincent-ux v1.4.0 · components/react/Field.tsx
+// vincent-ux v1.4.1 · components/react/Field.tsx
 import { useId, type ReactNode } from 'react'
 
 type ControlProps = { id: string; required?: boolean; 'aria-describedby'?: string; 'aria-invalid'?: true }

@@ -1,4 +1,4 @@
-// vincent-ux v1.4.0 · components/react/Select.tsx
+// vincent-ux v1.4.1 · components/react/Select.tsx
 import { Combobox as C } from '@base-ui/react/combobox'
 import type { AriaAttributes, Ref } from 'react'
 import { Icon } from './Icon'

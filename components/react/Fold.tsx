@@ -1,6 +1,6 @@
-// vincent-ux v1.4.0 · components/react/Fold.tsx
-// 收起区：次要信息默认收起，全站唯一的展开样式。外观见 components/css/molecules.css（.vx-fold*）
-// 统一使用数量与箭头表达折叠；行式内容用 summary + description，保持两层文字。
+// vincent-ux v1.4.1 · components/react/Fold.tsx
+// 内容收纳：分组、对象详情与编辑区共用此结构。外观见 components/css/molecules.css（.vx-fold*）
+// 数量与箭头表达折叠；分组摘要和草稿策略由宿主控制，见 components/disclosure.md。
 import { useId, useState, type HTMLAttributes, type ReactNode } from 'react'
 import { Icon } from './Icon'
 

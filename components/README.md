@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.0 · components/README.md -->
+<!-- vincent-ux v1.4.1 · components/README.md -->
 # 组件选用指南
 
 按「要做的事」分八组，一个组件只出现在一组里。每组先说什么情况用哪个，再说常见的误用。长什么样看 `showcase/index.html`；多个组件怎么配合看 `patterns/`；颜色语义看 `principles/visual.md`。带「React」的有交互组件，其余直接用类名。
@@ -70,8 +70,8 @@
 | 一组内容不需要卡片包裹 | `.vx-section-title` 加留白 |
 | 一串同类对象 | `.vx-rows` > `.vx-row`；长列表要分隔时 `--ruled` |
 | 要点或步骤说明 | `.vx-list` |
-| 次要信息（已做完的、依据、明细） | `Fold`（React）/ `.vx-fold`，默认收起；有集合数量时带计数，末尾只留箭头 |
-| 列表里每行能展开看详情 | `Fold variant="row" summary="标题" description="必要说明"` |
+| 次要信息（已做完的、依据、明细） | `Fold`（React）/ `.vx-fold`；按实际用途设置摘要与默认状态，见[收起与展开](disclosure.md) |
+| 列表里每行能展开看详情 | `Fold variant="row" summary="标题" description="必要说明"`，展开后保留对象身份 |
 | 自己做的展开按钮要一个朝向提示 | `.vx-chev`，展开时自动翻转 |
 | 少量「名称：值」 | `.vx-kv`（窄处 `--stack`） |
 
@@ -161,7 +161,7 @@
 
 独立选择卡可用 `aria-pressed` 暴露多选状态，以淡底和细边界区分选中，不额外叠加复选框或对号。需要同时提供打开详情与批量选择的内容列表，保留真实复选框来区分动作。选项多时按用户理解分组到页签，每屏保留少量选项；用语义图标辅助扫读。批量添加入口降为可选下拉，清空操作靠近已选数量。
 
-行组件默认只用标题与说明两层；数量和操作沿用说明样式。`Fold` 优先传简短 `summary` 与 `description`，`side` 仅放正文未表达的必要信息。完整约束见 [组件内控制样式种类](../principles/visual.md#组件内控制样式种类)，避免把所有文字类、标签和强调方式同时装进一个组件。
+行组件默认只用标题与说明两层；数量和操作沿用说明样式。`Fold` 的分组摘要、对象身份、编辑区、行内步骤与对话过程分别按[收起与展开规范](disclosure.md)接入；`side` 仅放正文未表达的非交互信息。完整约束见 [组件内控制样式种类](../principles/visual.md#组件内控制样式种类)，避免把所有文字类、标签和强调方式同时装进一个组件。
 
 卡内的一组指标用 `.vx-stats.vx-stats--inline`，保留指标层级而不重复嵌套承载面。整页选择按[页面组合](../patterns/page-composition.md)。
 

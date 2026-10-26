@@ -1,9 +1,10 @@
 # 设计沉淀覆盖表
 
-以 v1.4.0（2026-10-26）的近期界面改进为核对范围。沉淀完成需同时满足：规则能被找到、旧说法已修正、组件可复用、示例能操作、关键行为可验证、导出资源一致。修改本表引用的规范原文，不再另存一份规则副本。
+以 v1.4.1（2026-10-26）的近期界面改进为核对范围。沉淀完成需同时满足：规则能被找到、旧说法已修正、组件可复用、示例能操作、关键行为可验证、导出资源一致。修改本表引用的规范原文，不再另存一份规则副本。
 
 | 通用问题 | 规则来源 | 组件与可运行示例 | 验证与责任 |
 |---|---|---|---|
+| 原型组合已更新但组件规范与展示仍停留在旧结构 | [收起与展开](../components/disclosure.md)、[组件指南](../components/README.md) | `Fold` 分组／详情／编辑、行内步骤与对话过程；[ComponentExamples](../showcase/ComponentExamples.tsx) | [收纳回归](../tests/disclosure.spec.ts)：摘要显隐、独立分组、输入保留、明确放弃草稿、键盘和过程状态；展示页筛选、指标与外壳直接使用真实组件 |
 | AI 反馈和普通业务操作混用 | [待办工作页](../patterns/task-workspace.md)、[关键节点拍板](../patterns/decision.md) | `TaskCard` / `TaskStatus`；[TaskCardDemo](../showcase/react.tsx) | [组件测试](../tests/components.spec.ts)：选择不提交、自定义要求、提交中锁定、失败重试、交办与历史；产品另查反馈是否集中在应用待办与全局汇总 |
 | 历史增加重复层级，处理记录失去原选择 | [历史二级页](../patterns/task-workspace.md#历史二级页) | `Breadcrumbs` / `completedChoice` / `completedAction`；TaskCardDemo | 组件测试：面包屑返回、历史锁定与对话入口；宿主负责原会话、快照和版本对应 |
 | 筛选、数量、排序混在不同层级 | [内容浏览](../patterns/browse.md)、[范围与排序](../patterns/task-workspace.md#范围与排序) | `Select` / `DateFilter` / `SortMenu` / `Collection`；BrowserDemo、TaskCardDemo | 组件测试：全部首项、搜索、日期取消／应用、排序独立于日期、结果数量随筛选更新、连续切月与切月后键盘入口 |
