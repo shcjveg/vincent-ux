@@ -10,6 +10,8 @@ test('隐私检查识别凭据、身份和本机路径，报告不包含原值',
     ['credential-value', 'password: "' + 'a'.repeat(24) + '"'],
     ['credential-url', 'https://' + 'person:secret@' + 'example.com'],
     ['personal-email', 'person' + '@' + 'mail.test'],
+    ['personal-email', 'person' + '@' + 'github.com'],
+    ['personal-email', 'not-noreply' + '@' + 'github.com'],
     ['home-path', '/Users/' + 'someone/private'],
     ['private-network', ['192', '168', '1', '2'].join('.')],
     ['phone-or-id', '138' + '0'.repeat(8)],
@@ -22,5 +24,5 @@ test('隐私检查识别凭据、身份和本机路径，报告不包含原值',
 })
 
 test('隐私检查允许公共依赖、示例身份、GitHub 隐私邮箱和回环地址', () => {
-  for (const value of ['https://registry.npmjs.org/react', 'https://github.com/shcjveg/vincent-ux', 'person@example.com', '123+person@users.noreply.github.com', 'http://127.0.0.1:5190']) assert.deepEqual(scanText(value), [])
+  for (const value of ['https://registry.npmjs.org/react', 'https://github.com/shcjveg/vincent-ux', 'person@example.com', '123+person@users.noreply.github.com', 'noreply@github.com', 'http://127.0.0.1:5190']) assert.deepEqual(scanText(value), [])
 })

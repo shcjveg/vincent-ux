@@ -14,7 +14,8 @@ const rules = [
   ['private-network', /\b(?:10\.\d{1,3}\.\d{1,3}\.\d{1,3}|192\.168\.\d{1,3}\.\d{1,3}|172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3})\b|https?:\/\/[^\s/<>"']+\.(?:internal|local|corp)(?=[:/\s]|$)/gi],
   ['phone-or-id', /\b(?:1[3-9]\d{9}|\d{17}[0-9Xx])\b/g],
 ]
-const publicEmail = /@(?:users\.noreply\.github\.com|(?:[\w-]+\.)?example\.(?:com|net|org)|localhost)$/i
+// GitHub creates PR merge commits with this exact service mailbox; other github.com mailboxes remain private.
+const publicEmail = /(?:@(?:users\.noreply\.github\.com|(?:[\w-]+\.)?example\.(?:com|net|org)|localhost)|^noreply@github\.com)$/i
 
 export function scanText(source) {
   const findings = []
