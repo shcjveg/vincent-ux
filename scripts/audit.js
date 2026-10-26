@@ -1,9 +1,9 @@
-// vincent-ux v1.3.0 · scripts/audit.js
+// vincent-ux v1.4.0 · scripts/audit.js
 // 规则检查（在浏览器里跑）：把视觉与交互原则里能机器判断的部分变成断言，截图评审只看机器判断不了的。
 // 用法：页面里注入本文件后调用 window.vxAudit()，返回 [{ rule, text, where }]；空数组表示已覆盖规则无发现，不等于完整可访问性认证。
 // Playwright：await page.addScriptTag({ path }); const r = await page.evaluate(() => vxAudit())
 // 规则与出处
-//   dot       红点只出现在入口上（左栏、未激活页签、待办分组头、[data-entry]），当前项不带      patterns/todo-and-badge.md
+//   dot       入口只用点、选中态保留；处理终点角标放卡片左上角，列表行不重复     patterns/todo-and-badge.md
 //             [data-entry]：页面里本身就是入口的元素（如「更多」里的列表行、链路节点），可以带红点
 //   critical / accent 的合法出处：设计系统的语义类，或用 data-tone 声明了语气的元素
 //   primary   每个区域最多一个主按钮                                                      principles/visual.md
@@ -22,7 +22,6 @@
     '.vx-choice', '.vx-guide-progress', '.vx-text-accent', '[data-tone="accent"]', '[aria-pressed="true"]', '[aria-selected="true"]',
   ]
   const ENTRY = '.vx-nav-item, .vx-tab, .vx-todo-group-head, [data-entry]'
-  const CURRENT = '[aria-current="page"], [aria-current="true"], .vx-tab[aria-selected="true"]'
   const REGION = '[data-vx-region], .vx-browse-item, .vx-card, .vx-decision, .vx-flow, .vx-chat, .vx-guide-card, .vx-pagehead, .vx-dialog, .vx-drawer'
 
   const visible = (el) => {
@@ -55,10 +54,22 @@
 
     for (const d of root.querySelectorAll('.vx-dot:not(.vx-dot--neutral):not(.vx-dot--accent)')) {
       if (!visible(d) || d.closest('[data-vx-swatch]')) continue
+      const endpoint = d.closest('[data-attention="endpoint"]')
+      if (endpoint) {
+        const card = d.closest('.vx-card, .vx-decision, .vx-task-card, [data-pending-card="true"]')
+        if (!card || !d.classList.contains('vx-attention-corner') || d.closest('h2, h3, h4, .vx-row-title, .vx-todo')) add('dot', d, '终点角标必须属于处理卡片，不进入标题行或待办列表')
+        else {
+          const r = d.getBoundingClientRect(), c = card.getBoundingClientRect()
+          if (r.left - c.left > 12 || r.top - c.top > 12 || r.left < c.left || r.top < c.top) add('dot', d, '终点角标未放在卡片左上角')
+        }
+        continue
+      }
       const entry = d.closest(ENTRY)
       if (!entry) add('dot', d, '内容里的红点：' + text(d.parentElement))
-      else if (entry.closest(CURRENT) || entry.matches(CURRENT)) add('dot', d, '当前项带红点：' + text(entry))
     }
+
+    for (const badge of root.querySelectorAll('.vx-nav-item .vx-badge, .vx-nav-item .vx-count, .vx-tab .vx-badge, .vx-todo .vx-dot'))
+      if (visible(badge)) add('dot', badge, '导航入口不计数，待办列表项不重复红点')
 
     const regions = new Map()
     for (const b of root.querySelectorAll('.vx-btn--primary')) {

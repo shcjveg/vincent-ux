@@ -1,4 +1,6 @@
 // 展示页的交互：主题切换、收起区、模板演示。色板、间距、图标从生成产物读取，保证和源数据一致
+import packageMetadata from '../package.json'
+document.querySelector('[data-version]').textContent = `v${packageMetadata.version} · 展示与验收`
 const spriteUrl = new URL('../icons/dist/sprite.svg', import.meta.url).href
 const tokensUrl = new URL('../tokens/dist/tokens.json', import.meta.url).href
 const root = document.documentElement

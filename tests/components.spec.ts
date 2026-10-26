@@ -127,7 +127,7 @@ test('侧栏折叠仍有名称，关闭聊天恢复入口', async ({ page }) => 
   await expect(app.getByRole('button', { name: '商品', exact: true })).toBeVisible()
   await expect(app.getByRole('button', { name: '订单发货', exact: true })).toBeVisible()
   await app.locator('[data-open-chat]').click()
-  await app.getByRole('button', { name: '关闭对话', exact: true }).click()
+  await app.getByRole('button', { name: '收起对话', exact: true }).click()
   await expect(app.locator('[data-open-chat]')).toBeFocused()
 })
 
@@ -149,11 +149,25 @@ test('导览不会抢输入方向键，目标缺失可自动结束', async ({ pa
 
 test('决定卡失败可重试，执行中所有选项禁用', async ({ page }) => {
   const card = page.locator('.vx-decision').filter({ hasText: '是否应用新的发布设置' })
-  await card.getByRole('button', { name: '应用设置' }).click()
-  await expect(card.getByRole('button', { name: '稍后处理' })).toBeDisabled()
+  await card.getByRole('button', { name: '确认方案' }).click()
+  await expect(card.getByRole('radio', { name: '稍后处理' })).toBeDisabled()
   await expect(card.getByRole('alert')).toHaveText('连接中断，尚未应用。请重试。')
-  await card.getByRole('button', { name: '应用设置' }).click()
+  await card.getByRole('button', { name: '确认方案' }).click()
   await expect(card.getByRole('status')).toHaveText('已应用设置')
+})
+
+test('决定卡自定义决定单轮交办，调整与接管携带当前选择', async ({ page }) => {
+  const card=page.locator('.vx-decision').filter({hasText:'是否应用新的发布设置'})
+  await expect(card.getByText('执行方式 · 自动')).toBeVisible()
+  await card.getByRole('button',{name:'与 AI 调整'}).click()
+  await expect(page.getByRole('status').filter({hasText:'带入会话：应用设置'})).toBeVisible()
+  await card.getByRole('button',{name:'人工接管'}).click()
+  await expect(page.getByRole('status').filter({hasText:'人工接管：查看原始渠道设置'})).toBeVisible()
+  await card.getByRole('radio',{name:'填写我的决定'}).check()
+  await expect(card.getByRole('button',{name:'交给 AI 按此准备'})).toBeDisabled()
+  await card.getByRole('textbox',{name:'我的决定与限制'}).fill('只为网站渠道准备新设置')
+  await card.getByRole('button',{name:'交给 AI 按此准备'}).click()
+  await expect(card.getByRole('status')).toHaveText('已交给 AI 准备：只为网站渠道准备新设置')
 })
 
 for (const theme of ['light', 'dark']) {
@@ -170,14 +184,14 @@ for (const theme of ['light', 'dark']) {
 test('窄桌面窗口保留可用内容宽度', async ({ page }) => {
   await page.setViewportSize({ width: 1024, height: 768 })
   const app = page.locator('[data-demo-app]')
-  // 无会话状态必须一起收起；单纯检查横向溢出无法发现逐字竖排。
+  // 宿主控制展开状态；用户收起后无会话说明与账户信息一起隐藏。
   await app.locator('.vx-nav-item--sub').evaluate(el => {
     const empty = document.createElement('p')
     empty.className = 'vx-nav-empty'
     empty.textContent = '派给 AI 助理的事会留在这里'
     el.replaceWith(empty)
   })
-  await expect(app.locator('.vx-nav-empty')).toBeHidden()
+  for (const empty of await app.locator('.vx-nav-empty').all()) await expect(empty).toBeVisible()
   await expect(app.getByRole('button', { name: '新对话', exact: true })).toBeVisible()
   await app.locator('.vx-nav-account').evaluate(el => {
     const action = document.createElement('button')
@@ -194,7 +208,7 @@ test('窄桌面窗口保留可用内容宽度', async ({ page }) => {
   })
   expect(await accountFits()).toBe(true)
   await app.getByRole('button', { name: '收起侧栏', exact: true }).click()
-  await expect(app.locator('.vx-nav-empty')).toBeHidden()
+  for (const empty of await app.locator('.vx-nav-empty').all()) await expect(empty).toBeHidden()
   expect(await accountFits()).toBe(true)
   await app.locator('[data-open-chat]').click()
   const renderWidth = await app.locator('.vx-render').evaluate(el => el.clientWidth)
@@ -249,7 +263,7 @@ test('导览穿过裁剪容器、允许操作目标，并在完成后恢复入�
 
 test('待办分组与简化展开行保留键盘操作、详情和焦点恢复', async ({ page }) => {
   const demo = page.getByTestId('molecules-demo')
-  const weekly = demo.getByRole('button', { name: /^本周内 3 件/ })
+  const weekly = demo.getByRole('button', { name: /^本周内 3 项待处理/ })
   await weekly.focus()
   await page.keyboard.press('Enter')
   await expect(weekly).toHaveAttribute('aria-expanded', 'true')
@@ -396,4 +410,315 @@ test('导览导航引起宿主重渲染时，每一步只进入一次', async ({
   await guide.getByRole('button', { name: '下一步' }).click()
   await expect(guide.locator('.vx-guide-title')).toHaveText('浏览方式')
   await expect(demo).toHaveAttribute('data-visits', '2')
+})
+
+test('横向导览保留操作门槛，完成与退出分开，浅深色文字可读', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  const demo = page.getByTestId('guide-demo')
+  for (const theme of ['light', 'dark']) {
+    await page.evaluate(theme => document.documentElement.setAttribute('data-theme', theme), theme)
+    await demo.getByRole('button', { name: '体验底部横向导览' }).click()
+    const guide = page.getByRole('dialog', { name: '浏览偏好导览' })
+    await expect(guide.locator('.vx-guide-hole')).toHaveAttribute('data-target', 'guide-workspace')
+    const card = guide.locator('.vx-guide-card')
+    expect((await card.boundingBox())!.width).toBeGreaterThan(1300)
+    expect((await card.boundingBox())!.height).toBeLessThan(220)
+    await guide.getByRole('button', { name: '下一步' }).click()
+    await expect(guide.locator('.vx-guide-hole')).toHaveAttribute('data-target', 'guide-preference')
+    await guide.getByRole('button', { name: '下一步' }).click()
+    await expect(guide.locator('.vx-guide-hole')).toHaveAttribute('data-target', 'guide-save')
+    await expect(guide.getByRole('button', { name: '完成导览' })).toBeDisabled()
+    await card.focus(); await page.keyboard.press('ArrowRight')
+    await expect(guide).toBeVisible()
+    await demo.getByRole('button', { name: '保存浏览偏好' }).click()
+    await expect(guide.getByRole('button', { name: '完成导览' })).toBeEnabled()
+    expect((await new AxeBuilder({ page }).include('.vx-guide').withTags(['wcag2a', 'wcag2aa']).analyze()).violations).toEqual([])
+    await guide.getByRole('button', { name: '完成导览' }).click()
+    await expect(demo.getByText('导览已完成', { exact: true })).toBeVisible()
+    expect(await page.evaluate(() => document.body.style.getPropertyValue('--vx-guide-space'))).toBe('')
+  }
+})
+
+test('沉浸式选择保持内容聚合与焦点循环', async ({ page }) => {
+  const trigger = page.getByRole('button', { name: '选择使用路线', exact: true })
+  await trigger.click()
+  const dialog = page.getByRole('dialog', { name: '选择使用路线' })
+  await expect(dialog).toHaveAttribute('aria-modal', 'true')
+  const head = (await dialog.getByRole('heading').boundingBox())!
+  const last = (await dialog.getByRole('button', { name: '返回工作区' }).boundingBox())!
+  expect(head.y).toBeGreaterThan(150)
+  expect(last.y - head.y).toBeLessThan(600)
+  await dialog.getByRole('button', { name: '返回工作区' }).focus(); await page.keyboard.press('Tab')
+  await expect.poll(() => page.evaluate(() => !!document.activeElement?.closest('.vx-stage-dialog'))).toBe(true)
+  await page.keyboard.press('Escape'); await expect(dialog).toHaveCount(0); await expect(trigger).toBeFocused()
+})
+
+test('响应式欢迎页整组平衡，固定步骤不随选项数量移动', async ({ page }) => {
+  await page.evaluate(() => {
+    document.body.innerHTML = '<div class="vx-onboard-shell"><main class="vx-onboard"><header class="vx-onboard-top">工作区</header><div class="vx-onboard-main"><section class="vx-onboard-step"><h1>让工作有条理</h1><p>从一个清晰的动作开始。</p></section></div><footer class="vx-onboard-foot"><button class="vx-btn">开始</button></footer></main></div>'
+  })
+  for (const [width, height] of [[1512, 827], [2560, 1440], [375, 812]]) {
+    await page.setViewportSize({ width, height })
+    await expect.poll(async () => page.locator('.vx-onboard').evaluate(el => {
+      const r = el.getBoundingClientRect(); return Math.abs((r.top + r.bottom) / 2 - innerHeight / 2)
+    })).toBeLessThan(2)
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBe(0)
+  }
+  await page.locator('.vx-onboard').evaluate(el => el.classList.add('vx-onboard--fixed'))
+  const geometry = () => page.locator('.vx-onboard-main').evaluate(el => ({ top: el.getBoundingClientRect().top, bottom: el.getBoundingClientRect().bottom }))
+  const before = await geometry()
+  await page.locator('.vx-onboard-step').evaluate(el => { for (let i = 0; i < 30; i++) el.append(Object.assign(document.createElement('p'), { textContent: '可选择的内容' })) })
+  expect(await geometry()).toEqual(before)
+})
+
+test('说明 tooltip 可通过键盘读取且与触发器关联', async ({ page }) => {
+  const trigger = page.getByRole('button', { name: '保存设置说明' })
+  await trigger.focus()
+  const tip = page.getByRole('tooltip')
+  await expect(tip).toBeVisible()
+  await expect(trigger).toHaveAttribute('aria-describedby', await tip.getAttribute('id') as string)
+  await expect(tip).toHaveCSS('max-width', '260px')
+  await page.keyboard.press('Escape')
+  await expect(tip).toBeHidden()
+})
+
+test('说明 tooltip 支持点击固定、再次点击、外部点击与触屏', async ({ page, browser }) => {
+  const trigger = page.getByRole('button', {name:'保存设置说明'})
+  await trigger.click()
+  await expect(page.getByRole('tooltip')).toBeVisible()
+  await page.mouse.move(0,0)
+  await expect(page.getByRole('tooltip')).toBeVisible()
+  await trigger.click()
+  await expect(page.getByRole('tooltip')).toBeHidden()
+  await trigger.click()
+  await expect(page.getByRole('tooltip')).toBeVisible()
+  await page.getByRole('searchbox',{name:'搜索内容',exact:true}).click()
+  await expect(page.getByRole('tooltip')).toBeHidden()
+  const context=await browser.newContext({hasTouch:true,viewport:{width:390,height:844}})
+  const touch=await context.newPage()
+  await touch.goto('/showcase/')
+  await touch.getByRole('button',{name:'保存设置说明'}).tap()
+  await expect(touch.getByRole('tooltip')).toBeVisible()
+  await touch.getByRole('button',{name:'保存设置说明'}).tap()
+  await expect(touch.getByRole('tooltip')).toBeHidden()
+  await context.close()
+})
+
+
+test('对象摘要悬停预览、点击与键盘打开详情', async ({ page }) => {
+  const trigger=page.getByRole('button',{name:'查看便携收纳盒详情'})
+  await trigger.hover()
+  await expect(page.getByLabel('便携收纳盒预览',{exact:true})).toBeVisible()
+  await page.keyboard.press('Escape')
+  await trigger.click()
+  await expect(page.getByRole('dialog',{name:'对象详情'})).toBeVisible()
+  await page.keyboard.press('Escape')
+  await trigger.focus()
+  await page.keyboard.press('Enter')
+  await expect(page.getByRole('dialog',{name:'对象详情'})).toBeVisible()
+})
+
+
+test('板块卡片统一动作位置，标题说明支持点击、悬停和键盘', async ({ page }) => {
+  const card=page.getByLabel('板块卡片示例',{exact:true}), chat=card.getByRole('button',{name:'讨论这份报告'}), action=card.getByRole('button',{name:'打开报告'})
+  const title=card.getByRole('heading',{name:'报告摘要'}), a=await chat.boundingBox(), t=await title.boundingBox(), d=await action.boundingBox()
+  expect(a!.x+a!.width).toBeLessThanOrEqual(t!.x)
+  expect(d!.x).toBeGreaterThan(t!.x+t!.width)
+  await expect(action.locator('svg')).toHaveCount(0)
+  const label=card.getByRole('button',{name:'已完成说明'})
+  await expect(label).toHaveText('已完成')
+  expect(await label.evaluate(e=>getComputedStyle(e).textDecorationStyle)).toBe('dashed')
+  await label.hover(); await expect(page.getByRole('tooltip')).toContainText('来源：任务日志')
+  await label.click(); await page.mouse.move(0,0); await expect(page.getByRole('tooltip')).toBeVisible()
+  await page.keyboard.press('Escape'); await expect(page.getByRole('tooltip')).toBeHidden()
+  await label.focus(); await page.keyboard.press('Enter'); await expect(page.getByRole('tooltip')).toBeVisible()
+  await page.keyboard.press('Escape'); await action.click(); await expect(page.getByRole('dialog',{name:'对象详情'})).toBeVisible()
+})
+
+test('缩窄页签条时显示当前页和关闭入口，手动滚动不被拉回', async ({ page }) => {
+  const detail = page.getByRole('tab', { name: '明细', exact: true })
+  await detail.click()
+  const strip = page.getByRole('tablist', { name: '内容页签' })
+  const viewport = strip.locator('..')
+  const scrollY = await page.evaluate(() => window.scrollY)
+  await viewport.evaluate(el => { el.style.flex = '0 0 80px'; el.style.width = '80px' })
+  await expect.poll(() => strip.evaluate(el => el.scrollLeft)).toBeGreaterThan(0)
+  const close = page.getByRole('button', { name: '关闭明细', exact: true })
+  await expect(close).toBeVisible()
+  const bounds = await viewport.boundingBox(), target = await close.boundingBox()
+  expect(target!.x + target!.width).toBeLessThanOrEqual(bounds!.x + bounds!.width)
+  expect(await page.evaluate(() => window.scrollY)).toBe(scrollY)
+  await strip.evaluate(el => { el.scrollLeft = 0 })
+  await page.waitForTimeout(100)
+  expect(await strip.evaluate(el => el.scrollLeft)).toBe(0)
+  await page.getByRole('tab', { name: '概览', exact: true }).focus()
+  await page.keyboard.press('ArrowRight')
+  await expect(close).toBeVisible()
+  await close.click()
+  await expect(detail).toHaveCount(0)
+})
+
+
+test('终点角标独立于标题，完成后移除；用户菜单支持键盘和焦点恢复', async ({ page }) => {
+  await page.goto('/showcase/')
+  const decision = page.locator('.vx-decision').filter({has:page.getByRole('heading',{name:'是否应用新的发布设置？',exact:true})})
+  await expect(decision.locator('.vx-attention-corner')).toHaveCount(1)
+  await expect(decision.locator('h4 .vx-dot')).toHaveCount(0)
+  const offset = await decision.locator('.vx-attention-corner').evaluate(dot => {const r=dot.getBoundingClientRect(),c=dot.closest('.vx-decision')!.getBoundingClientRect();return [r.left-c.left,r.top-c.top]})
+  expect(offset.every(n=>n>=7&&n<=10)).toBeTruthy()
+  await decision.getByRole('button',{name:'确认方案',exact:true}).click()
+  await expect(decision.getByRole('alert')).toBeVisible()
+  await expect(decision.locator('.vx-attention-corner')).toHaveCount(1)
+  await decision.getByRole('button',{name:'确认方案',exact:true}).click()
+  await expect(decision.locator('.vx-attention-corner')).toHaveCount(0)
+  const trigger = page.getByRole('button',{name:'用户菜单',exact:true})
+  await trigger.focus(); await page.keyboard.press('Enter')
+  await expect(page.getByRole('menu',{name:'用户菜单'})).toBeVisible()
+  await page.keyboard.press('Escape'); await expect(trigger).toBeFocused()
+  await trigger.click(); await page.getByRole('menuitem',{name:'恢复示例',exact:true}).click()
+  await expect(page.getByRole('menu')).toHaveCount(0)
+  await expect(page.getByRole('status').filter({hasText:'示例已恢复'})).toHaveText('示例已恢复')
+})
+
+
+test('待办实例选择不提交，自定义需输入，确认后从待办移到历史', async ({page})=>{
+ const demo=page.getByTestId('task-card-demo')
+ await demo.getByRole('radio',{name:'自定义',exact:true}).check()
+ await expect(demo.getByRole('button',{name:'交给 AI 继续',exact:true})).toBeDisabled()
+ await expect(demo.locator('.vx-attention-corner')).toHaveCount(1)
+ await demo.getByRole('textbox',{name:'处理要求'}).fill('沿用当前范围，先核对来源')
+ await demo.getByRole('button',{name:'交给 AI 继续',exact:true}).click()
+ await expect(demo.locator('.vx-task-card')).toHaveCount(0)
+ await demo.getByRole('button',{name:'历史已办',exact:true}).click()
+ await expect(demo.locator('.vx-task-card')).toHaveCount(1)
+ await expect(demo.locator('.vx-attention-corner')).toHaveCount(0)
+  await expect(demo.getByRole('radio',{name:'自定义',exact:true})).toBeChecked()
+ for(const radio of await demo.getByRole('radio').all())await expect(radio).toBeDisabled()
+ await expect(demo.getByRole('textbox',{name:'处理要求'})).toHaveValue('沿用当前范围，先核对来源')
+ await expect(demo.getByRole('button',{name:'交给 AI 继续',exact:true})).toHaveAttribute('aria-pressed','true')
+ await expect(demo.getByRole('button',{name:'交给 AI 继续',exact:true})).toBeDisabled()
+ await expect(demo.getByRole('button',{name:'进入对话',exact:true})).toBeEnabled()
+})
+
+test('待办语义按钮、角标和状态在窄屏中可辨识且可达',async({page})=>{
+ await page.setViewportSize({width:390,height:844})
+ const demo=page.getByTestId('task-card-demo')
+ await demo.scrollIntoViewIfNeeded()
+ await expect(demo.getByRole('button',{name:'交给 AI 继续',exact:true})).toHaveCSS('color','rgb(34, 107, 72)')
+ await expect(demo.getByRole('button',{name:'中止，转人工接管',exact:true})).toHaveCSS('color','rgb(174, 47, 29)')
+ await demo.getByRole('button',{name:'进入对话',exact:true}).click()
+ await expect(demo).toContainText('建议版本 2')
+ await expect(demo.locator('.vx-task-card')).toHaveCount(1)
+ await demo.getByRole('button',{name:'中止，转人工接管',exact:true}).click()
+ await demo.getByRole('button',{name:'历史已办',exact:true}).click()
+ await expect(demo.getByRole('button',{name:'中止，转人工接管',exact:true})).toHaveAttribute('aria-pressed','true')
+ await expect(demo.locator('.vx-task-card-result')).toHaveCount(0)
+ expect((await new AxeBuilder({page}).include('[data-testid="task-card-demo"]').analyze()).violations).toEqual([])
+})
+
+test('待办提交期间锁定选择与动作，失败保留输入并可重试',async({page})=>{
+ await page.clock.install()
+ const demo=page.getByTestId('task-card-demo'),card=demo.locator('.vx-task-card')
+ await demo.getByRole('radio',{name:'自定义',exact:true}).check()
+ await demo.getByRole('textbox',{name:'处理要求'}).fill('先核对来源，再继续准备')
+ await demo.getByText('体验提交状态',{exact:true}).click()
+ await demo.getByRole('checkbox',{name:'下次提交失败'}).check()
+ const submit=demo.getByRole('button',{name:'交给 AI 继续',exact:true})
+ await submit.click();await expect(card).toHaveAttribute('aria-busy','true')
+ await expect(submit).toHaveAttribute('aria-busy','true')
+ await expect(card.locator('.vx-attention-corner')).toHaveCount(1)
+ for(const button of await card.getByRole('button').all())await expect(button).toBeDisabled()
+ for(const radio of await card.getByRole('radio').all())await expect(radio).toBeDisabled()
+ await expect(card.getByRole('textbox')).toBeDisabled()
+ await submit.evaluate(button=>(button as HTMLButtonElement).click())
+ await page.keyboard.press('Enter');await expect(demo).toContainText('提交尝试：1')
+ await page.clock.fastForward(700)
+ await expect(card).toHaveAttribute('aria-busy','false')
+ await expect(card.getByRole('alert')).toHaveText('暂时无法提交，请重试。')
+ await expect(card.getByRole('textbox')).toHaveValue('先核对来源，再继续准备')
+ await expect(card.locator('.vx-attention-corner')).toHaveCount(1)
+ await submit.click();await expect(demo).toContainText('提交尝试：2')
+ await page.clock.fastForward(700);await expect(card).toHaveCount(0)
+ await demo.getByRole('button',{name:'历史已办',exact:true}).click()
+ await expect(demo.getByRole('textbox',{name:'处理要求'})).toHaveValue('先核对来源，再继续准备')
+})
+
+test('月历连续前后切月，Tab 保持目标月份的日期入口',async({page})=>{
+ await page.clock.setFixedTime(new Date('2026-10-26T12:00:00'))
+ const demo=page.getByTestId('date-comparison-demo')
+ await demo.getByRole('button',{name:'时间范围',exact:true}).click()
+ const popup=page.locator('.vx-date-popup'),next=popup.getByRole('button',{name:'下个月',exact:true})
+ for(let i=0;i<8;i++)await next.click()
+ await next.press('Tab')
+ await expect(popup.getByRole('gridcell',{name:'2027年6月1日',exact:true})).toBeFocused()
+ const previous=popup.getByRole('button',{name:'上个月',exact:true})
+ for(let i=0;i<10;i++)await previous.click()
+ await next.focus();await next.press('Tab')
+ await expect(popup.getByRole('gridcell',{name:'2026年8月1日',exact:true})).toBeFocused()
+})
+
+test('选择器支持搜索无结果、键盘选择且无对号占位', async ({page})=>{
+ const trigger=browse(page).getByRole('combobox',{name:'内容类型',exact:true})
+ await trigger.click();const search=page.getByRole('combobox',{name:'搜索内容类型',exact:true})
+ await search.fill('不存在');await expect(page.getByText('没有匹配项',{exact:true})).toBeVisible()
+ await search.fill('模板');await expect(page.getByRole('option')).toHaveCount(1);await search.press('ArrowDown');await search.press('Enter')
+ await expect(trigger).toBeFocused();await expect(trigger).toHaveText('模板')
+ await trigger.click();await expect(page.locator('.vx-option-check')).toHaveCount(0);await page.keyboard.press('Escape');await expect(trigger).toBeFocused()
+})
+
+test('日期浮层保留草稿边界，排序按钮切换图标且不改变日期范围', async({page})=>{
+ const demo=page.getByTestId('task-card-demo'),date=demo.getByRole('button',{name:/^时间范围/}),sort=demo.locator('.vx-sort-toggle')
+ await date.click();await page.getByRole('button',{name:'最近 7 天',exact:true}).click();await page.getByRole('button',{name:'应用',exact:true}).click();await expect(date).toContainText('更新时间 · 最近 7 天')
+ await expect(sort).toHaveText('更新时间');await expect(sort.locator('[data-icon=sort-desc]')).toHaveCount(1);await sort.click();await expect(sort.locator('[data-icon=sort-asc]')).toHaveCount(1);await expect(sort).toBeFocused();await sort.press('Enter');await expect(sort.locator('[data-icon=sort-desc]')).toHaveCount(1);await expect(demo.getByRole('combobox',{name:'排序依据'})).toHaveCount(0);await expect(date).toContainText('更新时间 · 最近 7 天')
+ await date.click();await page.getByRole('button',{name:'自定义',exact:true}).click();await page.getByLabel('起始日期',{exact:true}).fill('2099-03-02');await page.getByLabel('截止日期',{exact:true}).fill('2099-03-01');await expect(page.getByRole('button',{name:'应用',exact:true})).toBeDisabled();await page.keyboard.press('Escape');await expect(date).toContainText('最近 7 天')
+ await date.click();await page.getByRole('button',{name:'具体日期',exact:true}).click();await page.getByLabel('具体日期',{exact:true}).fill('2099-03-02');await page.getByRole('button',{name:'应用',exact:true}).click();await expect(date).toContainText('2099-03-02')
+})
+
+test('连续月历跨月选择、键盘跨年、单日与对比范围可应用', async({page})=>{
+ const demo=page.getByTestId('date-comparison-demo'),date=demo.getByRole('button',{name:/^时间范围/})
+ await date.click();await page.getByLabel('起始日期',{exact:true}).fill('2026-09-27');await page.getByLabel('截止日期',{exact:true}).fill('2026-10-24')
+ await page.getByLabel('起始日期',{exact:true}).focus();await page.getByRole('gridcell',{name:'2026年9月27日',exact:true}).click();await page.getByRole('gridcell',{name:'2026年10月24日',exact:true}).click()
+ await expect(page.getByLabel('起始日期',{exact:true})).toHaveValue('2026-09-27');await expect(page.getByLabel('截止日期',{exact:true})).toHaveValue('2026-10-24');await expect(page.locator('.vx-calendar-week [data-endpoint]')).toHaveCount(2)
+ await page.getByRole('switch',{name:'对比上一时段',exact:true}).check();await expect(page.getByText('对比：2026-08-30 — 2026-09-26',{exact:true})).toBeVisible();await page.getByRole('button',{name:'应用',exact:true}).click()
+ await date.click();await expect(page.getByRole('switch',{name:'对比上一时段',exact:true})).toBeChecked();await page.getByRole('button',{name:'具体日期',exact:true}).click();await page.getByLabel('具体日期',{exact:true}).fill('2026-12-31');const last=page.getByRole('gridcell',{name:'2026年12月31日',exact:true});await last.focus();await page.keyboard.press('ArrowRight');await expect(page.getByRole('gridcell',{name:'2027年1月1日',exact:true})).toBeFocused();await page.keyboard.press('Enter');await expect(page.getByLabel('具体日期',{exact:true})).toHaveValue('2027-01-01');await page.getByRole('button',{name:'取消',exact:true}).click();await expect(date).toContainText('2026-09-27—2026-10-24')
+})
+
+test('月历浮层在窄屏与短窗口保留底部动作，展开不移动正文', async({page})=>{
+ for(const viewport of [{width:1440,height:1000},{width:390,height:844},{width:320,height:640},{width:760,height:500}]){
+  await page.setViewportSize(viewport);await page.goto('/showcase/');const trigger=page.getByTestId('task-card-demo').getByRole('button',{name:/^时间范围/});await trigger.scrollIntoViewIfNeeded();await trigger.click();const popup=page.locator('.vx-date-popup');await expect(popup).toBeVisible();await expect(popup.getByRole('button',{name:'取消',exact:true})).toBeInViewport();await expect(popup.getByRole('button',{name:'应用',exact:true})).toBeInViewport();const box=await popup.boundingBox();expect(box!.x).toBeGreaterThanOrEqual(0);expect(box!.x+box!.width).toBeLessThanOrEqual(viewport.width);expect(box!.y+box!.height).toBeLessThanOrEqual(viewport.height+1);await page.keyboard.press('Escape')
+ }
+})
+
+
+test('快捷范围以周一为周界，跨闰年的十二个月起止正确', async({page})=>{
+ await page.clock.install({time:new Date('2024-02-29T12:00:00')});await page.reload();await page.getByTestId('task-card-demo').getByRole('button',{name:/^时间范围/}).click();await page.getByRole('button',{name:'最近 12 个月',exact:true}).click();await expect(page.getByLabel('起始日期',{exact:true})).toHaveValue('2023-03-01');await expect(page.getByLabel('截止日期',{exact:true})).toHaveValue('2024-02-29');await page.getByRole('button',{name:'本周 周一至今天',exact:true}).click();await expect(page.getByLabel('起始日期',{exact:true})).toHaveValue('2024-02-26');await page.getByRole('button',{name:'上月',exact:true}).click();await expect(page.getByLabel('起始日期',{exact:true})).toHaveValue('2024-01-01');await expect(page.getByLabel('截止日期',{exact:true})).toHaveValue('2024-01-31')
+ const results=await new AxeBuilder({page}).include('.vx-date-popup').analyze();expect(results.violations).toEqual([])
+})
+
+
+test('状态区只保留类型、紧迫度和更新时间',async({page})=>{
+ const status=page.getByTestId('task-card-demo').locator('.vx-task-status')
+ expect(await status.locator('[data-status-part]').evaluateAll(xs=>xs.map(x=>x.getAttribute('data-status-part')))).toEqual(['type','urgency','timestamps'])
+ await expect(status.locator('time')).toHaveCount(1)
+ await expect(status.locator('time')).toHaveText('于 10/25 10:00 更新')
+ await expect(status.locator('.vx-tag')).toHaveCount(0)
+})
+
+test('状态保持单行且时间对齐右侧',async({page})=>{
+ for(const width of [1440,760,390]){await page.setViewportSize({width,height:1000});const result=await page.getByTestId('task-card-demo').locator('.vx-task-status').evaluate(e=>{const row=e.getBoundingClientRect(),main=e.querySelector('.vx-task-status-main')!.getBoundingClientRect(),time=e.querySelector('time')!.getBoundingClientRect();return{rowRight:row.right,timeRight:time.right,mainY:main.y+main.height/2,timeY:time.y+time.height/2,width:e.clientWidth,scroll:e.scrollWidth}});expect(Math.abs(result.mainY-result.timeY)).toBeLessThan(2);expect(Math.abs(result.rowRight-result.timeRight)).toBeLessThan(2);expect(result.scroll).toBeLessThanOrEqual(result.width+1)}
+})
+
+
+test('下拉筛选首项统一为全部，收起显示字段名称',async({page})=>{
+ for(const label of ['内容类型','内容状态']){const trigger=browse(page).getByRole('combobox',{name:label,exact:true});await expect(trigger).toHaveText(label);await trigger.click();await expect(page.getByRole('option').first()).toHaveText('全部');await page.keyboard.press('Escape')}
+})
+
+
+test('历史面包屑替换页头并通过一级标题返回',async({page})=>{
+ const demo=page.getByTestId('task-card-demo');await demo.getByRole('button',{name:'历史已办',exact:true}).click();const path=demo.getByRole('navigation',{name:'页面路径',exact:true});await expect(path.getByRole('heading',{name:'历史已办',exact:true})).toHaveAttribute('aria-current','page');await path.getByRole('button',{name:'待办事项',exact:true}).focus();await page.keyboard.press('Enter');await expect(path).toHaveCount(0);await expect(demo.getByRole('button',{name:'历史已办',exact:true})).toBeVisible()
+})
+
+
+test('页签红点定位在文字左上方，不改变标签宽度',async({page})=>{
+ const tab=page.getByRole('tab',{name:'明细',exact:true});const before=await tab.boundingBox();const mark=await tab.locator('.vx-dot').evaluate(e=>{const dot=e.getBoundingClientRect(),text=e.closest('.vx-tab-caption')!.querySelector('.vx-tab-text')!.getBoundingClientRect();return {left:text.left-dot.left,top:dot.top-text.top,position:getComputedStyle(e.parentElement!).position}});expect(mark.position).toBe('absolute');expect(mark.left).toBeGreaterThan(0);expect(mark.left).toBeLessThanOrEqual(8);expect(mark.top).toBeLessThanOrEqual(1);await tab.click();await expect(tab.locator('.vx-dot')).toBeVisible();expect(Math.abs((await tab.boundingBox())!.width-before!.width)).toBeLessThan(1);await page.getByRole('tab',{name:'概览',exact:true}).click();await expect(tab.locator('.vx-dot')).toBeVisible();expect(Math.abs((await tab.boundingBox())!.width-before!.width)).toBeLessThan(1)
 })

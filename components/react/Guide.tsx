@@ -1,4 +1,4 @@
-// vincent-ux v1.3.0 · components/react/Guide.tsx
+// vincent-ux v1.4.0 · components/react/Guide.tsx
 // 实机导览：目标完整挖空，说明卡优先固定停靠；遮挡目标时由说明卡避让。每一步先 go() 再定位；
 // 找不到先用 alt，再找不到就按当前方向跳过。挖空框在步骤之间平滑移动、不闪回左上角。外观见 .vx-guide-*
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
@@ -6,6 +6,8 @@ import { createPortal } from 'react-dom'
 import { Icon } from './Icon'
 
 export type GuideStep = {
+  ready?: boolean
+  nextLabel?: string
   stage?: string
   target: string
   title: string
@@ -14,9 +16,11 @@ export type GuideStep = {
   alt?: { target: string; title: string; text: string }
 }
 
-export function Guide({ name, steps, onExit, scrollRoot, placement = 'bottom' }: { name: string; steps: GuideStep[]; onExit: () => void; scrollRoot?: string; placement?: 'bottom' | 'left' }) {
+export function Guide({ name, steps, onExit, scrollRoot, placement = 'bottom', variant = 'card', onComplete, initialStep = 0 }: { name: string; steps: GuideStep[]; onExit: () => void; onComplete?: () => void; initialStep?: number; scrollRoot?: string; placement?: 'bottom' | 'left'; variant?: 'card' | 'banner' }) {
   const cardRef = useRef<HTMLDivElement>(null)
   const dock = useRef<Dock>(placement)
+  const completeRef = useRef(onComplete ?? onExit)
+  useLayoutEffect(() => { completeRef.current = onComplete ?? onExit }, [onComplete, onExit])
   const exitRef = useRef(onExit)
   useLayoutEffect(() => { exitRef.current = onExit }, [onExit])
   useLayoutEffect(() => {
@@ -24,7 +28,7 @@ export function Guide({ name, steps, onExit, scrollRoot, placement = 'bottom' }:
     cardRef.current?.focus()
     return () => { if (opener?.isConnected) opener.focus() }
   }, [])
-  const [i, setI] = useState(0)
+  const [i, setI] = useState(() => Math.max(0, Math.min(Math.trunc(initialStep), steps.length - 1)))
   const [dir, setDir] = useState<1 | -1>(1)
   // 当前讲解的内容；切到下一步时先留着上一步的，找到新目标再换，不闪空
   const [shown, setShown] = useState<{ target: string; title: string; text: string } | null>(null)
@@ -37,7 +41,7 @@ export function Guide({ name, steps, onExit, scrollRoot, placement = 'bottom' }:
   // go() 会触发宿主重渲染；语义相同的步骤对象/回调重建不能重启导航。
   const stepKey = step ? JSON.stringify([step.target, step.title, step.text, step.stage, step.alt]) : ''
   const last = i === steps.length - 1
-  const next = useCallback(() => { if (last) exitRef.current(); else { setDir(1); setI(v => v + 1) } }, [last])
+  const next = useCallback(() => { if (stepsRef.current[i]?.ready === false) return; if (last) completeRef.current(); else { setDir(1); setI(v => v + 1) } }, [last, i])
   const prev = useCallback(() => { setDir(-1); setI(v => Math.max(0, v - 1)) }, [])
 
   useEffect(() => {
@@ -68,8 +72,9 @@ export function Guide({ name, steps, onExit, scrollRoot, placement = 'bottom' }:
     }
     const find = () => {
       if (cancelled) return
-      const pick = [step, ...(step.alt ? [step.alt] : [])].find((c) => document.querySelector(`[data-tour="${CSS.escape(c.target)}"]`)?.getClientRects().length)
-      const el = pick && document.querySelector<HTMLElement>(`[data-tour="${CSS.escape(pick.target)}"]`)
+      const visibleTarget = (target: string) => Array.from(document.querySelectorAll<HTMLElement>(`[data-tour="${CSS.escape(target)}"]`)).find(el => el.getClientRects().length > 0)
+      const pick = [step, ...(step.alt ? [step.alt] : [])].find(c => visibleTarget(c.target))
+      const el = pick && visibleTarget(pick.target)
       if (el && pick && el.getClientRects().length > 0) {
         targetEl.current = el
         setShown(pick)
@@ -104,7 +109,7 @@ export function Guide({ name, steps, onExit, scrollRoot, placement = 'bottom' }:
           return
         }
         const card = cardRef.current
-        if (card) {
+        if (card && variant !== 'banner') {
           const layout = placeCard(goal, card.scrollHeight, dock.current, placement)
           dock.current = layout.dock
           card.dataset.placement = layout.dock
@@ -127,17 +132,27 @@ export function Guide({ name, steps, onExit, scrollRoot, placement = 'bottom' }:
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [scrollRoot, placement])
+  }, [scrollRoot, placement, variant])
+
+  useLayoutEffect(() => {
+    if (variant !== 'banner') return
+    const card = cardRef.current
+    if (!card) return
+    const update = () => document.body.style.setProperty('--vx-guide-space', `${card.getBoundingClientRect().height + 32}px`)
+    const observer = new ResizeObserver(update)
+    observer.observe(card); update()
+    return () => { observer.disconnect(); document.body.style.removeProperty('--vx-guide-space') }
+  }, [variant])
 
   if (!step || typeof document === 'undefined') return null
 
   return createPortal(
-    <div className="vx-guide" role="dialog" aria-modal="false" aria-label={name}>
+    <div className={`vx-guide${variant === 'banner' ? ' vx-guide--banner' : ''}`} role="dialog" aria-modal="false" aria-label={name}>
       {box ? <div key="spotlight" className="vx-guide-hole" style={box} data-target={shown?.target} aria-hidden="true" /> : <div key="mask" className="vx-guide-mask" aria-hidden="true" />}
       <div className="vx-guide-card" ref={cardRef} tabIndex={-1}>
         <div className="vx-guide-meta">
-          <span>{name}</span>
-          {step.stage && <span className="vx-tag">{step.stage}</span>}
+          <span>{step.stage ?? name}</span>
+
           <span className="vx-count">
             {i + 1} / {steps.length}
           </span>
@@ -156,8 +171,8 @@ export function Guide({ name, steps, onExit, scrollRoot, placement = 'bottom' }:
               <Icon name="back" size="sm" /> 上一步
             </button>
           )}
-          <button type="button" className="vx-btn vx-btn--primary vx-btn--sm" onClick={next}>
-            {last ? '完成导览' : '下一步'} {!last && <Icon name="next" size="sm" />}
+          <button type="button" className="vx-btn vx-btn--primary vx-btn--sm" disabled={step.ready === false} onClick={next}>
+            {step.nextLabel ?? (last ? '完成导览' : '下一步')} {!last && <Icon name="next" size="sm" />}
           </button>
         </div>
       </div>

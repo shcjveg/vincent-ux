@@ -1,4 +1,4 @@
-/* vincent-ux v1.3.0 · tokens/dist/tokens.css */
+/* vincent-ux v1.4.0 · tokens/dist/tokens.css */
 
 :root {
   color-scheme: light dark;
@@ -83,11 +83,14 @@
   --vx-text-disabled: light-dark(#B4ACA1, #5E574E);
   --vx-text-on-strong: light-dark(#FFFFFF, #1C1814);
   --vx-text-on-critical: light-dark(#FFFFFF, #1C1814);
+  --vx-text-muted: light-dark(#736B60, #948A7D);
   --vx-line-faint: light-dark(rgba(60, 44, 20, 0.06), rgba(255, 245, 230, 0.08));
   --vx-line-control: light-dark(#80766A, #A39A8D);
   --vx-ink-base: light-dark(#1C1814, #F3EEE7);
   --vx-ink-top: light-dark(#2E2822, #FFFFFF);
   --vx-focus-ring: light-dark(#80570D, #E8BF6A);
+  --vx-data-positive: light-dark(#226B48, #82C9A1);
+  --vx-data-negative: light-dark(#A33C36, #EF9991);
   --vx-brand-accent: light-dark(#80570D, #D9AE57);
   --vx-brand-accent-bright: light-dark(#C8962E, #E8BF6A);
   --vx-brand-accent-soft: light-dark(#F8F3E9, rgba(217, 174, 87, 0.14));

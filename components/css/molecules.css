@@ -1,4 +1,4 @@
-/* vincent-ux v1.3.0 · components/css/molecules.css */
+/* vincent-ux v1.4.0 · components/css/molecules.css */
 /* 分子：由原子组成、单一用途的小件。依赖 tokens.css、base.css、atoms.css。 */
 
 /* ---------- 收起区：次要信息默认收起，全站唯一的展开样式 ---------- */
@@ -373,20 +373,13 @@ button.vx-row {
   outline: 0;
 }
 
-/* 选中项前的勾，占位固定，未选中时留空 */
-.vx-option-check {
-  width: var(--vx-size-icon-sm);
-  margin-top: var(--vx-space-0-5);
-  flex-shrink: 0;
-  color: var(--vx-text-primary);
-}
-
 .vx-option:hover,
 .vx-option[data-highlighted] {
   background: var(--vx-fill-hover);
 }
 
-.vx-option[aria-selected='true'] {
+.vx-option[data-selected], .vx-option[aria-selected='true'] {
+  background: var(--vx-fill-hover);
   font-weight: var(--vx-font-weight-medium);
 }
 
@@ -396,8 +389,8 @@ button.vx-row {
   color: var(--vx-text-tertiary);
 }
 
-.vx-tip {
-  max-width: 260px;
+.vx-popup.vx-tip {
+  max-width: min(260px, calc(100vw - 32px));
   padding: var(--vx-space-1-5) var(--vx-space-2-5);
   font-size: var(--vx-font-size-sm);
   color: var(--vx-text-secondary);
@@ -529,6 +522,7 @@ button.vx-chip[aria-pressed='true'] {
 
 .vx-kv dd {
   margin: 0;
+  color: var(--vx-text-primary);
 }
 
 /* 单列：引导小结、详情页的少量关键信息 */
@@ -715,7 +709,7 @@ button.vx-chip[aria-pressed='true'] {
   transition: background var(--vx-motion-duration-fast), box-shadow var(--vx-motion-duration-fast), transform var(--vx-motion-duration-fast);
 }
 
-.vx-choice:not([aria-pressed='true'], [aria-checked='true'], :disabled):hover {
+.vx-choice:not([aria-pressed='true'], [aria-checked='true'], :has(> :checked), :disabled):hover {
   background: var(--vx-surface-card-hover);
 }
 
@@ -738,6 +732,15 @@ button.vx-chip[aria-pressed='true'] {
   line-height: var(--vx-font-leading-normal);
   color: var(--vx-text-secondary);
 }
+
+/* 路径入口：稳定的字母标识与向前箭头说明整卡可点；仍只用底色与边界表达选择。 */
+.vx-choice--route { cursor: pointer; }
+.vx-choice-route-head { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-bottom: var(--vx-space-3); }
+.vx-choice-route-key { font-size: var(--vx-font-size-2xl); line-height: 1; font-weight: var(--vx-font-weight-semibold); color: var(--vx-text-secondary); }
+.vx-choice-route-arrow { display: grid; place-items: center; width: var(--vx-size-control-md); height: var(--vx-size-control-md); border-radius: var(--vx-radius-full); background: var(--vx-surface-inset); color: var(--vx-text-primary); transition: background var(--vx-motion-duration-fast), color var(--vx-motion-duration-fast); }
+.vx-choice--route:is(:hover, :focus-visible) .vx-choice-route-arrow { background: var(--vx-ink-base); color: var(--vx-text-on-strong); }
+.vx-choice--route:not([aria-pressed='true'], :disabled):hover { box-shadow: var(--vx-shadow-card), inset 0 0 0 1px var(--vx-line-control); }
+.vx-choice.vx-choice--route:not(:disabled):active { transform: translateY(1px); }
 
 /* 兼容旧拷贝的标记；新结构不再放重复的选中对号。 */
 .vx-choice-check { display: none; }
@@ -820,6 +823,17 @@ button.vx-chip[aria-pressed='true'] {
   white-space: nowrap;
 }
 
+/* 纯文字选项仍使用完整名称与说明，不能让名称占据原来的图标列。 */
+.vx-choice--tile:not(:has(> .vx-choice-mark)) {
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: var(--vx-space-1);
+}
+.vx-choice--tile:not(:has(> .vx-choice-mark)) > :is(b, .vx-choice-desc) {
+  white-space: normal;
+  overflow: visible;
+  overflow-wrap: anywhere;
+}
+
 /* 没有图片时用首字代替，大小与图片一致 */
 .vx-choice--tile > span.vx-choice-mark {
   display: grid;
@@ -896,3 +910,104 @@ button.vx-chip[aria-pressed='true'] {
 .vx-pager button { min-width: var(--vx-size-hit); min-height: var(--vx-size-hit); }
 .vx-pager button:disabled { opacity: 0.45; }
 .vx-seg > button { min-height: var(--vx-size-hit); }
+
+/* 标题旁的期间或范围切换：保留焦点和命中区，静态时不画输入框。 */
+.vx-trigger--inline { background: transparent; border-color: transparent; padding: 0 var(--vx-space-2); font-size: var(--vx-font-size-md); }
+.vx-trigger--inline:hover, .vx-trigger--inline[data-popup-open] { background: var(--vx-fill-hover); }
+
+/* 说明附着于对应标题，虚线只提示可展开，不增加信息图标。 */
+.vx-tip-label { display: inline; padding: var(--vx-space-0-5) 0; border: 0; border-radius: var(--vx-radius-sm); background: transparent; color: inherit; font: inherit; text-align: inherit; line-height: inherit; text-decoration-line: underline; text-decoration-style: dashed; text-decoration-color: var(--vx-text-tertiary); text-underline-offset: .3em; text-decoration-thickness: 1px; cursor: help; }
+.vx-tip-label:hover, .vx-tip-label[aria-expanded='true'] { text-decoration-color: currentColor; color: var(--vx-text-primary); }
+
+/* Searchable selection: text aligned, selection without a reserved icon column. */
+.vx-select-popup { min-width:var(--anchor-width);width:max-content;max-width:min(360px,calc(100vw - 24px));overflow:hidden; }
+.vx-select-search { display:flex;gap:8px;align-items:center;padding:8px;border-bottom:1px solid var(--vx-line-faint);margin-bottom:4px; }
+.vx-select-search input { min-width:0;width:100%;border:0;outline:none;color:var(--vx-text-primary);background:transparent;font:inherit; }
+.vx-select-search:focus-within { box-shadow:inset 0 -1px var(--vx-text-muted); }
+.vx-select-list { max-height:min(280px,var(--available-height));overflow:auto;overscroll-behavior:contain; }
+.vx-select-popup .vx-option { min-width:0;overflow-wrap:anywhere; }
+.vx-select-empty { padding:12px;color:var(--vx-text-secondary);font-size:12px; }
+.vx-control-positioner { z-index:var(--vx-z-popover);max-width:calc(100vw - 24px); }
+.vx-sort-popup { width:200px; }
+.vx-popover-label { font-size:11px;font-weight:500;color:var(--vx-text-secondary);margin:6px 8px; }
+.vx-control-divider { height:1px;background:var(--vx-line-faint);margin:6px 0; }
+.vx-choice-row { position:relative;display:block;width:100%;border:0;border-radius:6px;padding:8px 10px;font:inherit;text-align:left;background:transparent;color:var(--vx-text-primary);cursor:pointer; }
+.vx-choice-row:hover,.vx-choice-row:has(input:checked) { background:var(--vx-fill-hover); }
+.vx-choice-row:has(input:checked) { font-weight:600; }
+.vx-date-trigger span { max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+.vx-date-trigger[data-active] { background:var(--vx-fill-hover); }
+/* Range picker: preset sidebar, date inputs, continuous calendar and fixed footer. */
+.vx-date-popup { display:flex;flex-direction:column;width:620px;max-width:calc(100vw - 24px);max-height:min(740px,var(--available-height));overflow:hidden;padding:0; }
+.vx-date-heading { display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--vx-line-faint);flex-shrink:0; }
+.vx-date-heading h2 { font-size:13px;margin:0;font-weight:600; }
+.vx-date-body { display:grid;grid-template-columns:176px minmax(0,1fr);min-height:0;flex:1;overflow:hidden; }
+.vx-date-sidebar { display:flex;flex-direction:column;border-right:1px solid var(--vx-line-faint);min-height:0; }
+.vx-date-presets { overflow:auto;overscroll-behavior:contain;padding:8px;flex:1; }
+.vx-date-preset { display:block;width:100%;text-align:left;border:0;background:transparent;color:var(--vx-text-secondary);font:inherit;padding:9px 10px;border-radius:6px;min-height:36px;cursor:pointer; }
+.vx-date-preset:hover { background:var(--vx-fill-hover); }
+.vx-date-preset[aria-pressed=true] { background:var(--vx-fill-hover);color:var(--vx-text-primary);font-weight:600; }
+.vx-date-preset small { display:block;font-size:10px;font-weight:400;color:var(--vx-text-tertiary); }
+.vx-date-main { display:flex;flex-direction:column;min-width:0;min-height:0;padding:14px 16px 0; }
+.vx-date-inputs { display:flex;gap:8px;align-items:center;flex-shrink:0; }
+.vx-date-inputs label { display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--vx-text-secondary);flex:1;min-width:0; }
+.vx-date-inputs input { width:100%;min-width:0;font-size:12px;padding:6px 8px;background:var(--vx-surface-card); }
+.vx-date-inputs label[data-active] input { border-color:var(--vx-text-secondary); }
+.vx-date-dash { padding-top:18px;color:var(--vx-text-tertiary);font-size:12px; }
+.vx-date-calendar { display:flex;flex-direction:column;flex:1;min-height:0;margin-top:8px; }
+.vx-calendar-navigation { display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;flex-shrink:0; }
+.vx-calendar-navigation .vx-icon-btn { width:28px;height:28px;min-height:28px; }
+.vx-calendar-weekdays,.vx-calendar-week { display:grid;grid-template-columns:repeat(7,minmax(0,1fr)); }
+.vx-calendar-weekdays { color:var(--vx-text-tertiary);font-size:11px;text-align:center;padding:8px 0;border-bottom:1px solid var(--vx-line-faint);flex-shrink:0; }
+.vx-calendar-months { position:relative;overflow:auto;overscroll-behavior:contain;min-height:130px;height:370px;scrollbar-width:thin; }
+.vx-calendar-month { padding:12px 0 8px; }
+.vx-calendar-month h3 { font-size:12px;font-weight:500;color:var(--vx-text-secondary);margin:0 0 8px; }
+.vx-calendar-week { margin-bottom:3px; }
+.vx-calendar-week>button { position:relative;display:flex;justify-content:center;align-items:center;padding:0;min-width:0;height:34px;border:0;background:transparent;color:var(--vx-text-primary);font-size:12px;cursor:pointer; }
+.vx-calendar-week>button>span { display:flex;justify-content:center;align-items:center;width:30px;height:30px;border-radius:50%; }
+.vx-calendar-week>button:hover>span { background:var(--vx-fill-hover); }
+.vx-calendar-week>button[data-range] { background:var(--vx-fill-hover); }
+.vx-calendar-week>button[data-start] { border-radius:50% 0 0 50%; }
+.vx-calendar-week>button[data-end] { border-radius:0 50% 50% 0; }
+.vx-calendar-week>button[data-start][data-end] { border-radius:50%; }
+.vx-calendar-week>button[aria-current=date]>span { box-shadow:inset 0 0 0 1px var(--vx-text-secondary); }
+.vx-calendar-week>button[data-endpoint]>span { background:var(--vx-text-primary);color:var(--vx-surface-card);font-weight:600; }
+.vx-calendar-week>button:focus-visible { outline:2px solid var(--vx-focus-ring);outline-offset:-2px;border-radius:6px;z-index:1; }
+.vx-date-error,.vx-date-compare-range { font-size:11px;margin:8px 0;flex-shrink:0; }
+.vx-date-comparison { border-top:1px solid var(--vx-line-faint);padding:12px;font-size:11px;flex-shrink:0; }
+.vx-date-comparison .vx-switch-label { gap:6px;font-size:11px; }
+.vx-date-actions { display:flex;justify-content:space-between;align-items:center;gap:8px;border-top:1px solid var(--vx-line-faint);padding:10px 12px;flex-shrink:0; }
+.vx-date-actions>div { display:flex;gap:8px; }
+@media(max-width:600px) {
+ .vx-date-popup { width:360px;max-height:min(680px,var(--available-height)); }
+ .vx-date-body { display:flex;flex-direction:column; }
+ .vx-date-sidebar { border-right:0;border-bottom:1px solid var(--vx-line-faint);flex-shrink:0; }
+ .vx-date-presets { display:flex;flex-wrap:wrap;gap:4px;max-height:94px;padding:8px; }
+ .vx-date-preset { width:auto;padding:6px 8px;min-height:30px;font-size:11px; }
+ .vx-date-preset small { display:none; }
+ .vx-date-presets .vx-control-divider { display:none; }
+ .vx-date-main { flex:1;padding:10px 12px 0; }
+ .vx-calendar-months { height:300px;min-height:90px; }
+ .vx-date-comparison { padding:6px 10px; }
+}
+
+.vx-choice-row>input { position:absolute;inset:0;opacity:0;width:100%;height:100%;margin:0;cursor:pointer; }
+.vx-choice-row:has(input:focus-visible) { outline:2px solid var(--vx-text-secondary);outline-offset:1px; }
+
+.vx-trigger-value { min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+
+.vx-select-empty:empty { display:none; }
+.vx-select-search { margin-bottom:4px;padding:8px 8px 9px; }
+
+.vx-trigger--filter { border:0;background:transparent;box-shadow:none;padding:0 var(--vx-space-2-5);font-size:var(--vx-font-size-md);min-height:var(--vx-size-control-md); }
+.vx-trigger--filter:hover,.vx-trigger--filter[data-popup-open] { background:var(--vx-fill-hover); }
+
+.vx-sort-toggle { white-space:nowrap; }
+
+/* 同类承载区共用空状态；章节轻量对齐正文，整页结果才居中。 */
+.vx-empty-state { display:flex;flex-direction:column;align-items:flex-start;gap:var(--vx-space-2);min-width:0;padding:var(--vx-space-2) 0;font-size:var(--vx-font-size-md);line-height:var(--vx-font-leading-normal);color:var(--vx-text-secondary); }
+.vx-empty-state > p { margin:0;max-width:100%;overflow-wrap:anywhere;font:inherit;color:inherit; }
+.vx-empty-state--page { align-items:center;padding:var(--vx-space-8) var(--vx-space-4);text-align:center; }
+.vx-empty-state-action { display:flex;flex-wrap:wrap;gap:var(--vx-space-2);max-width:100%;margin-top:var(--vx-space-1); }
+.vx-empty-state-icon { display:inline-flex;color:var(--vx-text-tertiary); }
+.vx-data-time { display:inline-flex;flex-wrap:wrap;justify-content:flex-end;gap:0 var(--vx-space-1);max-width:100%;font-size:var(--vx-font-size-sm);line-height:var(--vx-font-leading-normal);font-weight:var(--vx-font-weight-regular);color:var(--vx-text-tertiary);text-align:right;font-variant-numeric:tabular-nums; }
+.vx-data-time time { overflow-wrap:anywhere; }

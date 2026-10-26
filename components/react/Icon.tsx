@@ -1,12 +1,12 @@
-// vincent-ux v1.3.0 · components/react/Icon.tsx
+// vincent-ux v1.4.0 · components/react/Icon.tsx
 // 按含义引用图标：<Icon name="chat" />。含义表见 icons/icons.json；新增含义先登记再用。
 // 依赖：lucide-react
 import type { SVGProps } from 'react'
 import {
-  ArrowLeft, ArrowRight, BadgeCheck, ArrowUpDown, Blocks, BriefcaseBusiness, Cloud, GitBranch, GitCommitHorizontal, Globe, Laptop, LayoutGrid, Pin, User, Users, Calendar, ChartPie, Check, ChevronDown, CircleX, Clapperboard,
+  History, ArrowLeft, ArrowRight, ArrowDown, ArrowUp, BadgeCheck, ArrowUpDown, Blocks, BriefcaseBusiness, Cloud, GitBranch, GitCommitHorizontal, Globe, Laptop, LayoutGrid, Pin, User, Users, Calendar, ChartPie, Check, ChevronDown, ChevronLeft, ChevronRight, CircleX, Clapperboard,
   ClipboardCheck, Clock, Compass, Copy, CornerDownLeft, Download, Ellipsis, ExternalLink, Eye, Factory, Headset, Info, LayoutList,
-  ListFilter, ListTodo, LoaderCircle, Lock, Megaphone, MessageCircle, MessageCirclePlus, Package, PanelLeftClose, PanelLeftOpen,
-  Pencil, Play, Plus, RotateCcw, Search, Settings, ShieldAlert, ShoppingCart, Signpost, SlidersHorizontal, Store, Trash2,
+  ListFilter, ListTodo, LoaderCircle, Lock, Megaphone, MessageCircle, MessageCirclePlus, Package,
+  PanelRightOpen, Pencil, Play, Plus, RotateCcw, Search, Settings, ShieldAlert, ShoppingCart, Signpost, SlidersHorizontal, Store, Trash2,
   TriangleAlert, Truck, Upload, UserRoundCog, Wallet, X,
   type LucideIcon,
 } from 'lucide-react'
@@ -18,10 +18,10 @@ const ICONS = {
   settings: Settings, apps: LayoutGrid, build: Blocks,
   // 动作
   chat: MessageCircle, 'new-chat': MessageCirclePlus, send: CornerDownLeft, add: Plus, edit: Pencil, delete: Trash2,
-  search: Search, filter: ListFilter, sort: ArrowUpDown, download: Download, upload: Upload, external: ExternalLink,
+  search: Search, filter: ListFilter, sort: ArrowUpDown, 'sort-desc': ArrowDown, 'sort-asc': ArrowUp, download: Download, upload: Upload, external: ExternalLink,
   copy: Copy, refresh: RotateCcw, play: Play, guide: Signpost, 'switch-user': UserRoundCog, close: X, back: ArrowLeft,
-  next: ArrowRight, expand: ChevronDown, more: Ellipsis, 'collapse-sidebar': PanelLeftClose, 'expand-sidebar': PanelLeftOpen,
-  calendar: Calendar, watch: Eye, pin: Pin,
+  next: ArrowRight, expand: ChevronDown, more: Ellipsis, 'collapse-sidebar': ChevronLeft, 'expand-sidebar': ChevronRight,
+  'open-workspace': PanelRightOpen, calendar: Calendar, watch: Eye, pin: Pin, history: History,
   // 状态
   done: Check, pending: Clock, warning: TriangleAlert, blocked: CircleX, verified: BadgeCheck, info: Info, locked: Lock,
   running: LoaderCircle,

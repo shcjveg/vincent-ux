@@ -12,19 +12,19 @@
 
 具体规则以 `principles/` 为准；组件、模式和模板引用规则，不重复定义。
 
-## v1.3.0 验收入口
+## v1.4.0 验收入口
 
 | 范围 | 验收内容 | 入口 |
 |---|---|---|
-| 设计变量与图标 | 可重复生成，浅深主题语义一致，变量与含义映射可检查 | `npm run build`、`npm run icons -- node_modules`、`npm run check` |
-| 组件交互 | 搜索、组合筛选、分页与选择；表单、浮层、页签、折叠、导览和决定卡的完整状态 | `npm test`、`showcase/` |
-| 可访问性 | 标签、键盘、焦点恢复、对比度与浅深主题自动扫描 | `tests/components.spec.ts`、`principles/accessibility.md` |
-| 页面组合 | 桌面窄窗口布局、内容增减时的锚点、局部滚动与导览避让 | `patterns/page-composition.md`、浏览器测试 |
+| 设计变量与图标 | 可重复生成，浅深主题语义一致，变量与含义映射可检查 | `npm run build`、`npm run icons`、`npm run check` |
+| 组件交互 | 搜索、筛选与日期；表单、浮层、页签、导览、决定与待办卡的提交中／失败／历史状态 | `npm test`、`showcase/` |
+| 可访问性 | 标签、键盘、焦点恢复、对比度与浅深主题自动扫描 | `tests/components.spec.ts`、`tests/workspace-state.spec.ts`、`principles/accessibility.md` |
+| 页面组合 | 桌面与 320／390px 窄屏、会话切换和关闭恢复、内容锚点、局部滚动与导览避让 | `patterns/page-composition.md`、`patterns/page-chat-flow.md`、浏览器测试 |
 | 消费链路 | 单一样式入口、图标与许可齐全；预览、重复复制与冲突保护 | `examples/basic.html`、`tests/tooling.test.mjs` |
 | 工程与发布 | 类型、展示页构建、隐私检查和可复现依赖安装 | `npm run typecheck`、`npm run build:showcase`、`npm run check:privacy`、CI |
 
-自动扫描只覆盖已编码的规则；实际接入仍需检查长内容、缩放、完整键盘流程和读屏体验。
+近期能力的规则、示例与验证对应关系见[沉淀覆盖表](docs/coverage.md)。自动扫描只覆盖已编码的规则；实际接入仍需检查长内容、缩放、完整键盘流程和读屏体验。
 
 ## 当前边界
 
-当前不提供手机端专用适配、多密度主题、从右到左布局、Figma 组件库、Storybook 或完整多语言框架。Token 为项目内部的 DTCG 风格数据，不承诺兼容所有外部工具。版本与升级影响见 `CHANGELOG.md`。
+提供工作区、浮层与内容组件的窄屏适配；完整手机产品的信息架构和业务流程仍由宿主设计。当前不提供多密度主题、从右到左布局、Figma 组件库、Storybook 或完整多语言框架。Token 为项目内部的 DTCG 风格数据，不承诺兼容所有外部工具。版本与升级影响见 `CHANGELOG.md`。

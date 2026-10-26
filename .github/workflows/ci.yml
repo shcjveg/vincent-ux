@@ -25,7 +25,6 @@ jobs:
       - run: npm ci
       - run: npm run check:privacy
       - run: npm run build
-      - run: npm run icons -- node_modules
       - name: Verify committed generated assets
         run: git diff --exit-code -- tokens/dist icons/dist components patterns principles templates SKILL.md styles.css scripts/audit.js
       - run: npm run check

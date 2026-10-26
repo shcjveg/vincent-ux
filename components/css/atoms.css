@@ -1,4 +1,4 @@
-/* vincent-ux v1.3.0 · components/css/atoms.css */
+/* vincent-ux v1.4.0 · components/css/atoms.css */
 /* 原子：按钮、图标、标签、红点、缩略图与头像、输入框、开关、复选框、数字、骨架、转圈。依赖 tokens.css、base.css。 */
 
 /* ---------- 按钮：主（墨）· 次（凹面）· 文字 ---------- */
@@ -7,8 +7,8 @@
   align-items: center;
   justify-content: center;
   gap: var(--vx-space-2);
-  height: var(--vx-size-control-md);
-  padding: 0 var(--vx-space-3-5);
+  min-height: var(--vx-size-control-md);
+  padding: var(--vx-space-1-5) var(--vx-space-3-5);
   border-radius: var(--vx-radius-md);
   background: var(--vx-surface-inset);
   color: var(--vx-text-primary);
@@ -63,15 +63,15 @@
 }
 
 .vx-btn--sm {
-  height: var(--vx-size-control-sm);
-  padding: 0 var(--vx-space-3);
+  min-height: var(--vx-size-control-sm);
+  padding: var(--vx-space-1) var(--vx-space-3);
   font-size: var(--vx-font-size-sm);
   border-radius: var(--vx-radius-sm);
 }
 
 .vx-btn--lg {
-  height: var(--vx-size-control-lg);
-  padding: 0 var(--vx-space-5-5);
+  min-height: var(--vx-size-control-lg);
+  padding: var(--vx-space-2) var(--vx-space-5-5);
   font-size: var(--vx-font-size-lg);
   border-radius: var(--vx-radius-lg);
 }
