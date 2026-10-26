@@ -15,7 +15,7 @@ npm test
 npm run build:showcase
 ```
 
-浏览器测试使用 Chrome；Linux 首次安装可用 `npx playwright install --with-deps chrome`。本地展示命令和地址见 `README.md`。
+本地浏览器测试使用 Chrome；Linux 首次安装可用 `npx playwright install --with-deps chrome`。CI 使用当前 Playwright 版本固定的 Chromium headless shell：`npx playwright install --with-deps --only-shell chromium`，再以 `CI=1 npm test` 运行同一套用例。本地展示命令和地址见 `README.md`。
 
 原则、变量、组件、模式和模板各自维护自己的规则；先把问题放回真实页面验证，再提炼可复用部分。新增组件应包含必要状态、键盘行为与展示示例；行为变更补对应回归。按 [沉淀覆盖表](docs/coverage.md) 检查规则、示例、导出是否互相可达，旧规则冲突时改原文而非追加反例。修改变量源后重新生成 `tokens/dist/`，修改图标映射后重新生成精灵图，并提交生成结果。更新版本时同步 `package.json`、锁文件、来源标记和 `CHANGELOG.md`。
 
