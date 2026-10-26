@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.2 · patterns/actor-mark.md -->
+<!-- vincent-ux v1.4.3 · patterns/actor-mark.md -->
 
 # 谁做的
 

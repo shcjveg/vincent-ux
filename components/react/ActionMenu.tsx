@@ -1,4 +1,4 @@
-// vincent-ux v1.4.2 · components/react/ActionMenu.tsx
+// vincent-ux v1.4.3 · components/react/ActionMenu.tsx
 import type { ReactNode } from 'react'
 import { Menu } from '@base-ui/react/menu'
 import { Icon, type IconName } from './Icon'

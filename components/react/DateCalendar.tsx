@@ -1,4 +1,4 @@
-// vincent-ux v1.4.2 · components/react/DateCalendar.tsx
+// vincent-ux v1.4.3 · components/react/DateCalendar.tsx
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { Icon } from './Icon'
 

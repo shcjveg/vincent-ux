@@ -1,4 +1,4 @@
-// vincent-ux v1.4.2 · components/react/ActionBar.tsx
+// vincent-ux v1.4.3 · components/react/ActionBar.tsx
 import type { ReactNode } from 'react'
 import { Icon } from './Icon'
 

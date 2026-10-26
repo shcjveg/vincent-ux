@@ -1,4 +1,4 @@
-// vincent-ux v1.4.2 · components/react/index.ts
+// vincent-ux v1.4.3 · components/react/index.ts
 // React 组件：只收需要状态或可访问性逻辑的组件，以及用来固定一条容易写走样的规则的组件；纯外观直接用 CSS 类名（见 components/css/）。
 export { Icon, type IconName } from './Icon'
 export { Fold } from './Fold'

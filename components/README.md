@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.2 · components/README.md -->
+<!-- vincent-ux v1.4.3 · components/README.md -->
 # 组件选用指南
 
 按「要做的事」分八组，一个组件只出现在一组里。每组先说什么情况用哪个，再说常见的误用。长什么样看 `showcase/index.html`；多个组件怎么配合看 `patterns/`；颜色语义看 `principles/visual.md`。带「React」的有交互组件，其余直接用类名。
@@ -229,7 +229,7 @@
 
 `Breadcrumbs` 按[面包屑与二级页规范](breadcrumbs.md)替换原页头；父级返回对应范围，末项承担当前页标题。独立示例包含键盘返回与无历史记录状态。
 
-`Collection` 的数量位于结果区，`actions` 槽位可放排序；共用 `.vx-results-head` 实现左侧结果数、右侧排序，同一行呈现。有时间筛选时将其置于筛选组首项。
+`Collection` 的数量位于结果区，`actions` 槽位复用 `SortMenu` 展示更新时间及方向，点击反转排序；共用 `.vx-results-head` 实现左侧结果数、右侧排序，同一行呈现。有时间筛选时将其置于筛选组首项。
 
 ## 空状态、数据时间与操作自适应
 

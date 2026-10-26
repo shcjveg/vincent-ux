@@ -1,4 +1,4 @@
-// vincent-ux v1.4.2 · components/react/TextTip.tsx
+// vincent-ux v1.4.3 · components/react/TextTip.tsx
 import type { ReactNode } from 'react'
 import { Tip } from './Tip'
 

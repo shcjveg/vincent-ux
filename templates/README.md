@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.2 · templates/README.md -->
+<!-- vincent-ux v1.4.3 · templates/README.md -->
 # 模板选用指南
 
 模板只管骨架：一个应用由哪几栏组成、一个页面里的内容按什么顺序排。里面放什么组件见 `components/README.md`。

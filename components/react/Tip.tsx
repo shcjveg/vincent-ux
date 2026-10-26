@@ -1,4 +1,4 @@
-// vincent-ux v1.4.2 · components/react/Tip.tsx
+// vincent-ux v1.4.3 · components/react/Tip.tsx
 // 提示：基于 Base UI Tooltip。应用根部包一层 <TipProvider>。外观用 .vx-popup.vx-tip
 // 依赖：@base-ui/react
 import { useId, useRef, useState, type ReactElement, type ReactNode } from 'react'
