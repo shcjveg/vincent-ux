@@ -1,4 +1,4 @@
-// vincent-ux v1.4.1 · components/react/SectionHeader.tsx
+// vincent-ux v1.4.2 · components/react/SectionHeader.tsx
 import type { ReactNode } from 'react'
 import { DataTime, type DataTimeValue } from './DataTime'
 import { Icon } from './Icon'

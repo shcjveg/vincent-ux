@@ -593,7 +593,8 @@ test('待办语义按钮、角标和状态在窄屏中可辨识且可达',async(
 })
 
 test('待办提交期间锁定选择与动作，失败保留输入并可重试',async({page})=>{
- await page.clock.install()
+ await page.clock.install({time:new Date('2026-10-26T12:00:00')})
+ await page.clock.pauseAt(new Date('2026-10-26T12:01:00'))
  const demo=page.getByTestId('task-card-demo'),card=demo.locator('.vx-task-card')
  await demo.getByRole('radio',{name:'自定义',exact:true}).check()
  await demo.getByRole('textbox',{name:'处理要求'}).fill('先核对来源，再继续准备')
@@ -646,8 +647,8 @@ test('日期浮层保留草稿边界，排序按钮切换图标且不改变日�
  const demo=page.getByTestId('task-card-demo'),date=demo.getByRole('button',{name:/^时间范围/}),sort=demo.locator('.vx-sort-toggle')
  await date.click();await page.getByRole('button',{name:'最近 7 天',exact:true}).click();await page.getByRole('button',{name:'应用',exact:true}).click();await expect(date).toContainText('更新时间 · 最近 7 天')
  await expect(sort).toHaveText('更新时间');await expect(sort.locator('[data-icon=sort-desc]')).toHaveCount(1);await sort.click();await expect(sort.locator('[data-icon=sort-asc]')).toHaveCount(1);await expect(sort).toBeFocused();await sort.press('Enter');await expect(sort.locator('[data-icon=sort-desc]')).toHaveCount(1);await expect(demo.getByRole('combobox',{name:'排序依据'})).toHaveCount(0);await expect(date).toContainText('更新时间 · 最近 7 天')
- await date.click();await page.getByRole('button',{name:'自定义',exact:true}).click();await page.getByLabel('起始日期',{exact:true}).fill('2099-03-02');await page.getByLabel('截止日期',{exact:true}).fill('2099-03-01');await expect(page.getByRole('button',{name:'应用',exact:true})).toBeDisabled();await page.keyboard.press('Escape');await expect(date).toContainText('最近 7 天')
- await date.click();await page.getByRole('button',{name:'具体日期',exact:true}).click();await page.getByLabel('具体日期',{exact:true}).fill('2099-03-02');await page.getByRole('button',{name:'应用',exact:true}).click();await expect(date).toContainText('2099-03-02')
+ await date.click();await page.getByRole('button',{name:'自定义',exact:true}).click();await page.getByLabel('起始日期',{exact:true}).fill('2099-03-02');await page.getByLabel('截止日期',{exact:true}).fill('2099-03-01');await expect(page.getByRole('button',{name:'应用',exact:true})).toBeDisabled();await page.keyboard.press('Escape');await expect(page.locator('.vx-date-popup')).toBeHidden();await expect(date).toContainText('最近 7 天')
+ await date.click();await page.getByRole('button',{name:'具体日期',exact:true}).click();const day=page.getByLabel('具体日期',{exact:true});await day.fill('2099-03-02');await day.blur();await expect(day).toHaveValue('2099-03-02');const apply=page.getByRole('button',{name:'应用',exact:true});await expect(apply).toBeEnabled();await apply.click();await expect(page.locator('.vx-date-popup')).toBeHidden();await expect(date).toContainText('2099-03-02')
 })
 
 test('连续月历跨月选择、键盘跨年、单日与对比范围可应用', async({page})=>{

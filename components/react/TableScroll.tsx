@@ -1,4 +1,4 @@
-// vincent-ux v1.4.1 · components/react/TableScroll.tsx
+// vincent-ux v1.4.2 · components/react/TableScroll.tsx
 import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 
 // 保留原生表格与业务列；只在确有溢出时进入键盘顺序，避免撑开整个页面。

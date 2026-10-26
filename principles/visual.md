@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.1 · principles/visual.md -->
+<!-- vincent-ux v1.4.2 · principles/visual.md -->
 
 # 视觉原则
 

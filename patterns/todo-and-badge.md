@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.1 · patterns/todo-and-badge.md -->
+<!-- vincent-ux v1.4.2 · patterns/todo-and-badge.md -->
 
 # 待办与红点
 

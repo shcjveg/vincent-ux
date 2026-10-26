@@ -1,4 +1,4 @@
-// vincent-ux v1.4.1 · components/react/Breadcrumbs.tsx
+// vincent-ux v1.4.2 · components/react/Breadcrumbs.tsx
 import type { HTMLAttributes } from 'react'
 
 export type BreadcrumbItem = { label:string; href?:string; onClick?:()=>void }

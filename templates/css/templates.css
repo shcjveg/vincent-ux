@@ -1,4 +1,4 @@
-/* vincent-ux v1.4.1 · templates/css/templates.css */
+/* vincent-ux v1.4.2 · templates/css/templates.css */
 /* 模板：应用与页面的骨架。依赖 tokens.css 与 components/css/*。
    结构：.vx-app > .vx-nav（可收起）+ .vx-chat（按需出现）+ .vx-render（.vx-tabs + .vx-render-body > .vx-page） */
 

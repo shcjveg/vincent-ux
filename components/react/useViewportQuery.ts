@@ -1,4 +1,4 @@
-// vincent-ux v1.4.1 · components/react/useViewportQuery.ts
+// vincent-ux v1.4.2 · components/react/useViewportQuery.ts
 import { useSyncExternalStore } from 'react'
 
 /** Viewport switches update immediately on resize; content keeps its own draft/state. */
