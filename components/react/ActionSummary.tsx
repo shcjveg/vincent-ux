@@ -1,4 +1,4 @@
-// vincent-ux v1.4.1 · components/react/ActionSummary.tsx
+// vincent-ux v1.4.2 · components/react/ActionSummary.tsx
 import { Icon } from './Icon'
 
 /** Group related name/count/action; only actionable urgency receives a dot. */

@@ -1,4 +1,4 @@
-// vincent-ux v1.4.1 · components/react/Tabs.tsx
+// vincent-ux v1.4.2 · components/react/Tabs.tsx
 import { Tabs as T } from '@base-ui/react/tabs'
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { Icon } from './Icon'

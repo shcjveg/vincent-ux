@@ -1,4 +1,4 @@
-// vincent-ux v1.4.1 · scripts/audit.js
+// vincent-ux v1.4.2 · scripts/audit.js
 // 规则检查（在浏览器里跑）：把视觉与交互原则里能机器判断的部分变成断言，截图评审只看机器判断不了的。
 // 用法：页面里注入本文件后调用 window.vxAudit()，返回 [{ rule, text, where }]；空数组表示已覆盖规则无发现，不等于完整可访问性认证。
 // Playwright：await page.addScriptTag({ path }); const r = await page.evaluate(() => vxAudit())

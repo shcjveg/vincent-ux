@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.1 · icons/README.md -->
+<!-- vincent-ux v1.4.2 · icons/README.md -->
 
 # 图标
 

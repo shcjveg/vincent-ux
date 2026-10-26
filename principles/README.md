@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.1 · principles/README.md -->
+<!-- vincent-ux v1.4.2 · principles/README.md -->
 
 # 基础设计原则
 

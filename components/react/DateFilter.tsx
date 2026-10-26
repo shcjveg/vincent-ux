@@ -1,4 +1,4 @@
-// vincent-ux v1.4.1 · components/react/DateFilter.tsx
+// vincent-ux v1.4.2 · components/react/DateFilter.tsx
 import { useState } from 'react'
 import { Popover } from '@base-ui/react/popover'
 import { Icon } from './Icon'

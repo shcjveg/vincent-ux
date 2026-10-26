@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.1 · components/README.md -->
+<!-- vincent-ux v1.4.2 · components/README.md -->
 # 组件选用指南
 
 按「要做的事」分八组，一个组件只出现在一组里。每组先说什么情况用哪个，再说常见的误用。长什么样看 `showcase/index.html`；多个组件怎么配合看 `patterns/`；颜色语义看 `principles/visual.md`。带「React」的有交互组件，其余直接用类名。

@@ -1,4 +1,4 @@
-// vincent-ux v1.4.1 · components/react/EmptyState.tsx
+// vincent-ux v1.4.2 · components/react/EmptyState.tsx
 import type { ReactNode } from 'react'
 
 /** A shared empty state for a section or a full results page. */

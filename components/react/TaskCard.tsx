@@ -1,4 +1,4 @@
-// vincent-ux v1.4.1 · components/react/TaskCard.tsx
+// vincent-ux v1.4.2 · components/react/TaskCard.tsx
 import { useId, useState, type HTMLAttributes, type ReactNode } from 'react'
 import { Attention } from './Attention'
 import { Icon } from './Icon'

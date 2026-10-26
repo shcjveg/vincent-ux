@@ -1,4 +1,4 @@
-// vincent-ux v1.4.1 · components/react/SearchField.tsx
+// vincent-ux v1.4.2 · components/react/SearchField.tsx
 import { useRef, type InputHTMLAttributes } from 'react'
 import { Icon } from './Icon'
 
