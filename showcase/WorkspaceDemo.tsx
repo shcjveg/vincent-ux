@@ -57,12 +57,13 @@ function ReferencesPage(){
 }
 
 export function ComponentStatesDemo(){
- const [opened,setOpened]=useState(''),[period,setPeriod]=useState<DateFilterValue>({from:'',to:''})
+ const [opened,setOpened]=useState(''),[period,setPeriod]=useState<DateFilterValue>({from:'',to:''}),[span,setSpan]=useState<DateFilterValue>({from:'',to:''})
  return <div className="vx-stack" data-testid="component-states">
   <SectionCard title="来源记录" controls={<span className="vx-meta">近 7 天</span>} updatedAt={{text:'2026-10-25 10:00',dateTime:'2026-10-25T10:00:00+08:00',detail:'示例来源快照 · 北京时间'}}><EmptyState message="暂无来源记录"/></SectionCard>
   <SectionCard title="处理记录"><EmptyState message="暂无处理记录"/></SectionCard>
   <SectionCard title="表格操作"><TableScroll label="记录操作示例" minWidth={480}><table className="vx-table"><thead><tr><th>记录</th><th>操作</th></tr></thead><tbody><tr><td>需要核对的关联资料</td><td><Button onClick={()=>setOpened('已打开关联记录')}>打开关联记录</Button></td></tr></tbody></table></TableScroll>{opened&&<p role="status">{opened}</p>}</SectionCard>
   <SectionCard title="比较报告期间" data-testid="date-comparison-demo"><DateFilter allowComparison value={period} field="period" fields={[{id:'period',label:'统计期间'}]} onChange={setPeriod}/></SectionCard>
+  <SectionCard title="单一时间口径" data-testid="date-single-demo"><DateFilter value={span} field="span" fields={[{id:'span',label:''}]} onChange={setSpan}/></SectionCard>
   <div className="sc-long-action"><Button onClick={()=>setOpened('已查看下一步所需资料')}>查看这项工作下一步需要准备的完整资料</Button></div>
  </div>
 }

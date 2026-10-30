@@ -1,0 +1,101 @@
+{
+  "$description": "配色主题：只换颜色，不换圆角、字体、间距。每套主题只给参数，色值由 scripts/build-tokens.mjs 从默认配色（theme / brand）派生：明度一律沿用默认配色，只换色相与彩度，对比度由 scripts/check.mjs 逐套核对。定位依据见 docs/research/color-theme-taxonomy.md：三条轴（暖冷、软硬、清浊）定位，场景与人群只作标签。neutral.hue / accent.hue / critical.hue 为 OKLCH 色相角；neutral.chroma 为中性层彩度相对默认配色的倍数（0 为纯灰），darkChroma 缺省同 chroma；accent.chroma 为浅色强调色的 OKLCH 彩度（默认配色为 0.098），其余强调色按同一比例缩放；accent.lightness 为浅色强调色的明度微调（OKLCH L），只在对比度差一点时使用。",
+  "ink-gold": {
+    "name": "墨金",
+    "default": true,
+    "axes": { "warmCool": "暖", "softHard": "中偏硬", "clearGrayish": "浊" },
+    "tone": "沉稳、老练，金色只落在钱和选中上",
+    "scenarios": "经营看板、财务与结算、桌面工作台",
+    "audience": "决策者、运营负责人、财务"
+  },
+  "scholar": {
+    "name": "书卷",
+    "axes": { "warmCool": "暖底冷字", "softHard": "中", "clearGrayish": "浊" },
+    "tone": "纸张底色配藏青，安静、可信、适合长读",
+    "scenarios": "教育、研究报告、知识库、长文阅读",
+    "audience": "学生、教师、研究与分析人员",
+    "neutral": { "hue": 88, "chroma": 0.8, "darkChroma": 0.6 },
+    "accent": { "hue": 262, "chroma": 0.1 },
+    "critical": { "hue": 29 }
+  },
+  "mono": {
+    "name": "素白",
+    "axes": { "warmCool": "中", "softHard": "中偏硬", "clearGrayish": "无彩" },
+    "tone": "黑白灰，界面退后，让内容（图片、作品、正文）说话",
+    "scenarios": "工具与后台、文档、作品集与画廊、媒体内容展示",
+    "audience": "通用；创作者、编辑",
+    "neutral": { "hue": 260, "chroma": 0 },
+    "accent": { "hue": 255, "chroma": 0.04 },
+    "critical": { "hue": 29 }
+  },
+  "signal": {
+    "name": "信号",
+    "axes": { "warmCool": "冷", "softHard": "硬", "clearGrayish": "清" },
+    "tone": "冷灰配电光蓝，精确、高效，暗色尤其合适",
+    "scenarios": "开发者工具、数据与 AI 平台、监控",
+    "audience": "工程师、技术决策者",
+    "neutral": { "hue": 255, "chroma": 1.1, "darkChroma": 1.3 },
+    "accent": { "hue": 250, "chroma": 0.15 },
+    "critical": { "hue": 25 }
+  },
+  "mist": {
+    "name": "晴雾",
+    "axes": { "warmCool": "冷", "softHard": "软", "clearGrayish": "中" },
+    "tone": "雾蓝灰配湖蓝，清爽、克制、让人放心",
+    "scenarios": "医疗、金融服务、保险、客服",
+    "audience": "需要信任感的大众用户",
+    "neutral": { "hue": 222, "chroma": 0.8, "darkChroma": 0.7 },
+    "accent": { "hue": 222, "chroma": 0.085 },
+    "critical": { "hue": 27 }
+  },
+  "grove": {
+    "name": "松林",
+    "axes": { "warmCool": "中偏冷", "softHard": "软", "clearGrayish": "浊" },
+    "tone": "鼠尾草灰配松青，自然、温和、不刺激",
+    "scenarios": "健康、母婴、生活方式、可持续",
+    "audience": "注重品质与健康的大众消费者",
+    "neutral": { "hue": 150, "chroma": 0.9, "darkChroma": 0.6 },
+    "accent": { "hue": 185, "chroma": 0.085, "lightness": -0.01 },
+    "critical": { "hue": 29 }
+  },
+  "spark": {
+    "name": "珊瑚",
+    "axes": { "warmCool": "暖", "softHard": "中", "clearGrayish": "清" },
+    "tone": "奶油底配珊瑚橙，有活力、促行动",
+    "scenarios": "营销活动、增长与投放复盘、对客展示",
+    "audience": "市场、运营、品牌方",
+    "neutral": { "hue": 70, "chroma": 1.1 },
+    "accent": { "hue": 52, "chroma": 0.15 },
+    "critical": { "hue": 8 }
+  },
+  "blush": {
+    "name": "柔雾",
+    "axes": { "warmCool": "暖", "softHard": "软", "clearGrayish": "中" },
+    "tone": "粉调暖灰配灰玫瑰，柔和、亲近",
+    "scenarios": "美妆、母婴、轻社交、生活服务",
+    "audience": "以女性为主的消费者",
+    "neutral": { "hue": 20, "chroma": 1.0, "darkChroma": 0.7 },
+    "accent": { "hue": 352, "chroma": 0.085 },
+    "critical": { "hue": 35 }
+  },
+  "aubergine": {
+    "name": "梅子",
+    "axes": { "warmCool": "暖冷之间", "softHard": "硬", "clearGrayish": "浊" },
+    "tone": "紫调炭灰配梅紫，精致、克制的高级感，暗色尤其合适",
+    "scenarios": "高端品牌、会员、时尚与奢侈品、对外汇报",
+    "audience": "高净值客户、品牌管理层",
+    "neutral": { "hue": 320, "chroma": 1.1 },
+    "accent": { "hue": 318, "chroma": 0.11 },
+    "critical": { "hue": 25 }
+  },
+  "pop": {
+    "name": "霓虹",
+    "axes": { "warmCool": "中", "softHard": "硬", "clearGrayish": "极清" },
+    "tone": "纯灰底配高饱和电紫，醒目、年轻",
+    "scenarios": "潮流与联名、社区、创意活动",
+    "audience": "年轻用户、创作者社群",
+    "neutral": { "hue": 285, "chroma": 0.15 },
+    "accent": { "hue": 290, "chroma": 0.2 },
+    "critical": { "hue": 25 }
+  }
+}

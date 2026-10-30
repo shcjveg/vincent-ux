@@ -1,4 +1,4 @@
-// vincent-ux v1.4.3 · components/react/SectionCard.tsx
+// vincent-ux v1.5.0 · components/react/SectionCard.tsx
 import type { ComponentPropsWithoutRef, ReactNode } from 'react'
 import type { DataTimeValue } from './DataTime'
 import { Attention } from './Attention'

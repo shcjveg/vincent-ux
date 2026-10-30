@@ -3,7 +3,7 @@ name: vincent-ux
 description: 按 vincent-ux 设计系统写界面。生成或修改桌面 agent 工作台类页面（左导航、对话、多页签渲染区）、数据与运营工作台页面时使用；用户提到 vincent-ux、设计系统、按规范出页面时使用。
 ---
 
-<!-- vincent-ux v1.4.3 · SKILL.md -->
+<!-- vincent-ux v1.5.0 · SKILL.md -->
 
 # 用 vincent-ux 写界面
 

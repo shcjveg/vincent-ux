@@ -1,4 +1,4 @@
-/* vincent-ux v1.4.3 · components/css/organisms.css */
+/* vincent-ux v1.5.0 · components/css/organisms.css */
 /* 组织：完成一块完整内容的组件。依赖 tokens.css、base.css、atoms.css、molecules.css。 */
 
 /* ---------- 页头：一个标题 + 一句结论 + 页面级动作 ---------- */
@@ -931,6 +931,11 @@ body:has(.vx-guide) [data-tour] { scroll-margin: var(--vx-space-6); }
 .vx-tabset--workspace { display: flex; flex: 1; flex-direction: column; min-height: 0; }
 .vx-tabset--workspace > .vx-tabs-bar { flex-shrink: 0; }
 .vx-tabset--workspace > .vx-tab-panel { flex: 1; display: flex; flex-direction: column; min-height: 0; padding: 0; overflow: hidden; }
+/* 外开入口：紧跟页签条，和页签同高同字号；只用一个小箭头说明会离开当前页面 */
+.vx-tabs-links { display: flex; align-items: center; gap: var(--vx-space-1); margin-left: var(--vx-space-2); flex-shrink: 0; }
+.vx-tab-link { display: inline-flex; align-items: center; gap: var(--vx-space-1); height: var(--vx-size-hit); padding: 0 var(--vx-space-3); border-radius: var(--vx-radius-sm); font-size: var(--vx-font-size-md); color: var(--vx-text-secondary); text-decoration: none; white-space: nowrap; transition: background var(--vx-motion-duration-fast), color var(--vx-motion-duration-fast); }
+.vx-tab-link:hover { background: var(--vx-fill-hover); color: var(--vx-text-primary); text-decoration: none; }
+.vx-tab-link > svg { width: 12px; height: 12px; color: var(--vx-text-muted); }
 .vx-tabs-actions { display: flex; align-items: center; gap: var(--vx-space-1); margin-left: auto; padding-right: var(--vx-space-2); min-width: 0; }
 .vx-tabs-actions > .vx-meta, .vx-tabs-actions > .vx-tabs-meta { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .vx-tabs-actions > button { flex-shrink: 0; }
@@ -1256,3 +1261,79 @@ body:has(.vx-guide--banner) [data-tour] { scroll-margin-bottom: calc(var(--vx-gu
 
 .vx-composer-send:hover:not(:disabled) { background:var(--vx-ink-top); }
 .vx-composer-send:active:not(:disabled) { transform:translateY(.5px); }
+
+/* ---------- 抽屉详情：一种分区、一种字段、一种记录列表 ----------
+   结构：.vx-drawer > .vx-overlay-body > .vx-drawer-sections > .vx-drawer-section
+           .vx-drawer-section-head（标题 · 状态 .vx-tag · 行尾动作）
+           .vx-props > .vx-prop（名称 + 值或控件）
+           .vx-log（可选：追加记录，按时间）
+   分区之间只用留白与一道极细线；整张抽屉只有标题、名称/正文、说明三档文字。 */
+.vx-drawer-sections { display: flex; flex-direction: column; }
+.vx-drawer-section { display: flex; flex-direction: column; gap: var(--vx-space-4); padding-block: var(--vx-space-5); }
+.vx-drawer-section[data-open='false'] { padding-block: var(--vx-space-3-5); }
+.vx-drawer-section:first-child { padding-top: var(--vx-space-2); }
+.vx-drawer-section:last-child { padding-bottom: 0; }
+.vx-drawer-section + .vx-drawer-section { box-shadow: inset 0 1px 0 var(--vx-line-faint); }
+.vx-drawer-section-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--vx-space-2); min-height: 28px; }
+.vx-drawer-section-heading { margin: 0; min-width: 0; font: inherit; }
+/* 标题行即开关：不画按钮外观，箭头低调，悬停时箭头亮一档 */
+.vx-drawer-section-toggle { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--vx-space-2); min-height: 28px; padding: 0; border: 0; border-radius: var(--vx-radius-sm); background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.vx-drawer-section-title { font-size: var(--vx-font-size-md); font-weight: var(--vx-font-weight-semibold); color: var(--vx-text-primary); }
+.vx-drawer-section-chevron { width: 14px; height: 14px; color: var(--vx-text-muted); transform: rotate(-90deg); transition: transform var(--vx-motion-duration-fast), color var(--vx-motion-duration-fast); }
+.vx-drawer-section[data-open='true'] .vx-drawer-section-chevron { transform: none; }
+.vx-drawer-section-toggle:hover .vx-drawer-section-chevron { color: var(--vx-text-secondary); }
+.vx-drawer-section-actions { display: inline-flex; gap: var(--vx-space-2); margin-left: auto; }
+.vx-drawer-section-body { display: flex; flex-direction: column; gap: var(--vx-space-4); }
+.vx-drawer-section-body[hidden] { display: none; }
+.vx-drawer-section-head .vx-meta { flex-shrink: 0; }
+.vx-drawer-section > .vx-field + .vx-field { margin-top: var(--vx-space-1); }
+
+/* 字段栅格：短字段两列并排，长字段独占一行；窄抽屉自动一列。可编辑与不可编辑共用同一栅格，切换时位置不变。 */
+.vx-props, .vx-field-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(180px, 100%), 1fr)); gap: var(--vx-space-4); }
+.vx-props > .vx-prop--wide, .vx-field-grid > .vx-field--wide { grid-column: 1 / -1; }
+.vx-prop { display: flex; flex-direction: column; gap: var(--vx-space-1-5); min-width: 0; }
+.vx-prop-label { font-size: var(--vx-font-size-sm); font-weight: var(--vx-font-weight-medium); color: var(--vx-text-secondary); }
+.vx-prop-label[data-required='true']::after { content: ' *'; color: var(--vx-text-tertiary); }
+.vx-prop-value { font-size: var(--vx-font-size-md); line-height: 1.5; color: var(--vx-text-primary); overflow-wrap: anywhere; white-space: pre-line; }
+.vx-prop-empty { color: var(--vx-text-tertiary); }
+.vx-prop-value > .vx-images, .vx-prop > .vx-images { margin-top: var(--vx-space-0-5); }
+.vx-prop > .vx-option-grid { margin-top: calc(-1 * var(--vx-space-1)); }
+/* 字段里的下拉（Select）与输入框同高、同字号、同描边：同一类控件在表单里只有一种外观 */
+.vx-prop > .vx-trigger, .vx-field > .vx-trigger { width: 100%; height: var(--vx-size-control-md); padding: 0 var(--vx-space-2-5) 0 var(--vx-space-3); border-color: var(--vx-line-control); box-shadow: var(--vx-shadow-inset); font-size: var(--vx-font-size-md); color: var(--vx-text-primary); }
+.vx-prop > .vx-trigger .vx-trigger-placeholder, .vx-field > .vx-trigger .vx-trigger-placeholder { color: var(--vx-text-tertiary); }
+
+/* 追加记录：核验、补图、复核、改期等只追加不覆盖的历史，用一张带表头的小表格（table.vx-log）：
+   时间 · 事项 · 附图三列对齐，外框与行线都是极细线，表头浅底；没有附图时不出附图列。 */
+.vx-log { width: 100%; border-collapse: separate; border-spacing: 0; border: 1px solid var(--vx-line-faint); border-radius: var(--vx-radius-md); overflow: hidden; font-size: var(--vx-font-size-md); }
+.vx-log th { padding: var(--vx-space-1-5) var(--vx-space-3); background: var(--vx-fill-quiet); font-size: var(--vx-font-size-sm); font-weight: var(--vx-font-weight-medium); color: var(--vx-text-tertiary); text-align: left; white-space: nowrap; }
+.vx-log td { padding: var(--vx-space-2) var(--vx-space-3); border-top: 1px solid var(--vx-line-faint); vertical-align: middle; color: var(--vx-text-primary); overflow-wrap: anywhere; }
+.vx-log td:first-child, .vx-log th:first-child { width: 104px; white-space: nowrap; }
+.vx-log td:first-child { font-size: var(--vx-font-size-sm); color: var(--vx-text-secondary); font-family: var(--vx-font-family-num); }
+.vx-log-images { width: 1%; white-space: nowrap; }
+.vx-log .vx-images { flex-wrap: nowrap; gap: var(--vx-space-1); margin: 0; }
+.vx-log .vx-images-item { width: 28px; height: 36px; border-radius: var(--vx-radius-sm); }
+.vx-option--create { color: var(--vx-text-secondary); }
+
+/* 一组复选：等宽两列，命中区沿用 .vx-control-label */
+.vx-option-group { display: flex; flex-direction: column; gap: var(--vx-space-1); border: 0; margin: 0; padding: 0; min-width: 0; }
+.vx-option-group + .vx-option-group { margin-top: var(--vx-space-2); }
+.vx-option-group > legend, .vx-option-group-label { padding: 0; margin-bottom: var(--vx-space-1); font-size: var(--vx-font-size-sm); color: var(--vx-text-tertiary); }
+.vx-option-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(180px, 100%), 1fr)); gap: 0 var(--vx-space-4); margin-left: calc(-1 * var(--vx-space-1)); }
+
+/* ---------- 文字左上角红点：页签、筛选触发器、列表行标题、抽屉分区标题共用 ----------
+   绝对定位，不参与宽度计算，出现或消失时文字不移动。 */
+.vx-attention-mark { position: relative; display: inline-flex; max-width: 100%; min-width: 0; }
+.vx-attention-mark > .vx-dot { position: absolute; left: -7px; top: -1px; width: 6px; height: 6px; pointer-events: none; }
+.vx-trigger > .vx-attention-mark { display: flex; min-width: 0; }
+.vx-option > .vx-attention-count { margin-left: auto; align-self: center; }
+
+/* ---------- 用户入口：右上角头像，点开极简菜单 ---------- */
+.vx-user-trigger { display: inline-grid; place-items: center; width: var(--vx-size-control-md); height: var(--vx-size-control-md); padding: 0; border-radius: 50%; transition: box-shadow var(--vx-motion-duration-fast); }
+.vx-user-trigger:hover, .vx-user-trigger[data-popup-open] { box-shadow: 0 0 0 3px var(--vx-fill-selected); }
+.vx-user-trigger > .vx-avatar { width: 28px; height: 28px; }
+.vx-menu-head { display: flex; align-items: center; gap: var(--vx-space-2-5); padding: var(--vx-space-2) var(--vx-space-3) var(--vx-space-3); }
+.vx-menu-head { margin-bottom: var(--vx-space-1); box-shadow: inset 0 -1px 0 var(--vx-line-faint); }
+.vx-menu-head-text { display: flex; flex-direction: column; min-width: 0; }
+.vx-menu-head-name { font-size: var(--vx-font-size-md); font-weight: var(--vx-font-weight-medium); color: var(--vx-text-primary); }
+.vx-menu-head-meta { font-size: var(--vx-font-size-sm); color: var(--vx-text-tertiary); overflow-wrap: anywhere; }
+

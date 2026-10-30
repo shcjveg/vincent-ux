@@ -1,4 +1,4 @@
-// vincent-ux v1.4.3 · components/react/Metric.tsx
+// vincent-ux v1.5.0 · components/react/Metric.tsx
 import type { ReactNode } from 'react'
 import { TextTip } from './TextTip'
 

@@ -1,12 +1,15 @@
-// vincent-ux v1.4.3 · components/react/Tabs.tsx
+// vincent-ux v1.5.0 · components/react/Tabs.tsx
 import { Tabs as T } from '@base-ui/react/tabs'
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { Icon } from './Icon'
 
 export type TabItem<V extends string> = { value: V; label: string; content: ReactNode; closable?: boolean; disabled?: boolean; indicator?: ReactNode }
+/** 页签条末尾的外开入口：不是页签，不进 tablist；点开在新窗口（或由宿主 onOpen 打开）。 */
+export type TabLink = { label: string; href: string; onOpen?: (href: string) => void }
 type ClosePosition = { left: number; top: number; visible: boolean }
-export function Tabs<V extends string>({ label, value, items, onChange, onClose, actions, leading, variant = 'content', keepMounted = false, hidden = false }: {
+export function Tabs<V extends string>({ label, value, items, onChange, onClose, actions, leading, links, variant = 'content', keepMounted = false, hidden = false }: {
   label: string; value: V; items: TabItem<V>[]; onChange: (value: V) => void; onClose?: (value: V) => void
+  links?: TabLink[]
   actions?: ReactNode; leading?: ReactNode; variant?: 'content' | 'workspace'; keepMounted?: boolean; hidden?: boolean
 }) {
   const buttons = useRef(new Map<V, HTMLElement>())
@@ -77,6 +80,8 @@ export function Tabs<V extends string>({ label, value, items, onChange, onClose,
             tabIndex={item.value===value?0:-1} aria-label={`关闭${item.label}`} onClick={()=>close(item)}><Icon name="close" size="sm"/></button>)}
         </div>
       </div>
+      {!!links?.length && <div className="vx-tabs-links">{links.map(l => <a key={l.href} className="vx-tab-link" href={l.href} target="_blank" rel="noreferrer"
+        aria-label={`${l.label}（在新窗口打开）`} onClick={e => { if (l.onOpen) { e.preventDefault(); l.onOpen(l.href) } }}>{l.label}<Icon name="external" size="sm" /></a>)}</div>}
       {actions && <div className="vx-tabs-actions">{actions}</div>}
     </div>
     {(keepMounted ? [...items].sort((a,b)=>Number(b.value===value)-Number(a.value===value)) : items).map(item=><T.Panel key={item.value} value={item.value} keepMounted={keepMounted} className="vx-tab-panel">{item.content}</T.Panel>)}

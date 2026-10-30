@@ -1,4 +1,4 @@
-/* vincent-ux v1.4.3 · components/css/base.css */
+/* vincent-ux v1.5.0 · components/css/base.css */
 /* 基础重置与全局排版。依赖 tokens/dist/tokens.css。 */
 
 *,
@@ -55,14 +55,14 @@ a {
   outline-offset: 2px;
 }
 
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+/* 滚动条：只用 CSS 标准属性，保留系统的覆盖式滚动条（macOS 等平台滚动时才出现、不占宽度）；
+   取标准里最细的 thin，滑块用半透明中性色 fill-selected，轻到只在滚动时被注意到，跟随主题。不写 ::-webkit-scrollbar，否则浏览器会改画常显的传统滚动条。 */
+:root {
+  scrollbar-color: var(--vx-fill-selected) transparent;
 }
 
-::-webkit-scrollbar-thumb {
-  background: var(--vx-fill-selected);
-  border-radius: 4px;
+* {
+  scrollbar-width: thin;
 }
 
 /* 文字层级：标题 · 正文 · 说明，加一个数字。页面里的字只用这几档，层级靠字重和明度，不靠颜色和框 */

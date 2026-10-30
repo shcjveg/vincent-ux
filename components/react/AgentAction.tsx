@@ -1,4 +1,4 @@
-// vincent-ux v1.4.3 · components/react/AgentAction.tsx
+// vincent-ux v1.5.0 · components/react/AgentAction.tsx
 // 页面里交给 AI 的入口，两种样式固定（见 patterns/delegate.md）：
 // ask：问、讲、核对、拆解，只是聊，不产出东西 → 文字按钮
 // draft：起草、生成，产出一份要人审的东西 → 次按钮；它是流程中的一步时可以 primary

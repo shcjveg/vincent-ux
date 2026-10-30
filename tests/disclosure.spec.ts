@@ -40,7 +40,7 @@ test('行内步骤与执行过程使用各自语义，进行中保持展开且�
 })
 
 for(const theme of ['light','dark'])test(`${theme} 原型组件组合在窄屏完整可读且无障碍`,async({page})=>{
- await page.locator(`[data-theme-set=${theme}]`).click()
+ await page.evaluate(t => { document.documentElement.dataset.theme = t }, theme)
  for(const width of [1440,390,320]){await page.setViewportSize({width,height:900});const demo=page.getByTestId('disclosure-examples');expect(await demo.evaluate(e=>e.scrollWidth<=e.clientWidth+1)).toBe(true);const head=page.getByTestId('group-disclosure').locator('.vx-fold-head');await head.click();await head.click();const columns=await page.getByTestId('organisms-examples').locator('.vx-metrics').evaluate(e=>getComputedStyle(e).gridTemplateColumns.split(' ').length);expect(columns).toBe(width===320?1:width===390?2:4)}
  const result=await new AxeBuilder({page}).include('#disclosure').include('#controls-demo').include('#organisms-demo').analyze();expect(result.violations).toEqual([])
  expect(await page.locator('#organisms .vx-decision-actions').count()).toBe(0)

@@ -38,7 +38,7 @@ for(const width of [1440,390,320])test(`${width}px 工作区关闭、导航恢�
 })
 
 for(const theme of ['light','dark'])test(`${theme} 发送启禁状态与新增示例无障碍`,async({page})=>{
- await page.locator(`[data-theme-set=${theme}]`).click();const demo=page.getByTestId('session-workspace');await demo.getByRole('button',{name:'关闭示例页面',exact:true}).click();const send=demo.getByRole('button',{name:'发送示例消息'}),input=demo.getByRole('textbox',{name:'示例对话输入'})
+ await page.evaluate(t => { document.documentElement.dataset.theme = t }, theme);const demo=page.getByTestId('session-workspace');await demo.getByRole('button',{name:'关闭示例页面',exact:true}).click();const send=demo.getByRole('button',{name:'发送示例消息'}),input=demo.getByRole('textbox',{name:'示例对话输入'})
  await expect(send).toBeDisabled();const colors=()=>send.evaluate(e=>({bg:getComputedStyle(e).backgroundColor,color:getComputedStyle(e).color}));const disabled=await colors();await send.hover({force:true});expect(await colors()).toEqual(disabled)
  await input.fill('继续当前任务');await expect(send).toBeEnabled();await expect.poll(async()=>JSON.stringify(await colors())).not.toBe(JSON.stringify(disabled));await input.press('Enter');await expect(demo.locator('.vx-msg--user')).toHaveText('继续当前任务');await expect(input).toHaveValue('');await expect(send).toBeDisabled()
  const a11y=await new AxeBuilder({page}).include('#session-workspace').include('#component-states').withTags(['wcag2a','wcag2aa','wcag21aa','wcag22aa']).analyze();expect(a11y.violations).toEqual([])

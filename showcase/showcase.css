@@ -41,8 +41,83 @@
   color: var(--vx-text-primary);
 }
 
-.sc-theme {
-  margin-top: 20px;
+.sc-palette-pick {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vx-space-1);
+  margin-top: var(--vx-space-5);
+  font-size: var(--vx-font-size-sm);
+  color: var(--vx-text-tertiary);
+}
+
+.sc-sub {
+  margin: var(--vx-space-8) 0 var(--vx-space-2);
+  font-size: var(--vx-font-size-xl);
+}
+
+/* 配色主题对比：每套一张卡，色条取自生成产物，跟随当前明暗 */
+.sc-palettes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--vx-space-3);
+}
+
+.sc-palette {
+  display: flex;
+  flex-direction: column;
+  gap: var(--vx-space-2);
+  padding: var(--vx-space-3);
+  border-radius: var(--vx-radius-lg);
+  background: var(--vx-surface-card);
+  box-shadow: var(--vx-shadow-card);
+  text-align: left;
+}
+
+.sc-palette[aria-pressed='true'] {
+  box-shadow: 0 0 0 2px var(--vx-focus-ring);
+}
+
+.sc-palette-preview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--vx-space-1-5);
+  padding: var(--vx-space-2-5);
+  border-radius: var(--vx-radius-md);
+}
+
+.sc-palette-preview > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--vx-space-2);
+  border-radius: var(--vx-radius-sm);
+  font-size: var(--vx-font-size-sm);
+}
+
+.sc-palette-preview strong {
+  font-family: var(--vx-font-family-num);
+  font-size: var(--vx-font-size-xl);
+}
+
+.sc-palette-viz {
+  display: flex;
+  gap: 2px;
+  height: 10px;
+}
+
+.sc-palette-viz i {
+  flex: 1;
+  border-radius: 2px;
+}
+
+.sc-palette b {
+  font-size: var(--vx-font-size-lg);
+}
+
+.sc-palette p {
+  margin: 0;
+  font-size: var(--vx-font-size-sm);
+  color: var(--vx-text-secondary);
 }
 
 .sc-main {
@@ -214,9 +289,12 @@
 @media(max-width:740px) {
  .sc { display:block; }
  .sc-toc { position:static;height:auto;display:flex;align-items:center;gap:8px;overflow-x:auto;padding:12px 16px; }
- .sc-toc h1,.sc-toc a,.sc-theme { flex-shrink:0;white-space:nowrap; }
+ .sc-toc h1,.sc-toc a { flex-shrink:0;white-space:nowrap; }
  .sc-toc [data-version] { display:none; }
- .sc-theme { margin:0; }
  .sc-main { padding:16px; }
  .sc-board { padding:16px; }
 }
+
+/* 对客门户示例：把整屏模板装进一块固定高度的板子 */
+.sc-portal { padding: 0; overflow: hidden; border-radius: 14px; }
+.sc-portal .vx-portal { height: 600px; }

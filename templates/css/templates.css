@@ -1,4 +1,4 @@
-/* vincent-ux v1.4.3 · templates/css/templates.css */
+/* vincent-ux v1.5.0 · templates/css/templates.css */
 /* 模板：应用与页面的骨架。依赖 tokens.css 与 components/css/*。
    结构：.vx-app > .vx-nav（可收起）+ .vx-chat（按需出现）+ .vx-render（.vx-tabs + .vx-render-body > .vx-page） */
 
@@ -553,3 +553,96 @@ button.vx-nav-account:hover, button.vx-nav-account[data-popup-open] { background
 .vx-app[data-render='closed'] .vx-composer { width:calc(100% - 32px);max-width:880px;align-self:center;box-sizing:border-box; }
 .vx-workspace-close { flex-shrink:0; }
 @media(max-width:740px) { .vx-tabs-actions .vx-workspace-close { min-width:44px;min-height:44px; } }
+
+/* ---------- 对客门户：品牌方、客户等外部用户的登录与首屏 ----------
+   唯一允许的氛围层：一组缓慢上漂的内容瀑布流（.vx-portal-feed），只用中性面与少量强调色的抽象卡片，
+   不放真实业务内容。其余元素沿用系统的面、墨色主按钮和数字字体；动效只有「漂移」与「入场上浮」两种，
+   减少动态效果时由 base.css 统一停住。结构：
+   <main.vx-portal> <div.vx-portal-feed aria-hidden> .vx-portal-col × n </div> <section.vx-portal-panel> … </section> */
+.vx-portal { position: relative; height: 100dvh; min-height: 560px; display: grid; grid-template-columns: minmax(0, 7fr) minmax(360px, 5fr); grid-template-rows: minmax(0, 1fr); background: var(--vx-surface-canvas); overflow: hidden; }
+.vx-portal-feed {
+  position: relative; min-height: 0; overflow: hidden; display: flex; justify-content: center; gap: var(--vx-space-4);
+  padding-inline: var(--vx-space-6);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, currentColor 18%, currentColor 82%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, currentColor 18%, currentColor 82%, transparent 100%);
+  animation: vx-fade 1.2s var(--vx-motion-ease-out) both;
+}
+/* 整组轻微倾斜放大，给平面一点纵深；每列速度不同，一列向下，避免机械感。 */
+.vx-portal-feed-inner { display: flex; gap: var(--vx-space-4); transform: rotate(-7deg) scale(1.18); transform-origin: 50% 40%; }
+.vx-portal-col { display: flex; flex-direction: column; gap: var(--vx-space-4); width: clamp(96px, 7.4vw, 128px); animation: vx-portal-drift var(--vx-portal-speed, 64s) linear infinite; }
+.vx-portal-col:nth-child(2n) { animation-direction: reverse; margin-top: -40%; }
+.vx-portal-tile { display: flex; flex-direction: column; gap: var(--vx-space-2); padding: var(--vx-space-2); border-radius: var(--vx-radius-lg); background: var(--vx-surface-card); box-shadow: var(--vx-shadow-card); }
+.vx-portal-tile-cover { aspect-ratio: 3 / 4; border-radius: var(--vx-radius-md); background: var(--vx-surface-inset); }
+.vx-portal-tile[data-shape='tall'] .vx-portal-tile-cover { aspect-ratio: 3 / 4.6; }
+.vx-portal-tile[data-shape='square'] .vx-portal-tile-cover { aspect-ratio: 1; }
+.vx-portal-tile[data-tone='warm'] .vx-portal-tile-cover { background: var(--vx-brand-accent-soft); }
+.vx-portal-tile[data-tone='deep'] .vx-portal-tile-cover { background: var(--vx-fill-selected); }
+.vx-portal-tile-line { height: 7px; border-radius: var(--vx-radius-full); background: var(--vx-fill-quiet); }
+.vx-portal-tile-line + .vx-portal-tile-line { width: 62%; }
+.vx-portal-tile-foot { display: flex; align-items: center; gap: var(--vx-space-1-5); padding-bottom: var(--vx-space-0-5); }
+.vx-portal-tile-foot::before { content: ''; width: 12px; height: 12px; border-radius: 50%; background: var(--vx-fill-selected); }
+.vx-portal-tile-foot::after { content: ''; height: 6px; width: 34%; margin-left: auto; border-radius: var(--vx-radius-full); background: var(--vx-fill-quiet); }
+/* 上榜的笔记：一枚金色小签，是整片里唯一的强调色 */
+.vx-portal-tile[data-mark] .vx-portal-tile-cover { position: relative; }
+.vx-portal-tile[data-mark] .vx-portal-tile-cover::after { content: ''; position: absolute; left: 8px; top: 8px; width: 26px; height: 8px; border-radius: var(--vx-radius-full); background: var(--vx-brand-accent-bright); }
+
+.vx-portal-panel { position: relative; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; gap: var(--vx-space-6); padding: clamp(var(--vx-space-8), 8vh, var(--vx-space-24)) clamp(var(--vx-space-6), 5vw, var(--vx-space-14)); background: var(--vx-surface-shell); }
+.vx-portal-panel > * { position: relative; width: min(380px, 100%); }
+/* 面板的材质：一层极淡的颗粒，让大面积的面不是一块死色；不拦截点击，减少透明度时也保留 */
+.vx-portal-panel::before { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0.07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.vx-portal-eyebrow { margin: 0; font-size: var(--vx-font-size-sm); letter-spacing: 0.12em; color: var(--vx-text-tertiary); }
+.vx-portal-title { margin: var(--vx-space-3) 0 0; font-size: clamp(36px, 3.6vw, 52px); line-height: 1.08; font-weight: var(--vx-font-weight-semibold); letter-spacing: -0.02em; color: var(--vx-text-primary); }
+.vx-portal-lead { margin: var(--vx-space-3) 0 0; font-size: var(--vx-font-size-lg); line-height: 1.7; color: var(--vx-text-secondary); }
+.vx-portal-form { display: flex; flex-direction: column; gap: var(--vx-space-4); }
+.vx-portal-form .vx-btn { height: var(--vx-size-control-lg); }
+/* 登录字段成组：一块凹面里一行一个字段，标签在左；行间只用极细的结构线，聚焦的那一行亮一档并给焦点环 */
+.vx-portal-fields { display: flex; flex-direction: column; border: 1px solid var(--vx-line-control); border-radius: var(--vx-radius-md); background: var(--vx-surface-inset); box-shadow: var(--vx-shadow-inset); overflow: hidden; }
+.vx-portal-field { display: grid; grid-template-columns: 3.5em minmax(0, 1fr); align-items: center; gap: var(--vx-space-3); min-height: 48px; padding: 0 var(--vx-space-4); transition: background var(--vx-motion-duration-fast); }
+.vx-portal-field + .vx-portal-field { box-shadow: inset 0 1px 0 var(--vx-line-faint); }
+.vx-portal-field > span { font-size: var(--vx-font-size-md); color: var(--vx-text-tertiary); }
+.vx-portal-field:focus-within { background: var(--vx-fill-quiet); outline: 2px solid var(--vx-focus-ring); outline-offset: -2px; }
+.vx-portal-input { width: 100%; min-width: 0; height: 46px; padding: 0; border: 0; background: transparent; color: var(--vx-text-primary); font: inherit; font-size: var(--vx-font-size-lg); outline: none; }
+
+/* 演示账号：一行一个，整行可点直接登录；悬停时浮起一档、箭头前移 */
+.vx-portal-quick { display: flex; flex-direction: column; gap: var(--vx-space-2); }
+.vx-portal-quick-caption { font-size: var(--vx-font-size-sm); color: var(--vx-text-tertiary); }
+.vx-portal-account { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--vx-space-3); width: 100%; padding: var(--vx-space-3) var(--vx-space-4); border: 0; border-radius: var(--vx-radius-md); background: var(--vx-fill-quiet); color: inherit; font: inherit; text-align: left; cursor: pointer; transition: background var(--vx-motion-duration-fast), box-shadow var(--vx-motion-duration-fast), transform var(--vx-motion-duration-fast) var(--vx-motion-ease-out); }
+.vx-portal-account:hover, .vx-portal-account:focus-visible { background: var(--vx-surface-card); box-shadow: var(--vx-shadow-card); transform: translateY(-1px); }
+.vx-portal-account-name { display: block; font-size: var(--vx-font-size-md); font-weight: var(--vx-font-weight-semibold); color: var(--vx-text-primary); }
+.vx-portal-account-meta { display: block; margin-top: var(--vx-space-0-5); font-size: var(--vx-font-size-sm); color: var(--vx-text-tertiary); font-family: var(--vx-font-family-num); }
+.vx-portal-account > svg { width: 16px; height: 16px; color: var(--vx-text-tertiary); transition: transform var(--vx-motion-duration-fast) var(--vx-motion-ease-out), color var(--vx-motion-duration-fast); }
+.vx-portal-account:hover > svg, .vx-portal-account:focus-visible > svg { transform: translateX(3px); color: var(--vx-text-primary); }
+.vx-portal-account[aria-busy='true'] { opacity: 0.6; cursor: progress; }
+
+/* 对客首屏：页面最上方一段，名称用展示字号，几个关键数字用数字字体大号排开 */
+.vx-portal-hero { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--vx-space-6) var(--vx-space-10); padding: var(--vx-space-8) var(--vx-space-8) var(--vx-space-7); border-radius: var(--vx-radius-xl); background: var(--vx-surface-card); box-shadow: var(--vx-shadow-card); }
+.vx-portal-hero-title { margin: var(--vx-space-2) 0 0; font-size: clamp(28px, 2.6vw, 36px); line-height: 1.15; font-weight: var(--vx-font-weight-semibold); letter-spacing: -0.015em; }
+.vx-portal-figures { display: flex; flex-wrap: wrap; gap: var(--vx-space-4) var(--vx-space-10); margin: 0; }
+.vx-portal-figure { display: flex; flex-direction: column-reverse; gap: var(--vx-space-1); margin: 0; }
+.vx-portal-figure dt { font-size: var(--vx-font-size-sm); color: var(--vx-text-tertiary); }
+.vx-portal-figure dd { margin: 0; font-family: var(--vx-font-family-num); font-variant-numeric: tabular-nums; font-size: 34px; line-height: 1; letter-spacing: -0.01em; color: var(--vx-text-primary); }
+.vx-portal-figure dd small { margin-left: 2px; font-size: var(--vx-font-size-md); color: var(--vx-text-tertiary); }
+
+/* 对客页面里可点开的内容卡：悬停浮起一档，封面轻微放大；只用在对客模板内 */
+.vx-lift { transition: transform var(--vx-motion-duration-fast) var(--vx-motion-ease-out), box-shadow var(--vx-motion-duration-fast), background var(--vx-motion-duration-fast); }
+.vx-lift:hover, .vx-lift:focus-within { transform: translateY(-2px); background: var(--vx-surface-card); box-shadow: var(--vx-shadow-card); }
+.vx-lift img { transition: transform 600ms var(--vx-motion-ease-out); }
+.vx-lift:hover img { transform: scale(1.03); }
+
+/* 入场上浮：同组内容按顺序（--i）错开 70ms 出现，只在首次渲染时发生 */
+.vx-rise { animation: vx-rise 640ms var(--vx-motion-ease-out) both; animation-delay: calc(var(--i, 0) * 70ms); }
+
+@keyframes vx-portal-drift { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+@keyframes vx-rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 900px) {
+  /* 窄屏：氛围层铺满整屏并压暗，面板成为居中的一张浮卡，上下留白均匀，不画分隔线 */
+  .vx-portal { height: auto; min-height: 100dvh; grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(100dvh, auto); place-items: center; padding: var(--vx-space-6) var(--vx-space-4); }
+  .vx-portal-feed { position: absolute; inset: 0; opacity: 0.45; -webkit-mask-image: linear-gradient(to bottom, currentColor 0, currentColor 30%, transparent 100%); mask-image: linear-gradient(to bottom, currentColor 0, currentColor 30%, transparent 100%); }
+  /* 浮卡是悬在氛围层上的一层，按浮层处理：半透明面 + 磨砂，顶边一道细高光 */
+  .vx-portal-panel { width: min(420px, 100%); min-height: 0; overflow: visible; justify-content: flex-start; gap: var(--vx-space-5); padding: var(--vx-space-8) var(--vx-space-7) var(--vx-space-7); border-radius: var(--vx-radius-xl); background: var(--vx-surface-overlay); -webkit-backdrop-filter: var(--vx-blur-overlay); backdrop-filter: var(--vx-blur-overlay); box-shadow: inset 0 1px 0 var(--vx-fill-selected), var(--vx-shadow-overlay); }
+  .vx-portal-panel > * { width: 100%; }
+  .vx-portal-title { margin-top: 0; font-size: 34px; }
+  .vx-portal-hero { padding: var(--vx-space-6) var(--vx-space-5); }
+}

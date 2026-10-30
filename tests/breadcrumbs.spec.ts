@@ -30,7 +30,7 @@ test('无历史记录只保留路径与空态，不出现筛选或零计数',asy
 })
 
 for(const theme of ['light','dark'])test(`${theme} 面包屑在桌面与窄屏完整可读且无障碍`,async({page})=>{
- await page.locator(`[data-theme-set=${theme}]`).click();const demo=page.getByTestId('breadcrumb-examples')
+ await page.evaluate(t => { document.documentElement.dataset.theme = t }, theme);const demo=page.getByTestId('breadcrumb-examples')
  for(const width of[1440,390,320]){await page.setViewportSize({width,height:1000});const head=demo.locator('.vx-pagehead');expect(await head.evaluate(e=>e.scrollWidth<=e.clientWidth+1)).toBe(true);await expect(demo.getByRole('heading',{name:'历史已办',level:2})).toBeVisible()}
  expect((await new AxeBuilder({page}).include('#breadcrumbs').analyze()).violations).toEqual([])
 })

@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.3 · components/README.md -->
+<!-- vincent-ux v1.5.0 · components/README.md -->
 # 组件选用指南
 
 按「要做的事」分八组，一个组件只出现在一组里。每组先说什么情况用哪个，再说常见的误用。长什么样看 `showcase/index.html`；多个组件怎么配合看 `patterns/`；颜色语义看 `principles/visual.md`。带「React」的有交互组件，其余直接用类名。
@@ -12,14 +12,14 @@
 | `Breadcrumbs` | [面包屑与二级页](breadcrumbs.md)：路径替换页头、返回原范围、历史空态 | [面包屑](../showcase/index.html#breadcrumbs) |
 | `Fold` | [收起与展开](disclosure.md)：分组、详情、编辑、步骤与状态保留 | [收起与展开](../showcase/index.html#disclosure) |
 | `Button` / `Field` / `Checkbox` / `Switch` / `RadioGroup` / `Select` | 输入、字段关联、禁用与保存 | [交互与状态](../showcase/index.html#interactive)、[字段与范围](../showcase/index.html#molecules) |
-| `SearchField` / `FilterBar` / `Collection` / `Pagination` / `Segmented` | [浏览与筛选](../patterns/browse.md) | [浏览与筛选](../showcase/index.html#browse) |
+| `SearchField` / `FilterBar` / `Collection` / `Pagination` / `Segmented` / `SelectionBar` | [浏览与筛选](../patterns/browse.md) | [浏览与筛选](../showcase/index.html#browse) |
 | `DateFilter` / `SortMenu` / `TaskStatus` / `TaskCard` | [待办与历史](../patterns/task-workspace.md) | [待办实例](../showcase/index.html#task-workspace) |
 | `Metric` / `DataTip` / `SectionHeader` / `SectionCard` / `SectionAction` / `TableScroll` | 数据范围、来源与板块组合 | [数据板块](../showcase/index.html#organisms)、[摘要与板块](../showcase/index.html#molecules) |
 | `EmptyState` / `DataTime` | [空状态与数据时间](#空状态数据时间与操作自适应) | [状态与时间](../showcase/index.html#component-states) |
-| `ObjectPreview` / `ActionSummary` / `Attention` / `AttentionTitle` | 对象辨认、摘要与[提醒](../patterns/todo-and-badge.md) | [摘要与分组](../showcase/index.html#molecules)、[收起与展开](../showcase/index.html#disclosure) |
+| `ObjectPreview` / `ActionSummary` / `Attention` / `AttentionTitle` / `AttentionMark` | 对象辨认、摘要与[提醒](../patterns/todo-and-badge.md) | [摘要与分组](../showcase/index.html#molecules)、[收起与展开](../showcase/index.html#disclosure) |
 | `TextTip` / `Tip` / `TipProvider` | 口径与补充解释；Provider 提供提示上下文 | [板块说明](../showcase/index.html#molecules)、[交互](../showcase/index.html#interactive) |
 | `DecisionCard` / `ActionBar` / `AgentAction` | [决定](../patterns/decision.md)与[派活](../patterns/delegate.md)；ActionBar 组合在决定区 | [单次决定](../showcase/index.html#interactive)、[派活入口](../showcase/index.html#molecules) |
-| `Dialog` / `Guide` | 模态工作面与[功能导览](../patterns/guide.md) | [弹层](../showcase/index.html#interactive)、[选择与导览](../showcase/index.html#guide) |
+| `Dialog` / `DetailDrawer` / `DrawerSection` / `Property` / `Guide` | 模态工作面、[抽屉详情](drawer.md)与[功能导览](../patterns/guide.md) | [弹层](../showcase/index.html#interactive)、[选择与导览](../showcase/index.html#guide) |
 | `Tabs` / `WorkspaceOverlay` / `ActionMenu` / `useViewportQuery` | [外壳模板](../templates/README.md)、[会话状态](../patterns/page-chat-flow.md)；hook 控制断点 | [真实工作区](../showcase/index.html#session-workspace) |
 | `Icon` | [语义图标](../icons/README.md) | [图标目录](../showcase/index.html#icons) |
 
@@ -46,6 +46,8 @@
 | 不可撤回的危险动作 | `Button variant="danger"` / `.vx-btn--danger`，按后果确认 |
 | 交给 AI 问一问 / 起草一份 | `AgentAction kind="ask | draft"`（React），见 `patterns/delegate.md` |
 | 外壳和工具栏里的纯图标动作 | `.vx-icon-btn`，必须带 `aria-label` |
+| 当前用户入口（外壳没有用户卡片时） | `UserMenu`（React）：右上角一个头像，点开是名字、身份和账户动作的极简菜单 |
+| 明暗切换 | `ThemeToggle`（React）：左下角最底一个半透明小圆钮，点一下在浅色与暗色之间切换，记住选择；没选过时用根元素上的默认明暗（嵌入浅色宿主时写 `data-theme="light"`），再没有就跟随系统。左下角的其它浮钮让到它上方 |
 
 误用：用强调色做按钮；用箭头表示「去对话」（箭头只表示去另一页）。
 
@@ -60,9 +62,11 @@
 | 行尾切换一个属性，状态要写出来（置顶 / 已置顶） | `.vx-toggle` |
 | 表单里的勾选 | `Checkbox`（React，含半选）/ `.vx-check` |
 | 少量互斥选项 | `RadioGroup`（React，原生 radio） |
+| 可由用户扩充取值的枚举 | `Select creatable`：下拉里搜索不到时直接新增，不另设选项维护页 |
 | 在少量对象之间切换，或已应用的筛选条件 | `button.vx-chip[aria-pressed]`，放在 `.vx-filterbar` |
 | 引导或设置里的一次性选择，每项要一句说明 | `.vx-choice`（大卡，单选）、`--row`（行式清单）、`--tile`（带标识的一组对象，可多选；还不能用的照常列出并 `disabled`，说明写原因） |
-| 传文件 | `.vx-dropzone` |
+| 传文件（文档、素材包） | `.vx-dropzone` |
+| 传图片，可多张，传完能看到缩略图 | `.vx-images`（缩略图 + 末尾添加格；可附一排示例图让用户直接点选） |
 
 误用：页内频繁切换用选择卡（用分段）；把大量条件同时铺开（常用条件前置，复杂条件按需展开）。
 
@@ -130,7 +134,7 @@
 | 情况 | 用 |
 |---|---|
 | 下拉选项、补充说明 | `.vx-popup`、`Tip`（React） |
-| 不离开当前页看一个对象的详情 | `Dialog variant="drawer"`（React）/ `.vx-drawer` |
+| 不离开当前页看一个对象的详情 | `DetailDrawer`（React）/ `.vx-drawer`；正文按[抽屉详情](drawer.md)：`DrawerSection` 分区、`Property` 字段（`.vx-props`）、`.vx-log` 追加记录 |
 | 必须先答复才能继续 | `Dialog`（React）/ `.vx-dialog` |
 
 误用：能在页面里展开说清的事弹对话框；浮层以外的地方用玻璃质感。
@@ -147,8 +151,9 @@
 | 一串内容或卡片网格 | `Collection layout="list | grid"`：共用结果、总数、加载、空、失败与重试 |
 | 列表／网格切换 | `Segmented`，保持排序、筛选和选择 |
 | 多页结果 | `Pagination`：从 1 开始，边界禁用，最多显示 5 个邻近页码 |
+| 多选后批量处理 | `SelectionBar`：选中至少一项时浮在结果区底部；左侧已选数量与取消选择，短竖线后是本次可做的动作，最多一个主按钮；Esc 取消选择 |
 | 长表格在有限宽度内逐列比较 | `TableScroll`：命名滚动区域，仅溢出时进入 Tab 顺序；通过 `minWidth` 按列数保留可读宽度 |
-| 同一工作区的多个内容面板 | `Tabs`：方向键切换，Delete 或悬停／聚焦时出现的行尾按钮关闭页签 |
+| 同一工作区的多个内容面板 | `Tabs`（另一个产品或页面的入口用 `links`，标外开图标，不做成页签）：方向键切换，Delete 或悬停／聚焦时出现的行尾按钮关闭页签 |
 
 组合规则见 [内容浏览与筛选](../patterns/browse.md)，可运行示例在 `showcase/react.tsx`。网格用于封面或摘要有意义的内容；需要逐列比较时用表格。列表与网格都保留 `ul/li` 语义，只有需要单元格键盘导航时才引入 ARIA grid。
 

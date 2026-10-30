@@ -1,4 +1,4 @@
-// vincent-ux v1.4.3 · components/react/Dialog.tsx
+// vincent-ux v1.5.0 · components/react/Dialog.tsx
 import { Dialog as D } from '@base-ui/react/dialog'
 import type { ReactElement, ReactNode } from 'react'
 import { Icon } from './Icon'

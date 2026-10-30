@@ -1,13 +1,20 @@
 # 设计沉淀覆盖表
 
-以 v1.4.3（2026-10-26）的近期界面改进为核对范围。沉淀完成需同时满足：规则能被找到、旧说法已修正、组件可复用、示例能操作、关键行为可验证、导出资源一致。修改本表引用的规范原文，不再另存一份规则副本。
+以 v1.5.0（2026-10-31）的近期界面改进为核对范围。沉淀完成需同时满足：规则能被找到、旧说法已修正、组件可复用、示例能操作、关键行为可验证、导出资源一致。修改本表引用的规范原文，不再另存一份规则副本。
 
 | 通用问题 | 规则来源 | 组件与可运行示例 | 验证与责任 |
 |---|---|---|---|
+| 不同调性的产品只能共用一套配色 | [视觉原则 · 颜色只表达意义](../principles/visual.md)、[使用指南 · 配色与主题](usage.md#配色与主题)、[分类调研](research/color-theme-taxonomy.md) | `data-palette` + `tokens/src/palettes.json`；[展示页](../showcase/index.html) 颜色 › 配色主题 | `npm run check`：10 套主题浅色／暗色对比度、强调色与危急色色相间隔；[组件测试](../tests/components.spec.ts)：配色切换改变变量且明暗仍然生效 |
 | 原型组合已更新但组件规范与展示仍停留在旧结构 | [收起与展开](../components/disclosure.md)、[组件指南](../components/README.md) | `Fold` 分组／详情／编辑、行内步骤与对话过程；[ComponentExamples](../showcase/ComponentExamples.tsx) | [收纳回归](../tests/disclosure.spec.ts)：摘要显隐、独立分组、输入保留、明确放弃草稿、键盘和过程状态；展示页筛选、指标与外壳直接使用真实组件 |
 | AI 反馈和普通业务操作混用 | [待办工作页](../patterns/task-workspace.md)、[关键节点拍板](../patterns/decision.md) | `TaskCard` / `TaskStatus`；[TaskCardDemo](../showcase/react.tsx) | [组件测试](../tests/components.spec.ts)：选择不提交、自定义要求、提交中锁定、失败重试、交办与历史；产品另查反馈是否集中在应用待办与全局汇总 |
 | 历史增加重复层级，处理记录失去原选择 | [历史二级页](../patterns/task-workspace.md#历史二级页) | `Breadcrumbs` / `completedChoice` / `completedAction`；TaskCardDemo | [面包屑独立回归](../tests/breadcrumbs.spec.ts)：唯一路径页头、键盘返回、范围保留、历史空态；组件测试：历史锁定与对话入口；宿主负责原会话、快照和版本对应 |
-| 筛选、数量、排序混在不同层级 | [内容浏览](../patterns/browse.md)、[范围与排序](../patterns/task-workspace.md#范围与排序) | `Select` / `DateFilter` / `SortMenu` / `Collection`；BrowserDemo、TaskCardDemo | 组件测试：全部首项、搜索、日期取消／应用、排序独立于日期、结果数量随筛选更新、连续切月与切月后键盘入口 |
+| 筛选、数量、排序混在不同层级 | [内容浏览](../patterns/browse.md)、[范围与排序](../patterns/task-workspace.md#范围与排序) | `Select` / `DateFilter` / `SortMenu` / `Collection`；BrowserDemo、TaskCardDemo | 组件测试：全部首项、搜索、日期取消／应用、单一时间口径只显示范围、排序独立于日期、结果数量随筛选更新、连续切月与切月后键盘入口 |
+| 明暗切换各页自写，嵌入宿主后默认值和记忆互相覆盖 | [组件指南](../components/README.md)、[使用指南 · 配色与主题](usage.md#配色与主题) | `ThemeToggle` / `.vx-theme-toggle`；展示页左下角（展示页唯一的明暗入口） | [组件测试](../tests/components.spec.ts)：点击切换、名称说明下一步、记住选择且优先于根元素默认值；左下角其它浮钮由使用方让到其上方 |
+| 外壳没有用户卡片时，身份与账户动作无处安放 | [组件指南](../components/README.md) | `UserMenu`；展示页「交互与状态 › 弹层与页签」页签条右侧 | 组件测试：不进入页签键盘顺序、点开显示名字与身份、Esc 关闭并把焦点还给头像 |
+| 批量操作散落在结果区顶部与行内，已选范围不清楚 | [批量操作条](../patterns/browse.md#批量操作条) | `SelectionBar`；BrowserDemo | 组件测试：选中出现、取消消失、筛选外数量、Esc 取消与焦点恢复 |
+| 抽屉里分区重叠、靠卡片粗线收起展开，字段样式与编辑出口各不相同 | [抽屉详情](../components/drawer.md) | `DetailDrawer` / `DrawerSection` / `Property` / `.vx-log`；DetailDrawerDemo | 组件测试：查看态无控件、编辑后同位置出现控件、计算字段不可编辑、分区红点在标题左上角、底部只有一个出口；视觉检查：只有极细线分隔、文字三档 |
+| 列表里看不出哪些对象等我处理，筛选不知道各类有多少 | [对象列表与筛选](../patterns/todo-and-badge.md#对象列表与筛选) | `Select attention` / 选项 `attention` / `AttentionMark`；BrowserDemo | 组件测试：触发器有点不计数、选项行尾计数、零项无计数、行标题左上角红点不改变文字位置 |
+| 对客入口与内部工作台一样朴素，缺少品牌感；或为了“高级”到处加渐变与动效 | [对客门户](../templates/README.md) | `.vx-portal` / `PortalFeed` / `.vx-portal-hero` / `.vx-rise`；PortalDemo | 组件测试：氛围层对读屏隐藏、快捷登录可键盘触发、减少动态效果时动画停住；视觉检查：唯一强调色、无真实内容 |
 | 点击或切换后错误清除提醒 | [待办与红点](../patterns/todo-and-badge.md) | `Attention` / `AttentionTitle` / `TaskCard` / `Tabs.indicator` | 组件测试：选中态红点保留、标签宽度稳定、完成终点消失；宿主负责同一未处理实例集合及旧实例不重复提醒 |
 | 空状态随页面变化，更新时间摆放无依据 | [空状态与数据时间](../components/README.md#空状态数据时间与操作自适应) | `EmptyState` / `DataTime` / `SectionCard updatedAt`；[ComponentStatesDemo](../showcase/WorkspaceDemo.tsx) | [工作区与状态测试](../tests/workspace-state.spec.ts)：同类空态样式一致、无需动作时不加按钮、可靠时间居右、无来源不生成时间 |
 | 窄区域裁字、按钮与表格挤坏 | [空间按内容分配](../patterns/page-composition.md#空间按内容分配) | `Button` / `TableScroll`；ComponentStatesDemo | 320／390／1440px：短按钮完整、长动作增高、表格局部滚动；实际产品另查最长数据和组合宽度 |

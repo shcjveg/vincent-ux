@@ -1,4 +1,4 @@
-/* vincent-ux v1.4.3 · components/css/molecules.css */
+/* vincent-ux v1.5.0 · components/css/molecules.css */
 /* 分子：由原子组成、单一用途的小件。依赖 tokens.css、base.css、atoms.css。 */
 
 /* ---------- 内容收纳：Fold 的分组与对象行，行内步骤和对话过程见各自语义结构 ---------- */
@@ -194,6 +194,9 @@ button.vx-row {
 .vx-rows {
   display: flex;
   flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 /* 长列表才加行线：放在容器上 */
@@ -691,6 +694,32 @@ button.vx-chip[aria-pressed='true'] {
   }
 }
 
+/* ---------- 图片选择：一排缩略图，末尾一个添加格，可多张；不用拉宽的上传区 ----------
+   结构：<ul class="vx-images"><li class="vx-images-item"><img alt> <button class="vx-images-remove" aria-label></li>…
+         <li><label class="vx-images-add"><input type="file" multiple class="vx-sr-only">图标 · 文字</label></li></ul> */
+.vx-images { display: flex; flex-wrap: wrap; gap: var(--vx-space-3); margin: 0; padding: 0; list-style: none; }
+.vx-images-item,
+.vx-images-add { position: relative; width: 96px; height: 96px; flex-shrink: 0; border-radius: var(--vx-radius-md); }
+.vx-images-item { overflow: hidden; background: var(--vx-fill-quiet); }
+.vx-images-item > img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.vx-images-remove {
+  position: absolute; top: var(--vx-space-1); right: var(--vx-space-1);
+  display: grid; place-items: center; width: 28px; height: 28px; border-radius: var(--vx-radius-full);
+  background: var(--vx-surface-card); box-shadow: var(--vx-shadow-card); color: var(--vx-text-secondary);
+}
+.vx-images-remove:hover { color: var(--vx-text-primary); }
+.vx-images-remove > svg { width: 14px; height: 14px; }
+.vx-images-add {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--vx-space-1);
+  background: var(--vx-surface-inset); box-shadow: var(--vx-shadow-inset);
+  font-size: var(--vx-font-size-sm); color: var(--vx-text-tertiary); cursor: pointer;
+  transition: background var(--vx-motion-duration-fast), color var(--vx-motion-duration-fast);
+}
+.vx-images-add:hover { color: var(--vx-text-secondary); }
+.vx-images-add:focus-within { outline: 2px solid var(--vx-focus-ring); outline-offset: 2px; }
+.vx-images-add[data-over='true'] { background: var(--vx-brand-accent-soft); color: var(--vx-brand-accent); }
+.vx-images-add[aria-disabled='true'] { opacity: 0.45; cursor: not-allowed; }
+
 /* ---------- 选择卡：引导与设置里的一次性选择，每项一句说明（选用见 components/README.md） ---------- */
 /* 大卡：选中只用淡底与细边界，语义由 aria-pressed / aria-checked 表达
    结构：<button class="vx-choice" aria-pressed>图标 · <b>名称</b> · <span class="vx-choice-desc">说明</span></button> */
@@ -896,7 +925,7 @@ button.vx-chip[aria-pressed='true'] {
 .vx-search input { flex: 1; width: 100%; min-width: 0; border: 0; background: transparent; outline: none; }
 .vx-search input::placeholder { color: var(--vx-text-tertiary); }
 .vx-search input::-webkit-search-cancel-button { appearance: none; }
-.vx-search:has(input:focus-visible) { outline: 2px solid var(--vx-focus-ring); outline-offset: 2px; }
+.vx-search:has(input:focus-visible) { outline: 2px solid var(--vx-focus-ring); outline-offset: -1px; }
 .vx-search:has(:disabled) { opacity: 0.45; }
 .vx-filter-panel { display: flex; flex-direction: column; gap: var(--vx-space-3); }
 .vx-filterbar .vx-search { flex: 1; min-width: min(240px, 100%); }
@@ -958,7 +987,7 @@ button.vx-chip[aria-pressed='true'] {
 .vx-calendar-navigation .vx-icon-btn { width:28px;height:28px;min-height:28px; }
 .vx-calendar-weekdays,.vx-calendar-week { display:grid;grid-template-columns:repeat(7,minmax(0,1fr)); }
 .vx-calendar-weekdays { color:var(--vx-text-tertiary);font-size:11px;text-align:center;padding:8px 0;border-bottom:1px solid var(--vx-line-faint);flex-shrink:0; }
-.vx-calendar-months { position:relative;overflow:auto;overscroll-behavior:contain;min-height:130px;height:370px;scrollbar-width:thin; }
+.vx-calendar-months { position:relative;overflow:auto;overscroll-behavior:contain;min-height:130px;height:370px; }
 .vx-calendar-month { padding:12px 0 8px; }
 .vx-calendar-month h3 { font-size:12px;font-weight:500;color:var(--vx-text-secondary);margin:0 0 8px; }
 .vx-calendar-week { margin-bottom:3px; }
@@ -1011,3 +1040,64 @@ button.vx-chip[aria-pressed='true'] {
 .vx-empty-state-icon { display:inline-flex;color:var(--vx-text-tertiary); }
 .vx-data-time { display:inline-flex;flex-wrap:wrap;justify-content:flex-end;gap:0 var(--vx-space-1);max-width:100%;font-size:var(--vx-font-size-sm);line-height:var(--vx-font-leading-normal);font-weight:var(--vx-font-weight-regular);color:var(--vx-text-tertiary);text-align:right;font-variant-numeric:tabular-nums; }
 .vx-data-time time { overflow-wrap:anywhere; }
+
+/* ---------- 批量操作条：多选后浮在结果区底部的一条胶囊；不选不出现 ----------
+   结构：.vx-selection-bar > .vx-selection-bar-state（已选数量 + 清除）· .vx-selection-bar-divider · .vx-selection-bar-actions（.vx-btn…）
+   用浮层面与投影表达「临时浮起」，不加描边；分隔只用一段居中的短竖线。粘在视口底部但仍在文档流里，不盖住最后一项。 */
+.vx-selection-bar {
+  position: sticky;
+  bottom: var(--vx-space-6);
+  z-index: var(--vx-z-float);
+  display: flex;
+  align-items: center;
+  gap: var(--vx-space-1-5);
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+  padding: var(--vx-space-1-5);
+  border-radius: var(--vx-radius-xl);
+  background: var(--vx-surface-overlay-strong);
+  -webkit-backdrop-filter: var(--vx-blur-overlay);
+  backdrop-filter: var(--vx-blur-overlay);
+  box-shadow: var(--vx-shadow-overlay);
+  animation: vx-selection-bar-in var(--vx-motion-duration-base) var(--vx-motion-ease-out);
+}
+.vx-selection-bar-state { display: flex; align-items: center; gap: var(--vx-space-0-5); padding-left: var(--vx-space-3); white-space: nowrap; }
+.vx-selection-bar-count { font-size: var(--vx-font-size-md); color: var(--vx-text-primary); font-variant-numeric: tabular-nums; }
+.vx-selection-bar-hidden { color: var(--vx-text-tertiary); }
+.vx-selection-bar-clear { width: var(--vx-size-control-sm); height: var(--vx-size-control-sm); color: var(--vx-text-tertiary); }
+.vx-selection-bar-divider { width: 1px; height: var(--vx-space-5); flex-shrink: 0; background: var(--vx-line-faint); }
+.vx-selection-bar-actions { display: flex; align-items: center; gap: var(--vx-space-1); min-width: 0; }
+.vx-selection-bar-actions > .vx-btn { min-height: var(--vx-size-control-md); border-radius: var(--vx-radius-md); }
+.vx-selection-bar-actions > .vx-btn:not(.vx-btn--primary) { background: transparent; }
+.vx-selection-bar-actions > .vx-btn:not(.vx-btn--primary):hover { background: var(--vx-fill-hover); }
+@keyframes vx-selection-bar-in { from { opacity: 0; transform: translateY(var(--vx-space-2)); } }
+@container (max-width: 560px) {
+  .vx-selection-bar { width: 100%; flex-wrap: wrap; border-radius: var(--vx-radius-lg); }
+  .vx-selection-bar-divider { display: none; }
+  .vx-selection-bar-actions { flex-wrap: wrap; width: 100%; }
+}
+
+/* ---------- 明暗切换：左下角半透明小圆钮，悬停或聚焦才清晰，不占布局 ---------- */
+.vx-theme-toggle {
+  position: fixed;
+  left: var(--vx-space-4);
+  bottom: var(--vx-space-4);
+  z-index: var(--vx-z-float);
+  width: var(--vx-size-control-sm);
+  height: var(--vx-size-control-sm);
+  border-radius: var(--vx-radius-full);
+  background: var(--vx-surface-overlay);
+  -webkit-backdrop-filter: var(--vx-blur-overlay);
+  backdrop-filter: var(--vx-blur-overlay);
+  box-shadow: var(--vx-shadow-card);
+  color: var(--vx-text-secondary);
+  opacity: 0.6;
+  transition: opacity var(--vx-motion-duration-fast), color var(--vx-motion-duration-fast);
+}
+
+.vx-theme-toggle:hover,
+.vx-theme-toggle:focus-visible {
+  opacity: 1;
+  color: var(--vx-text-primary);
+}
