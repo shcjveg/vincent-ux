@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.3 · patterns/guide.md -->
+<!-- vincent-ux v1.5.0 · patterns/guide.md -->
 # 功能导览
 
 导览在真实页面上讲解并允许操作。产品决定路线、分支和完成条件；设计系统负责可读、定位、键盘与空间。

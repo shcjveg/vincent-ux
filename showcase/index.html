@@ -21,6 +21,7 @@
         <a href="#component-states">空状态与数据时间</a>
         <a href="#task-workspace">待办与历史</a>
         <a href="#guide">选择卡与功能导览</a>
+        <a href="#portal">对客门户</a>
         <a href="#surfaces">面分层</a>
         <a href="#color">颜色</a>
         <a href="#type">文字</a>
@@ -30,10 +31,7 @@
         <a href="#molecules">分子</a>
         <a href="#organisms">组织</a>
         <a href="#templates">模板</a>
-        <div class="sc-theme vx-seg" role="group" aria-label="主题">
-          <button type="button" data-theme-set="light" aria-pressed="true">浅色</button>
-          <button type="button" data-theme-set="dark">暗色</button>
-        </div>
+        <div class="sc-palette-pick"><span aria-hidden="true">配色</span><div id="palette-pick"></div></div>
       </nav>
       <main class="sc-main">
         <section class="sc-sec" id="browse">
@@ -52,6 +50,7 @@
           <h2>选择卡与功能导览</h2><p class="sc-lead">选择卡用淡底和细边界表达选中。导览会逐步介绍下面页面中的真实功能：极简蒙层圈定当前位置，说明卡尽量停靠，遮挡目标时自动避让。</p>
           <div class="sc-board" id="guide-demo"></div>
         </section>
+        <section class="sc-sec" id="portal"><h2>对客门户</h2><p class="sc-lead">外部用户的登录页：左侧抽象的内容瀑布流缓慢漂移，右侧标题、表单与演示账号快捷登录。减少动态效果时瀑布流停住。</p><div class="sc-board sc-portal" id="portal-demo"></div></section>
         <section class="sc-sec" id="surfaces">
           <h2>面分层</h2>
           <p class="sc-lead">层级靠明度差，不靠线。四级面每升一级亮一档；输入类控件是比所在面深一档的凹面。</p>
@@ -66,8 +65,11 @@
 
         <section class="sc-sec" id="color">
           <h2>颜色</h2>
-          <p class="sc-lead">中性层承担全部结构；品牌层只有两种强调：金给钱、选中和需要你看的地方，朱给红点、亏损和阻断。主按钮用墨色。</p>
+          <p class="sc-lead">中性层承担全部结构；品牌层只有两种强调：强调色给钱、选中和需要你看的地方，危急色给红点、亏损和阻断。主按钮用墨色。</p>
           <div data-vx-swatch class="sc-swatches" data-swatches="text-primary text-secondary text-tertiary text-disabled ink-base brand-accent brand-accent-bright brand-accent-soft brand-critical brand-critical-soft fill-hover fill-selected line-faint"></div>
+          <h3 class="sc-sub">配色主题</h3>
+          <p class="sc-lead">按暖冷、软硬、清浊三条轴各占一个位置，只换颜色。明度沿用默认配色，对比度逐套核对。点一套即可切换整页。</p>
+          <div class="sc-palettes" data-palettes></div>
         </section>
 
         <section class="sc-sec" id="type">

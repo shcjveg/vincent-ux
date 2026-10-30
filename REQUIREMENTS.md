@@ -12,11 +12,11 @@
 
 具体规则以 `principles/` 为准；组件、模式和模板引用规则，不重复定义。
 
-## v1.4.3 验收入口
+## v1.5.0 验收入口
 
 | 范围 | 验收内容 | 入口 |
 |---|---|---|
-| 设计变量与图标 | 可重复生成，浅深主题语义一致，变量与含义映射可检查 | `npm run build`、`npm run icons`、`npm run check` |
+| 设计变量与图标 | 可重复生成，浅深主题语义一致，10 套配色主题逐套满足对比度与色相间隔，变量与含义映射可检查 | `npm run build`、`npm run icons`、`npm run check` |
 | 组件交互 | 搜索、筛选与日期；表单、浮层、页签、导览、决定与待办卡的提交中／失败／历史状态 | `npm test`、`showcase/` |
 | 可访问性 | 标签、键盘、焦点恢复、对比度与浅深主题自动扫描 | `tests/components.spec.ts`、`tests/disclosure.spec.ts`、`tests/workspace-state.spec.ts`、`principles/accessibility.md` |
 | 页面组合 | 桌面与 320／390px 窄屏、会话切换和关闭恢复、内容锚点、局部滚动与导览避让 | `patterns/page-composition.md`、`patterns/page-chat-flow.md`、浏览器测试 |

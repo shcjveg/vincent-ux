@@ -1,4 +1,4 @@
-// vincent-ux v1.4.3 · components/react/index.ts
+// vincent-ux v1.5.0 · components/react/index.ts
 // React 组件：只收需要状态或可访问性逻辑的组件，以及用来固定一条容易写走样的规则的组件；纯外观直接用 CSS 类名（见 components/css/）。
 export { Icon, type IconName } from './Icon'
 export { Fold } from './Fold'
@@ -18,11 +18,12 @@ export { Checkbox } from './Checkbox'
 export { Switch } from './Switch'
 export { RadioGroup } from './RadioGroup'
 export { Dialog } from './Dialog'
-export { Tabs, type TabItem } from './Tabs'
+export { Tabs, type TabItem, type TabLink } from './Tabs'
 export { TableScroll } from './TableScroll'
 export { SearchField } from './SearchField'
 export { FilterBar, type ActiveFilter } from './FilterBar'
 export { Collection } from './Collection'
+export { SelectionBar } from './SelectionBar'
 export { Pagination } from './Pagination'
 
 export { ObjectPreview } from './ObjectPreview'
@@ -36,8 +37,12 @@ export { SectionCard, SectionAction } from './SectionCard'
 export { WorkspaceOverlay } from './WorkspaceOverlay'
 export { useViewportQuery } from './useViewportQuery'
 
-export { Attention, AttentionTitle } from './Attention'
+export { Attention, AttentionMark, AttentionTitle } from './Attention'
+export { DetailDrawer, DrawerSection, Property } from './Detail'
 export { ActionMenu } from './ActionMenu'
+export { UserMenu } from './UserMenu'
+export { ThemeToggle } from './ThemeToggle'
+export { PortalFeed } from './PortalFeed'
 export { TaskCard, type TaskCardOption, type TaskCardChoice } from './TaskCard'
 export { SortMenu } from './SortMenu'
 export { DateFilter, type DateFilterValue } from './DateFilter'

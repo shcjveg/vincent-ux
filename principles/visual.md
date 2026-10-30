@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.3 · principles/visual.md -->
+<!-- vincent-ux v1.5.0 · principles/visual.md -->
 
 # 视觉原则
 
@@ -21,6 +21,7 @@
 ## 颜色只表达意义
 
 - 中性层（面、文字、填充）承担全部结构；品牌层只有两种强调：`brand-accent`（钱、选中、等你动手的那一个状态）和 `brand-critical`（红点、亏损、阻断、已超时）。这是全系统颜色语义的唯一出处，模式和组件只引用不重述。使用方页面不直接引用品牌色：在元素上用 `data-tone="accent | critical"` 声明语气，样式里取 `--vx-tone` / `--vx-tone-soft`；`scripts/audit.js` 会检查强调色和危急色是否都有合法出处。
+- 配色主题（`data-palette`）只改变这些语义角色的取值，不改变角色本身：中性层跟主题的中性色相，强调色跟主题的强调色相，危急色只换色相并与强调色隔开至少 40°，涨跌色（`data-positive` / `data-negative`）不随主题变。所有主题共用同一组明度，因此层级、对比度和组件写法在任何主题下都一样。
 - 决策动作的同意与中止可用少量语义色：同意引用 `data-positive`，中止引用 `critical`，同时配含义明确的图标与文字；仅落文字和图标，背景保持中性。
 - 主按钮用墨色 `ink-base`，不用品牌色。
 - 淡底色（`brand-accent-soft`、`brand-critical-soft`）只用于状态，淡到能分辨即可，不铺大面积。

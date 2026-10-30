@@ -1,4 +1,4 @@
-// vincent-ux v1.4.3 · components/react/DecisionCard.tsx
+// vincent-ux v1.5.0 · components/react/DecisionCard.tsx
 // 决定卡：问题与范围 · 判断依据 · 方案比较 · 一次确认。规则见 patterns/decision.md
 import { useId, useState, type HTMLAttributes, type ReactNode } from 'react'
 import { Attention } from './Attention'

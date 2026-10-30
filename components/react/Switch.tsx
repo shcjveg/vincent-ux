@@ -1,4 +1,4 @@
-// vincent-ux v1.4.3 · components/react/Switch.tsx
+// vincent-ux v1.5.0 · components/react/Switch.tsx
 import type { InputHTMLAttributes, ReactNode } from 'react'
 
 export function Switch({ label, className, ...props }: Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'size'> & { label: ReactNode }) {

@@ -1,4 +1,4 @@
-// vincent-ux v1.4.3 · components/react/DateFilter.tsx
+// vincent-ux v1.5.0 · components/react/DateFilter.tsx
 import { useState } from 'react'
 import { Popover } from '@base-ui/react/popover'
 import { Icon } from './Icon'
@@ -24,7 +24,9 @@ function precedingRange(from:string,to:string){const a=parseDay(from),b=parseDay
 export function DateFilter({value,field,fields,onChange,allowComparison=false}:{value:DateFilterValue;field:string;fields:{id:string;label:string}[];onChange:(value:DateFilterValue,field:string)=>void;allowComparison?:boolean}){
  const [open,setOpen]=useState(false),[draft,setDraft]=useState(value),[draftField,setDraftField]=useState(field),[active,setActive]=useState<'from'|'to'>('from'),[single,setSingle]=useState(false),[today,setToday]=useState(()=>localDay(new Date())),[anchor,setAnchor]=useState(()=>value.from||localDay(new Date())),[compare,setCompare]=useState(!!value.comparison)
  const fieldLabel=fields.find(f=>f.id===field)?.label??'时间'
- const label=value.from||value.to?`${fieldLabel} · ${value.preset||(value.from===value.to?value.from:`${value.from||'不限'}—${value.to||'不限'}`)}`:'时间范围'
+ // 字段名为空：页面只有一个时间口径，触发器只显示范围，浮层不出字段下拉。
+ const range=value.preset||(value.from===value.to?value.from:`${value.from||'不限'}—${value.to||'不限'}`)
+ const label=value.from||value.to?(fieldLabel?`${fieldLabel} · ${range}`:range):'时间范围'
  const invalid=!draft.from||!draft.to||draft.from>draft.to
  const selectDate=(day:string)=>{if(single){setDraft({from:day,to:day});return}if(active==='from'){setDraft({from:day,to:''});setActive('to')}else{setDraft({from:draft.from&&draft.from<day?draft.from:day,to:draft.from&&draft.from>day?draft.from:day});setActive('from')}}
  const editDate=(key:'from'|'to',v:string)=>{setDraft(d=>({...d,[key]:v,...(single?{from:v,to:v}:{}),preset:undefined}));if(/^\d{4}-\d{2}-\d{2}$/.test(v)&&!Number.isNaN(parseDay(v).valueOf()))setAnchor(v)}
@@ -32,7 +34,7 @@ export function DateFilter({value,field,fields,onChange,allowComparison=false}:{
  return <Popover.Root open={open} onOpenChange={v=>{setOpen(v);if(v){const now=localDay(new Date());setToday(now);setDraft(value);setDraftField(field);setAnchor(value.from||now);setActive('from');setSingle(!!value.from&&value.from===value.to&&!value.preset);setCompare(!!value.comparison)}}}>
   <Popover.Trigger className="vx-btn vx-btn--ghost vx-btn--sm vx-date-trigger" aria-label={label==='时间范围'?label:`时间范围：${label}`} data-active={!!(value.from||value.to)||undefined}><Icon name="calendar"/><span>{label}</span></Popover.Trigger>
   <Popover.Portal><Popover.Positioner side="bottom" align="end" sideOffset={6} className="vx-control-positioner"><Popover.Popup className="vx-popup vx-date-popup" aria-label="时间范围设置">
-   <div className="vx-date-heading"><Popover.Title>时间范围</Popover.Title><Select label="筛选时间字段" value={draftField} options={fields.map(f=>({value:f.id,label:f.label}))} onChange={setDraftField} variant="inline"/></div>
+   <div className="vx-date-heading"><Popover.Title>时间范围</Popover.Title>{fieldLabel&&<Select label="筛选时间字段" value={draftField} options={fields.map(f=>({value:f.id,label:f.label}))} onChange={setDraftField} variant="inline"/>}</div>
    <div className="vx-date-body">
     <aside className="vx-date-sidebar"><div className="vx-date-presets" role="group" aria-label="快捷日期范围">
      <button type="button" className="vx-date-preset" aria-pressed={!draft.preset&&!single} onClick={()=>{setSingle(false);setDraft(d=>({...d,preset:undefined}));setActive('from')}}>自定义</button>

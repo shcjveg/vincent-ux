@@ -1,13 +1,13 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { WorkspaceDemo, ComponentStatesDemo } from './WorkspaceDemo'
 import { BreadcrumbExamples } from './NavigationExamples'
 import { DisclosureExamples, ControlsExamples, OrganismsExamples } from './ComponentExamples'
 import { createRoot } from 'react-dom/client'
 import { DataTime, EmptyState, Button, Checkbox, Collection, DecisionCard, Dialog, Field, FilterBar, Fold, Guide, Icon,
-  Breadcrumbs, DateFilter, SortMenu, TaskStatus, TaskCard, ActionMenu, AttentionTitle, ActionSummary, Metric, ObjectPreview, SectionCard, SectionAction, SectionHeader, Pagination, RadioGroup, SearchField, Segmented, Select, Switch, TableScroll, Tabs, Tip, TipProvider, type GuideStep } from '../components/react'
+  Breadcrumbs, ThemeToggle, UserMenu, DateFilter, SortMenu, TaskStatus, TaskCard, ActionMenu, AttentionMark, AttentionTitle, ActionSummary, DetailDrawer, DrawerSection, Property, Metric, ObjectPreview, PortalFeed, SectionCard, SectionAction, SectionHeader, Pagination, RadioGroup, SearchField, Segmented, Select, SelectionBar, Switch, TableScroll, Tabs, Tip, TipProvider, type GuideStep } from '../components/react'
 
 type Item = { id: string; title: string; type: string; status: string; summary: string; updatedAt: string }
-const content: Item[] = [
+const initialContent: Item[] = [
   { id: '1', title: '本周运营回顾', type: '报告', status: '已完成', summary: '关键变化、待办和下一步计划。', updatedAt: '2026-10-26T10:00:00+08:00' },
   { id: '2', title: '内容发布检查表', type: '模板', status: '草稿', summary: '发布前逐项核对标题、图片和目标。', updatedAt: '2026-10-25T09:00:00+08:00' },
   { id: '3', title: '访谈要点', type: '笔记', status: '已完成', summary: '整理用户提出的问题与需求。', updatedAt: '2026-10-24T11:00:00+08:00' },
@@ -23,7 +23,9 @@ const tour: GuideStep[] = [
 ]
 
 function BrowserDemo() {
+  const [content, setContent] = useState(initialContent)
   const [query, setQuery] = useState('')
+  const [todo, setTodo] = useState('全部')
   const [type, setType] = useState('全部')
   const [status, setStatus] = useState('全部')
   const [order, setOrder] = useState<'asc' | 'desc'>('desc')
@@ -34,19 +36,22 @@ function BrowserDemo() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string>()
   const [guide, setGuide] = useState<GuideStep[] | null>(null)
-  const filtered = content.filter(item => item.title.includes(query.trim()) && (type === '全部' || item.type === type) && (status === '全部' || item.status === status))
+  // 草稿就是「等我完善」的待办：筛选器、选项计数、行标题红点和抽屉分区红点来自同一个集合。
+  const drafts = content.filter(item => item.status === '草稿').length
+  const filtered = content.filter(item => item.title.includes(query.trim()) && (type === '全部' || item.type === type) && (status === '全部' || item.status === status) && (todo === '全部' || item.status === '草稿'))
   const direction = order === 'desc' ? -1 : 1
   filtered.sort((a, b) => (Date.parse(a.updatedAt) - Date.parse(b.updatedAt)) * direction || a.id.localeCompare(b.id) * direction)
   const totalPages = Math.ceil(filtered.length / 6)
   const currentPage = Math.min(page, Math.max(1, totalPages))
   const shown = filtered.slice((currentPage - 1) * 6, currentPage * 6)
   const change = (set: (value: string) => void) => (value: string) => { set(value); setPage(1) }
-  const reset = () => { setQuery(''); setType('全部'); setStatus('全部'); setPage(1) }
+  const reset = () => { setQuery(''); setType('全部'); setStatus('全部'); setTodo('全部'); setPage(1) }
   const reload = () => { setError(undefined); setLoading(true); window.setTimeout(() => setLoading(false), 600) }
   const filters = [
     ...(query ? [{ id: 'query', label: `搜索：${query}`, onRemove: () => change(setQuery)('') }] : []),
     ...(type !== '全部' ? [{ id: 'type', label: `类型：${type}`, onRemove: () => change(setType)('全部') }] : []),
     ...(status !== '全部' ? [{ id: 'status', label: `状态：${status}`, onRemove: () => change(setStatus)('全部') }] : []),
+    ...(todo !== '全部' ? [{ id: 'todo', label: `待办：${todo}`, onRemove: () => change(setTodo)('全部') }] : []),
   ]
   return <div className="vx-stack vx-stack--lg" data-testid="browser-demo">
     <div data-tour="browse-search">
@@ -54,14 +59,13 @@ function BrowserDemo() {
         <SearchField label="搜索内容" placeholder="搜索标题" value={query} onChange={change(setQuery)} />
         <Select variant="filter" allValue="全部" label="内容类型" value={type} onChange={change(setType)} options={['全部', '报告', '模板', '笔记'].map(value => ({ value, label: value }))} />
         <Select variant="filter" allValue="全部" label="内容状态" value={status} onChange={change(setStatus)} options={['全部', '草稿', '已完成'].map(value => ({ value, label: value }))} />
+        <Select variant="filter" allValue="全部" label="待办" attention={drafts > 0} value={todo} onChange={change(setTodo)} options={[{ value: '全部', label: '全部' }, { value: '补全草稿', label: '补全草稿', attention: drafts }]} />
       </FilterBar>
     </div>
     <div className="vx-cluster">
       <Checkbox label="选择当前页" checked={shown.length > 0 && shown.every(item => selected.includes(item.id))}
         indeterminate={shown.some(item => selected.includes(item.id)) && !shown.every(item => selected.includes(item.id))}
         disabled={shown.length === 0 || loading} onChange={e => setSelected(e.target.checked ? [...new Set([...selected, ...shown.map(item => item.id)])] : selected.filter(id => !shown.some(item => item.id === id)))} />
-      <span className="vx-meta" role="status">已选 {selected.length} 项</span>
-      {selected.length > 0 && <Button variant="ghost" size="sm" onClick={() => setSelected([])}>清除选择</Button>}
       <span className="vx-spacer" />
       <Segmented label="浏览方式" value={layout} options={[{ id: 'list', label: '列表' }, { id: 'grid', label: '卡片' }]} onChange={setLayout} />
     </div>
@@ -72,25 +76,94 @@ function BrowserDemo() {
         renderItem={item => <>
           <Checkbox label="选择" aria-label={`选择${item.title}`} checked={selected.includes(item.id)} onChange={e => setSelected(e.target.checked ? [...selected, item.id] : selected.filter(id => id !== item.id))} />
           <div className="vx-browse-item-main">
-            <button type="button" className="vx-result-title" onClick={() => setDetail(item)}>{item.title}</button>
+            <AttentionMark on={item.status === '草稿'}><button type="button" className="vx-result-title" onClick={() => setDetail(item)}>{item.title}</button></AttentionMark>
             <p className="vx-body">{item.summary}</p>
           </div>
           <div className="vx-cluster"><span className="vx-tag">{item.type}</span><span className="vx-tag">{item.status}</span><DataTime text={item.updatedAt.slice(5,16).replace('T',' ')} dateTime={item.updatedAt} detail="示例记录更新时间 · 北京时间"/></div>
         </>} />
     </div>
     <Pagination page={currentPage} totalPages={totalPages} onChange={setPage} disabled={loading} />
+    <SelectionBar count={selected.length} hidden={selected.filter(id => !filtered.some(item => item.id === id)).length} onClear={() => setSelected([])}>
+      <Button size="sm">移动到</Button>
+      <Button size="sm">导出</Button>
+      <Button size="sm" variant="primary">归档</Button>
+    </SelectionBar>
     <details className="sc-test-tools"><summary>体验导览与不同状态</summary><div className="vx-cluster">
       <Button size="sm" onClick={() => setGuide(tour)}>开始浏览导览</Button>
       <Button size="sm" onClick={reload}>演示加载</Button>
       <Button size="sm" onClick={() => setError('暂时无法更新内容，请重试。')}>演示请求失败</Button>
       <Button size="sm" onClick={() => setGuide([{ target: 'missing-target', title: '不可用目标', text: '目标缺失时自动退出。' }])}>验证缺失目标</Button>
     </div></details>
-    <Dialog open={detail !== null} onOpenChange={open => { if (!open) setDetail(null) }} title={detail?.title ?? '内容详情'} variant="drawer"
-      description={detail?.summary} actions={<Button onClick={() => setDetail(null)}>关闭详情</Button>}>
-      <div className="vx-cluster"><span className="vx-tag">{detail?.type}</span><span className="vx-tag">{detail?.status}</span></div>
-    </Dialog>
+    {detail && <ItemDrawer item={detail} onClose={() => setDetail(null)} onSave={next => { setContent(content.map(x => x.id === next.id ? next : x)); setDetail(next) }} />}
     {guide && <Guide name="浏览内容" steps={guide} onExit={() => setGuide(null)} />}
   </div>
+}
+
+/** 抽屉详情：一个编辑出口、MECE 分区、两态字段；草稿从待办进入时直接是编辑态。 */
+function ItemDrawer({ item, onClose, onSave }: { item: Item; onClose: () => void; onSave: (item: Item) => void }) {
+  const pending = item.status === '草稿'
+  const [editing, setEditing] = useState(pending)
+  const [draft, setDraft] = useState(item)
+  const [error, setError] = useState<string>()
+  const dirty = JSON.stringify(draft) !== JSON.stringify(item)
+  const save = () => {
+    if (!draft.summary.trim()) { setError('请填写摘要'); return }
+    const next = { ...draft, status: draft.summary.trim().length >= 12 ? '已完成' : '草稿', updatedAt: '2026-10-27T10:00:00+08:00' }
+    setError(undefined); setEditing(false); onSave(next)
+  }
+  const date = (iso: string) => iso.slice(0, 16).replace('T', ' ')
+  return <TipProvider><DetailDrawer title={item.title} onClose={onClose} editable editing={editing} dirty={dirty}
+    onEdit={() => { setDraft(item); setEditing(true) }} onCancel={() => { setDraft(item); setError(undefined); setEditing(false) }} onSave={save}>
+    <DrawerSection title="基本信息">
+      <div className="vx-props">
+        <Property label="标题" tip="列表与搜索使用的名称" editing={editing} value={item.title}>{p => <input {...p} className="vx-input" value={draft.title} onChange={e => setDraft({ ...draft, title: e.target.value })} />}</Property>
+        <Property label="类型" tip="报告、模板或笔记，可以在下拉里新增类型" editing={editing} value={item.type}>{p => <Select label={p['aria-label']} creatable value={draft.type} onChange={v => setDraft({ ...draft, type: v })} options={[...new Set(['报告', '模板', '笔记', draft.type])].map(t => ({ value: t, label: t }))} />}</Property>
+        <Property label="更新时间" tip="最近一次保存的时间，系统记录" editing={editing} value={date(item.updatedAt)} />
+      </div>
+    </DrawerSection>
+    <DrawerSection title="内容" status={<span className="vx-tag">{item.status}</span>} attention={pending}>
+      <div className="vx-props">
+        <Property label="摘要" tip="写满 12 个字后，草稿自动转为已完成" wide required editing={editing} error={error} value={item.summary}>{p => <textarea {...p} className="vx-textarea" rows={3} value={draft.summary} onChange={e => setDraft({ ...draft, summary: e.target.value })} />}</Property>
+        <Property label="字数" tip="摘要的字数，随填写实时计算" editing={editing} value={<span className="vx-num">{(editing ? draft : item).summary.trim().length}</span>} />
+      </div>
+    </DrawerSection>
+    <DrawerSection title="历史" defaultOpen={false}>
+      <div className="vx-props">
+        <Property label="处理记录" tip="每次保存追加一条，不覆盖" wide value={<table className="vx-log">
+          <thead><tr><th>时间</th><th>事项</th></tr></thead>
+          <tbody>
+            <tr><td><time dateTime="2026-10-20T10:00">10-20 10:00</time></td><td>创建草稿</td></tr>
+            <tr><td><time dateTime="2026-10-24T11:00">10-24 11:00</time></td><td>补充封面与摘要</td></tr>
+          </tbody>
+        </table>} />
+      </div>
+    </DrawerSection>
+  </DetailDrawer></TipProvider>
+}
+
+function PortalDemo() {
+  const [busy, setBusy] = useState<string | null>(null)
+  const [signed, setSigned] = useState<string | null>(null)
+  const accounts = [['品牌 A · 系列一', 'brand-a'], ['品牌 B · 系列二', 'brand-b']]
+  return <main className="vx-portal" data-testid="portal-demo">
+    <PortalFeed />
+    <section className="vx-portal-panel">
+      <div className="vx-rise" style={{ '--i': 0 } as React.CSSProperties}><p className="vx-portal-eyebrow">示例 · 客户入口</p><h1 className="vx-portal-title">内容看板</h1><p className="vx-portal-lead">{signed ? `已登录 ${signed}` : '用分配给你的账号登录。'}</p></div>
+      <form className="vx-portal-form vx-rise" style={{ '--i': 1 } as React.CSSProperties} onSubmit={e => e.preventDefault()}>
+        <div className="vx-portal-fields">
+          <label className="vx-portal-field"><span>账号</span><input className="vx-portal-input" autoComplete="username" /></label>
+          <label className="vx-portal-field"><span>密码</span><input className="vx-portal-input" type="password" autoComplete="current-password" /></label>
+        </div>
+        <Button type="submit" variant="primary">登录</Button>
+      </form>
+      <div className="vx-portal-quick vx-rise" style={{ '--i': 2 } as React.CSSProperties}>
+        <span className="vx-portal-quick-caption">演示账号</span>
+        {accounts.map(([name, login]) => <button key={login} type="button" className="vx-portal-account" aria-busy={busy === login || undefined}
+          onClick={() => { setBusy(login); window.setTimeout(() => { setBusy(null); setSigned(name) }, 300) }}>
+          <span><span className="vx-portal-account-name">{name}</span><span className="vx-portal-account-meta">{login}</span></span><Icon name="next" /></button>)}
+      </div>
+    </section>
+  </main>
 }
 
 function InteractionDemo() {
@@ -130,7 +203,7 @@ function InteractionDemo() {
         trigger={<Button>打开确认框</Button>} actions={<><Button onClick={() => setDialog(false)}>取消</Button><Button variant="primary" onClick={() => setDialog(false)}>发布内容</Button></>}>
         <Field label="发布备注">{props => <input {...props} className="vx-input" placeholder="选填" />}</Field>
       </Dialog>
-      <Tabs label="内容页签" variant="workspace" actions={<span className="vx-meta">工作区操作</span>} value={tab} onChange={setTab} onClose={() => setDetailsTab(false)} items={[
+      <Tabs label="内容页签" variant="workspace" links={[{ label: '外部看板', href: 'https://example.com/board' }]} actions={<UserMenu name="林同学" meta="内容运营 · lin@example.com" items={[{ label: '退出登录', icon: 'switch-user', onClick: () => {} }]} />} value={tab} onChange={setTab} onClose={() => setDetailsTab(false)} items={[
         { value: 'overview', label: '概览', content: <p className="vx-body">方向键切换页签，关闭后焦点回到相邻页签。</p> },
         ...(detailsTab ? [{ value: 'detail', label: '明细', closable: true, indicator:<span className="vx-dot" aria-hidden="true"/>, content: <p className="vx-body">可按 Delete 关闭本页签。</p> }] : []),
       ]} />
@@ -246,10 +319,31 @@ function GuideDemo() {
   </div>
 }
 
+/** 导航里的配色选择：只读写根元素的 data-palette，色卡区点选也改同一个属性。 */
+function PalettePick() {
+  const root = document.documentElement
+  const [palettes, setPalettes] = useState<{ value: string; label: string; default?: boolean }[]>([])
+  const [current, setCurrent] = useState(root.dataset.palette ?? '')
+  useEffect(() => {
+    fetch(new URL('../tokens/dist/tokens.json', import.meta.url)).then(r => r.json())
+      .then(({ palettes = {} }: { palettes?: Record<string, { name: string; default?: boolean }> }) => setPalettes(Object.entries(palettes).map(([value, p]) => ({ value, label: p.name, default: p.default }))))
+    const watch = new MutationObserver(() => setCurrent(root.dataset.palette ?? ''))
+    watch.observe(root, { attributes: true, attributeFilter: ['data-palette'] })
+    return () => watch.disconnect()
+  }, [])
+  const fallback = palettes.find(p => p.default)?.value ?? null
+  return <Select label="配色主题" value={current || fallback} options={palettes.map(({ value, label }) => ({ value, label }))}
+    onChange={id => { if (id === fallback) delete root.dataset.palette; else root.dataset.palette = id }} />
+}
+createRoot(document.getElementById('palette-pick')!).render(<PalettePick />)
+// 左下角明暗切换：展示页唯一的明暗入口，改根元素的 data-theme
+const toggleHost = document.body.appendChild(document.createElement('div'))
+createRoot(toggleHost).render(<ThemeToggle />)
 createRoot(document.getElementById('browse-demo')!).render(<BrowserDemo />)
 createRoot(document.getElementById('interaction-demo')!).render(<InteractionDemo />)
 
 createRoot(document.getElementById('guide-demo')!).render(<GuideDemo />)
+createRoot(document.getElementById('portal-demo')!).render(<PortalDemo />)
 
 createRoot(document.getElementById('molecules-demo')!).render(<MoleculesDemo />)
 

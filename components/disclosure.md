@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.3 · components/disclosure.md -->
+<!-- vincent-ux v1.5.0 · components/disclosure.md -->
 # 收起与展开
 
 原型中反复出现的收纳方式包括分组、对象详情、编辑区、行内步骤和对话过程。按任务选结构，复用同一套文字、箭头、状态与键盘规则。侧栏折叠和工作区关闭属于[外壳模板](../templates/README.md)，不混入内容收纳。

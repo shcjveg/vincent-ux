@@ -63,39 +63,44 @@ if (process.argv.slice(2).length)
     if (/\.(tsx|jsx)$/.test(f) && !/(vincent-ux|components)[\\/]react[\\/]Icon\.tsx$/.test(f) && /from ['"]lucide-react['"]/.test(readFileSync(f, 'utf8')))
       warnings.push(`${relative(process.cwd(), f)} 直接引用 lucide-react，改用 <Icon name="含义" />`)
 
-// 按实际用途检查；透明面先与底层合成，普通小字一律 4.5:1。
-const rgb = value => {
-  if (value.startsWith('#')) return [1, 3, 5].map(i => parseInt(value.slice(i, i + 2), 16)).concat(1)
-  const values = value.match(/[\d.]+/g)?.map(Number)
-  if (!values || values.length < 3) throw new Error(`不支持的颜色：${value}`)
-  return values.length === 3 ? [...values, 1] : values
-}
-const blend = (front, back) => front.slice(0, 3).map((c, i) => c * front[3] + back[i] * (1 - front[3])).concat(1)
-const lum = color => color.slice(0, 3).map(v => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4 }).reduce((sum, v, i) => sum + v * [0.2126, 0.7152, 0.0722][i], 0)
-const contrast = (fg, bg) => { const [hi, lo] = [lum(blend(fg, bg)), lum(bg)].sort((a, b) => b - a); return (hi + 0.05) / (lo + 0.05) }
+// 按实际用途检查；透明面先与底层合成，普通小字一律 4.5:1。默认配色与每套配色主题（tokens/dist/tokens.json 的 palettes）逐套核对。
 if (!process.argv.slice(2).length) {
-  const t = JSON.parse(readFileSync(join(ROOT, 'tokens/src/theme.tokens.json'), 'utf8'))
-  const b = JSON.parse(readFileSync(join(ROOT, 'tokens/src/brand.tokens.json'), 'utf8'))
-  const verify = (label, fg, bg, min) => { const r = contrast(rgb(fg), bg); if (r < min) errors.push(`对比度 ${label} = ${r.toFixed(2)}，需 ≥ ${min}`) }
-  for (const mode of ['light', 'dark']) {
-    const surfaces = Object.entries(t.surface).filter(([key]) => !key.startsWith('$') && key !== 'scrim')
-    for (const [surface, value] of surfaces) {
-      for (const under of ['canvas', 'card']) {
-        const bg = blend(rgb(value[mode]), rgb(t.surface[under][mode]))
-        for (const k of ['positive', 'negative']) if (t.data?.[k]) verify(`${mode} data-${k} / ${surface}`, t.data[k][mode], bg, 4.5)
-        for (const k of ['primary', 'secondary', 'tertiary']) verify(`${mode} text-${k} / ${surface}`, t.text[k][mode], bg, 4.5)
-        for (const k of ['accent', 'critical']) verify(`${mode} brand-${k} / ${surface}`, b.brand[k][mode], bg, 4.5)
-        verify(`${mode} focus / ${surface}`, t.focus.ring[mode], bg, 3)
-        verify(`${mode} control / ${surface}`, t.line.control[mode], bg, 3)
+  const { blend, contrast, parse: rgb, toOklch } = await import('./color.mjs')
+  const source = { theme: JSON.parse(readFileSync(join(ROOT, 'tokens/src/theme.tokens.json'), 'utf8')), brand: JSON.parse(readFileSync(join(ROOT, 'tokens/src/brand.tokens.json'), 'utf8')) }
+  const { palettes = {} } = JSON.parse(readFileSync(join(ROOT, 'tokens/dist/tokens.json'), 'utf8'))
+  for (const [id, palette] of Object.entries(palettes)) {
+    const t = structuredClone(source.theme), b = structuredClone(source.brand)
+    for (const { path, light, dark } of palette.tokens) {
+      const [group, key] = path, target = group === 'brand' || group === 'viz' ? b : t
+      Object.assign(target[group][key], { light, dark })
+    }
+    const verify = (label, fg, bg, min) => { const r = contrast(rgb(fg), bg); if (r < min) errors.push(`对比度 [${id}] ${label} = ${r.toFixed(2)}，需 ≥ ${min}`) }
+    // 强调色（选中、等你动手）与危急色（阻断、超时）色相至少隔 40°，免得两种语气看成一种。
+    const hue = (c) => toOklch(rgb(c))[2], gap = (x, y) => { const d = Math.abs(x - y) % 360; return Math.min(d, 360 - d) }
+    for (const mode of ['light', 'dark']) {
+      const d = gap(hue(b.brand.accent[mode]), hue(b.brand.critical[mode]))
+      if (d < 40) errors.push(`色相 [${id}] ${mode} brand-accent 与 brand-critical 只隔 ${d.toFixed(0)}°，需 ≥ 40°`)
+    }
+    for (const mode of ['light', 'dark']) {
+      const surfaces = Object.entries(t.surface).filter(([key]) => !key.startsWith('$') && key !== 'scrim')
+      for (const [surface, value] of surfaces) {
+        for (const under of ['canvas', 'card']) {
+          const bg = blend(rgb(value[mode]), rgb(t.surface[under][mode]))
+          for (const k of ['positive', 'negative']) if (t.data?.[k]) verify(`${mode} data-${k} / ${surface}`, t.data[k][mode], bg, 4.5)
+          for (const k of ['primary', 'secondary', 'tertiary']) verify(`${mode} text-${k} / ${surface}`, t.text[k][mode], bg, 4.5)
+          for (const k of ['accent', 'critical']) verify(`${mode} brand-${k} / ${surface}`, b.brand[k][mode], bg, 4.5)
+          verify(`${mode} focus / ${surface}`, t.focus.ring[mode], bg, 3)
+          verify(`${mode} control / ${surface}`, t.line.control[mode], bg, 3)
+        }
       }
+      for (const surface of ['shell', 'card']) verify(`${mode} text-muted / ${surface}`, t.text.muted[mode], rgb(t.surface[surface][mode]), 4.5)
+      for (const tone of ['accent', 'critical']) {
+        const bg = blend(rgb(b.brand[`${tone}-soft`][mode]), rgb(t.surface.card[mode]))
+        verify(`${mode} ${tone} / soft`, b.brand[tone][mode], bg, 4.5)
+      }
+      for (const stop of ['base', 'top']) verify(`${mode} 主按钮 ${stop}`, t.text['on-strong'][mode], rgb(t.ink[stop][mode]), 4.5)
+      verify(`${mode} 红色计数`, t.text['on-critical'][mode], rgb(b.brand.critical[mode]), 4.5)
     }
-    for (const surface of ['shell', 'card']) verify(`${mode} text-muted / ${surface}`, t.text.muted[mode], rgb(t.surface[surface][mode]), 4.5)
-    for (const tone of ['accent', 'critical']) {
-      const bg = blend(rgb(b.brand[`${tone}-soft`][mode]), rgb(t.surface.card[mode]))
-      verify(`${mode} ${tone} / soft`, b.brand[tone][mode], bg, 4.5)
-    }
-    for (const stop of ['base', 'top']) verify(`${mode} 主按钮 ${stop}`, t.text['on-strong'][mode], rgb(t.ink[stop][mode]), 4.5)
-    verify(`${mode} 红色计数`, t.text['on-critical'][mode], rgb(b.brand.critical[mode]), 4.5)
   }
 }
 

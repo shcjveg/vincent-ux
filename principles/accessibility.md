@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.3 · principles/accessibility.md -->
+<!-- vincent-ux v1.5.0 · principles/accessibility.md -->
 
 # 无障碍底线
 

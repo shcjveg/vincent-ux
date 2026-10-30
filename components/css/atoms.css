@@ -1,4 +1,4 @@
-/* vincent-ux v1.4.3 · components/css/atoms.css */
+/* vincent-ux v1.5.0 · components/css/atoms.css */
 /* 原子：按钮、图标、标签、红点、缩略图与头像、输入框、开关、复选框、数字、骨架、转圈。依赖 tokens.css、base.css。 */
 
 /* ---------- 按钮：主（墨）· 次（凹面）· 文字 ---------- */
@@ -192,6 +192,10 @@ button.vx-toggle:hover {
   height: var(--vx-size-icon-sm);
 }
 
+/* ---------- 文字链接：按钮形态的链接与 <a> 同一外观（base.css a） ---------- */
+.vx-link { display: inline; padding: 0; border: 0; background: none; font: inherit; line-height: inherit; text-align: inherit; cursor: pointer; color: var(--vx-brand-accent); text-decoration: underline; text-underline-offset: 0.18em; }
+.vx-link:hover, a:hover { text-decoration-thickness: 2px; }
+
 /* ---------- 标签：中性 · 强调（金）· 危急（朱）---------- */
 .vx-tag {
   display: inline-flex;
@@ -347,11 +351,12 @@ button.vx-toggle:hover {
   color: var(--vx-text-tertiary);
 }
 
+/* 输入框聚焦：焦点环压住自身边框画在框内，只有一道线；滚动容器贴边时也不会被裁掉 */
 .vx-input:focus-visible,
 .vx-textarea:focus-visible,
 .vx-select:focus-visible {
   outline: 2px solid var(--vx-focus-ring);
-  outline-offset: 2px;
+  outline-offset: -1px;
 }
 
 .vx-input[aria-invalid='true'],
@@ -464,6 +469,8 @@ button.vx-toggle:hover {
 }
 .vx-control-label:has(:disabled) { opacity: 0.45; cursor: not-allowed; }
 .vx-check, .vx-radio { border: 1px solid var(--vx-line-control); }
+/* 勾选时 ::after 成为 inline-grid 的首项，会改变基线；固定居中对齐，勾选前后位置不跳。 */
+.vx-check, .vx-radio { vertical-align: middle; }
 .vx-check:checked, .vx-check:indeterminate { border-color: var(--vx-ink-base); background: var(--vx-ink-base); }
 .vx-check:indeterminate::after { content: ''; width: 8px; height: 2px; background: var(--vx-text-on-strong); }
 .vx-radio { appearance: none; width: 16px; height: 16px; margin: 0; border-radius: 50%; background: var(--vx-surface-inset); }

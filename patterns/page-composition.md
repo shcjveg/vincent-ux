@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.3 · patterns/page-composition.md -->
+<!-- vincent-ux v1.5.0 · patterns/page-composition.md -->
 
 # 页面组合
 

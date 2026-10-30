@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.3 · components/breadcrumbs.md -->
+<!-- vincent-ux v1.5.0 · components/breadcrumbs.md -->
 # 面包屑与二级页
 
 复用原型中“原待办页 → 历史已办 → 原待办页”的路径。面包屑表达当前页面在任务里的位置；工作区页签、应用分类和页内筛选保留在各自层级。

@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.4.3 · patterns/delegate.md -->
+<!-- vincent-ux v1.5.0 · patterns/delegate.md -->
 
 # 带上下文派活
 
