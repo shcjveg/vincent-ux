@@ -3,9 +3,10 @@ import { Tabs as T } from '@base-ui/react/tabs'
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { Icon } from './Icon'
 
-export type TabItem<V extends string> = { value: V; label: string; content: ReactNode; closable?: boolean; disabled?: boolean; indicator?: ReactNode }
+/** tour：导览锚点名，写到页签项的 data-tour 上，供 Guide 定位。 */
+export type TabItem<V extends string> = { value: V; label: string; content: ReactNode; closable?: boolean; disabled?: boolean; indicator?: ReactNode; tour?: string }
 /** 页签条末尾的外开入口：不是页签，不进 tablist；点开在新窗口（或由宿主 onOpen 打开）。 */
-export type TabLink = { label: string; href: string; onOpen?: (href: string) => void }
+export type TabLink = { label: string; href: string; onOpen?: (href: string) => void; tour?: string }
 type ClosePosition = { left: number; top: number; visible: boolean }
 export function Tabs<V extends string>({ label, value, items, onChange, onClose, actions, leading, links, variant = 'content', keepMounted = false, hidden = false }: {
   label: string; value: V; items: TabItem<V>[]; onChange: (value: V) => void; onClose?: (value: V) => void
@@ -66,7 +67,7 @@ export function Tabs<V extends string>({ label, value, items, onChange, onClose,
         onFocusCapture={e=>setFocused((e.target as HTMLElement).closest<HTMLElement>('[data-tab-key]')?.dataset.tabKey??null)}
         onBlurCapture={e=>{if(!e.currentTarget.contains(e.relatedTarget as Node|null))setFocused(null)}}>
         <T.List ref={list} activateOnFocus className={`vx-tabs${variant==='content'?' vx-seg':''}`} aria-label={label}>
-          {items.map(item => <div key={item.value} className="vx-tab-item" data-tab-key={item.value} data-active={item.value===value} data-hovered={item.value===hovered} data-focused={item.value===focused} data-closable={!!item.closable&&!!onClose} role="presentation">
+          {items.map(item => <div key={item.value} className="vx-tab-item" data-tab-key={item.value} data-tour={item.tour} data-active={item.value===value} data-hovered={item.value===hovered} data-focused={item.value===focused} data-closable={!!item.closable&&!!onClose} role="presentation">
             <T.Tab value={item.value} disabled={item.disabled} className="vx-tab vx-tab-label"
               ref={el=>{if(el)buttons.current.set(item.value,el);else buttons.current.delete(item.value)}}
               onKeyDown={e=>{if(e.key==='Delete'&&item.closable&&onClose){e.preventDefault();close(item)}}}>
@@ -80,7 +81,7 @@ export function Tabs<V extends string>({ label, value, items, onChange, onClose,
             tabIndex={item.value===value?0:-1} aria-label={`关闭${item.label}`} onClick={()=>close(item)}><Icon name="close" size="sm"/></button>)}
         </div>
       </div>
-      {!!links?.length && <div className="vx-tabs-links">{links.map(l => <a key={l.href} className="vx-tab-link" href={l.href} target="_blank" rel="noreferrer"
+      {!!links?.length && <div className="vx-tabs-links">{links.map(l => <a key={l.href} className="vx-tab-link" href={l.href} target="_blank" rel="noreferrer" data-tour={l.tour}
         aria-label={`${l.label}（在新窗口打开）`} onClick={e => { if (l.onOpen) { e.preventDefault(); l.onOpen(l.href) } }}>{l.label}<Icon name="external" size="sm" /></a>)}</div>}
       {actions && <div className="vx-tabs-actions">{actions}</div>}
     </div>

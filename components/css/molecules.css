@@ -74,8 +74,34 @@
   color: var(--vx-text-primary);
 }
 
+/* 收起区：grid 行高从 1fr 到 0fr 做高度过渡；内边距放在内层，收起时不留白 */
 .vx-fold-body {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows var(--vx-motion-duration-slow) var(--vx-motion-ease-standard);
+}
+
+.vx-fold[data-open='false'] > .vx-fold-body {
+  grid-template-rows: 0fr;
+}
+
+.vx-fold-inner {
+  min-height: 0;
+  overflow: hidden;
   padding: var(--vx-space-0-5) 0 var(--vx-space-3);
+}
+
+.vx-fold[data-open='false'] > .vx-fold-body > .vx-fold-inner {
+  padding-block: 0;
+  transition: padding var(--vx-motion-duration-slow) var(--vx-motion-ease-standard);
+}
+
+.vx-fold[data-open='true'] > .vx-fold-body > .vx-fold-inner {
+  transition: padding var(--vx-motion-duration-slow) var(--vx-motion-ease-standard);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vx-fold-body, .vx-fold-inner { transition: none; }
 }
 
 /* 裸放在页面上（不在卡片里）的收起区：左右缩进到和卡片内容同一条边 */
@@ -333,7 +359,7 @@ button.vx-row {
   font-weight: var(--vx-font-weight-semibold);
   color: var(--vx-text-primary);
 }
-.vx-todo-group > .vx-fold-body { padding: 0; }
+.vx-todo-group > .vx-fold-body > .vx-fold-inner { padding: 0; }
 .vx-todos > .vx-fold + .vx-fold { margin-top: var(--vx-space-4); }
 
 /* ---------- 浮层：下拉、提示、弹出（唯一用玻璃的一层） ---------- */
@@ -930,6 +956,16 @@ button.vx-chip[aria-pressed='true'] {
 .vx-filter-panel { display: flex; flex-direction: column; gap: var(--vx-space-3); }
 .vx-filterbar .vx-search { flex: 1; min-width: min(240px, 100%); }
 .vx-filterbar > * { max-width: 100%; }
+/* 筛选项与侧栏（搜索）分开：左边自由换行，右边一列固定在行首，不随筛选项换行；侧栏内上下排 */
+.vx-filterbar-row { display: flex; align-items: flex-start; gap: var(--vx-space-3) var(--vx-space-6); }
+.vx-filterbar-row > .vx-filterbar { flex: 1 1 0; min-width: 0; }
+.vx-filterbar-side { flex: 0 0 auto; display: flex; flex-direction: column; align-items: flex-end; gap: var(--vx-space-2); max-width: 40%; }
+.vx-filterbar-side .vx-search { width: 240px; max-width: 100%; }
+@media (max-width: 760px) {
+  .vx-filterbar-row { flex-direction: column; }
+  .vx-filterbar-side { align-items: stretch; max-width: none; width: 100%; }
+  .vx-filterbar-side .vx-search { width: 100%; }
+}
 .vx-trigger { min-height: var(--vx-size-hit); border: 1px solid var(--vx-line-control); }
 .vx-trigger[aria-invalid='true'] { border-color: var(--vx-brand-critical); }
 .vx-trigger:disabled, .vx-option[data-disabled] { opacity: 0.45; cursor: not-allowed; }
@@ -1100,4 +1136,14 @@ button.vx-chip[aria-pressed='true'] {
 .vx-theme-toggle:focus-visible {
   opacity: 1;
   color: var(--vx-text-primary);
+}
+
+/* 行内形态：普通小按钮，不浮动、不半透明，写出当前模式 */
+.vx-theme-toggle--inline {
+  position: static;
+  width: auto;
+  height: auto;
+  opacity: 1;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }

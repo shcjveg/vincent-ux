@@ -4,16 +4,18 @@
 import { Menu } from '@base-ui/react/menu'
 import { Icon, type IconName } from './Icon'
 
-export function UserMenu({ name, meta, items = [] }: {
+export function UserMenu({ name, meta, items = [], tour }: {
   name: string
   /** 身份说明：角色、账号或所属组织，一行。 */
   meta?: string
   /** 账户动作；没有可做的动作时可省略，菜单只展示身份。 */
   items?: { label: string; icon?: IconName; onClick: () => void }[]
+  /** 导览锚点名，写到头像入口的 data-tour 上。 */
+  tour?: string
 }) {
   const initial = Array.from(name.trim())[0] ?? '?'
   return <Menu.Root>
-    <Menu.Trigger className="vx-user-trigger" aria-label={`当前用户：${name}`}><span className="vx-avatar" aria-hidden="true">{initial}</span></Menu.Trigger>
+    <Menu.Trigger className="vx-user-trigger" data-tour={tour} aria-label={`当前用户：${name}`}><span className="vx-avatar" aria-hidden="true">{initial}</span></Menu.Trigger>
     <Menu.Portal><Menu.Positioner side="bottom" align="end" sideOffset={8} className="vx-menu-positioner">
       <Menu.Popup className="vx-menu" aria-label="当前用户">
         <div className="vx-menu-head">

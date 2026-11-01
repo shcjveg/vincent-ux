@@ -2,6 +2,16 @@
 
 版本号按语义化规则：不兼容的公开接口变更升主版本；新增能力升次版本；修值与修样式升修订号。公开版本在 Git 中打同名标签，两个已发布标签之间可用 `git diff` 查看具体改动。公开历史从 v1.3.0 脱敏快照开始，早期版本仅保留演进摘要。
 
+## 未发布
+
+- 新增警示语气：`--vx-brand-warning` / `--vx-brand-warning-soft`、`[data-tone='warning']`、`.vx-tag--warning`、`.vx-text-warning`，用于「拖了一阵但还没到阻断」的一档（如待办 1 天未处理）；`npm run check` 对它同样核对比度；配色主题默认不改它的色相，需要时在 `palettes.json` 给 `warning.hue`。
+- `Tabs` 的页签项与 `links`、`UserMenu` 的头像入口新增 `tour`，写到 `data-tour`，供 `Guide` 定位外壳元素。
+- `Guide` 底部新增进度点（`.vx-guide-dots`），末步之前有「跳过导览」文字链（`.vx-guide-skip`，等于退出）；横幅形态不显示这两样。
+- 新增图标含义：`today`、`keyword`、`manuscript`、`task`、`note`、`channel`、`notify`。
+- `Fold` 展开收起改为高度过渡（grid 行高 0fr ↔ 1fr，约 280ms），收起时内容用 `inert` 隔离而不是 `hidden`；内容外多了一层 `.vx-fold-inner`，原来写在 `.vx-fold-body` 上的内边距移到它上面。
+- `FilterBar` 新增 `side`：搜索框这类不参与换行的控件放进右侧一列（`.vx-filterbar-side`），筛选项在左边自己换行，不会挤进这一列；侧栏内上下排，适合把「清除筛选」放在搜索框下面。窄屏整列落到筛选项下方。
+- `ThemeToggle` 新增 `variant="inline"`：放进设置页的表单行里，普通小按钮写出当前模式，不再浮在左下角。
+
 ## v1.5.0（2026-10-31）
 
 新增配色主题、对客门户模板与一组从产品原型收回的组件；公开接口保持兼容，按 `npm run sync -- <目录> --dry-run` 比较后同步即可。

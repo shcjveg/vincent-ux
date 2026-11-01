@@ -1,6 +1,7 @@
 // vincent-ux v1.5.0 · components/react/Fold.tsx
 // 内容收纳：分组、对象详情与编辑区共用此结构。外观见 components/css/molecules.css（.vx-fold*）
 // 数量与箭头表达折叠；分组摘要和草稿策略由宿主控制，见 components/disclosure.md。
+// 展开收起是高度过渡（约 220ms 缓出），减少动态效果时直接切换。
 import { useId, useState, type HTMLAttributes, type ReactNode } from 'react'
 import { Icon } from './Icon'
 
@@ -38,9 +39,10 @@ export function Fold({ summary, description, count, side, children, defaultOpen 
           <Icon name="expand" size="sm" />
         </span>
       </button>
+      {/* 收起时不用 hidden：靠 grid 行高 0fr → 1fr 做高度过渡，内容对读屏与键盘用 inert 隔离 */}
       {children != null && (
-        <div id={id} className="vx-fold-body" hidden={!open}>
-          {children}
+        <div id={id} className="vx-fold-body" aria-hidden={!open} inert={!open || undefined}>
+          <div className="vx-fold-inner">{children}</div>
         </div>
       )}
     </div>

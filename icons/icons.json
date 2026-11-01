@@ -11,6 +11,13 @@
   "meanings": {
     "navigation": {
       "todo": "list-todo",
+      "today": "calendar-check",
+      "keyword": "hash",
+      "manuscript": "file-text",
+      "task": "send",
+      "note": "book",
+      "channel": "users-round",
+      "notify": "bell",
       "home": "layout-list",
       "product": "package",
       "store": "store",

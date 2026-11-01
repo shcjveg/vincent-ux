@@ -3,7 +3,7 @@
 // 依赖：lucide-react
 import type { SVGProps } from 'react'
 import {
-  History, ArrowLeft, ArrowRight, ArrowDown, ArrowUp, BadgeCheck, ArrowUpDown, Blocks, BriefcaseBusiness, Cloud, GitBranch, GitCommitHorizontal, Globe, Laptop, LayoutGrid, Pin, User, Users, Calendar, ChartPie, Check, ChevronDown, ChevronLeft, ChevronRight, CircleX, Clapperboard,
+  History, ArrowLeft, Bell, Book, CalendarCheck, FileText, Hash, Send, UsersRound, ArrowRight, ArrowDown, ArrowUp, BadgeCheck, ArrowUpDown, Blocks, BriefcaseBusiness, Cloud, GitBranch, GitCommitHorizontal, Globe, Laptop, LayoutGrid, Pin, User, Users, Calendar, ChartPie, Check, ChevronDown, ChevronLeft, ChevronRight, CircleX, Clapperboard,
   ClipboardCheck, Clock, Compass, Contrast, Copy, CornerDownLeft, Download, Ellipsis, ExternalLink, Eye, Factory, Headset, Info, LayoutList,
   ListFilter, ListTodo, LoaderCircle, Lock, Megaphone, MessageCircle, MessageCirclePlus, Package,
   PanelRightOpen, Pencil, Play, Plus, RotateCcw, Search, Settings, ShieldAlert, ShoppingCart, Signpost, SlidersHorizontal, Store, Trash2,
@@ -13,7 +13,7 @@ import {
 
 const ICONS = {
   // 导航
-  todo: ListTodo, home: LayoutList, product: Package, store: Store, explore: Compass, checklist: ClipboardCheck,
+  todo: ListTodo, today: CalendarCheck, keyword: Hash, manuscript: FileText, task: Send, note: Book, channel: UsersRound, notify: Bell, home: LayoutList, product: Package, store: Store, explore: Compass, checklist: ClipboardCheck,
   publish: Upload, promote: Megaphone, ship: Truck, support: Headset, risk: ShieldAlert, wallet: Wallet, report: ChartPie,
   settings: Settings, apps: LayoutGrid, build: Blocks,
   // 动作

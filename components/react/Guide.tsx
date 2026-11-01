@@ -1,6 +1,7 @@
 // vincent-ux v1.5.0 · components/react/Guide.tsx
 // 实机导览：目标完整挖空，说明卡优先固定停靠；遮挡目标时由说明卡避让。每一步先 go() 再定位；
 // 找不到先用 alt，再找不到就按当前方向跳过。挖空框在步骤之间平滑移动、不闪回左上角。外观见 .vx-guide-*
+// 底部一排进度点标出当前步；末步之前有「跳过导览」文字链，等于退出。
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from './Icon'
@@ -165,6 +166,7 @@ export function Guide({ name, steps, onExit, scrollRoot, placement = 'bottom', v
           <p className="vx-guide-text">{shown?.text}</p>
         </div>
         <div className="vx-guide-actions">
+          <span className="vx-guide-dots" aria-hidden="true">{steps.map((_, k) => <i key={k} data-on={k === i || undefined} data-done={k < i || undefined} />)}</span>
           <span className="vx-spacer" />
           {i > 0 && (
             <button type="button" className="vx-btn vx-btn--sm" onClick={prev}>
@@ -175,6 +177,7 @@ export function Guide({ name, steps, onExit, scrollRoot, placement = 'bottom', v
             {step.nextLabel ?? (last ? '完成导览' : '下一步')} {!last && <Icon name="next" size="sm" />}
           </button>
         </div>
+        {!last && <button type="button" className="vx-link vx-guide-skip" onClick={onExit}>跳过导览</button>}
       </div>
     </div>, document.body,
   )

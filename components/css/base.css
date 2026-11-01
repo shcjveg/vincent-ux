@@ -94,7 +94,7 @@ a {
   color: var(--vx-text-tertiary);
 }
 
-/* 语气：元素用 data-tone 声明语义（accent = 钱、选中、等你动手；critical = 亏损、阻断、已超时），
+/* 语气：元素用 data-tone 声明语义（accent = 钱、选中、等你动手；warning = 拖了一阵；critical = 亏损、阻断、已超时），
    自己和子元素的样式用 --vx-tone / --vx-tone-soft 取色。页面样式只认语气，不直接用品牌色 */
 [data-tone='accent'] {
   --vx-tone: var(--vx-brand-accent);
@@ -106,6 +106,12 @@ a {
   --vx-tone-soft: var(--vx-brand-critical-soft);
 }
 
+/* warning = 拖了一阵、还没到阻断：介于「等你动手」与「已超时」之间的一档 */
+[data-tone='warning'] {
+  --vx-tone: var(--vx-brand-warning);
+  --vx-tone-soft: var(--vx-brand-warning-soft);
+}
+
 /* 强调色文字：只给钱和「等你动手」的那一个状态 */
 .vx-text-accent {
   color: var(--vx-brand-accent);
@@ -114,6 +120,11 @@ a {
 /* 危急色文字：只给亏损、过期、阻断 */
 .vx-text-critical {
   color: var(--vx-brand-critical);
+}
+
+/* 警示色文字：拖了一阵但还没到阻断 */
+.vx-text-warning {
+  color: var(--vx-brand-warning);
 }
 
 /* 临近的时限：墨色加粗，不用危急色（颜色语义见 principles/visual.md）。全系统只有这一条规则；

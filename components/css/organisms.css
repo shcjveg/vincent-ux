@@ -888,6 +888,41 @@ body:has(.vx-guide) [data-tour] { scroll-margin: var(--vx-space-6); }
   flex: 1;
 }
 
+/* 进度点：当前步拉长成短条，走过的用强调色，没到的用中性 */
+.vx-guide-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--vx-space-1);
+}
+
+.vx-guide-dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--vx-radius-full);
+  background: var(--vx-fill-selected);
+  transition: width var(--vx-motion-duration-base) var(--vx-motion-ease-standard), background var(--vx-motion-duration-base);
+}
+
+.vx-guide-dots i[data-done] {
+  background: color-mix(in srgb, var(--vx-brand-accent) 45%, transparent);
+}
+
+.vx-guide-dots i[data-on] {
+  width: 14px;
+  background: var(--vx-brand-accent);
+}
+
+.vx-guide-skip {
+  margin-top: var(--vx-space-3);
+  font-size: var(--vx-font-size-xs);
+  color: var(--vx-text-disabled);
+  text-decoration: none;
+}
+
+.vx-guide-skip:hover {
+  color: var(--vx-text-tertiary);
+}
+
 @keyframes vx-fade {
   from {
     opacity: 0;
@@ -975,6 +1010,7 @@ body:has(.vx-guide) [data-tour] { scroll-margin: var(--vx-space-6); }
 .vx-guide--banner .vx-guide-title { color: inherit; font-size: var(--vx-font-size-xl); }
 .vx-guide--banner .vx-guide-text { color: inherit; font-size: var(--vx-font-size-lg); max-width: 72ch; }
 .vx-guide--banner .vx-guide-actions { padding-right: 12px; }
+.vx-guide--banner .vx-guide-dots, .vx-guide--banner .vx-guide-skip { display: none; }
 .vx-guide--banner .vx-btn { color: inherit; background: transparent; box-shadow: inset 0 0 0 1px currentColor; }
 .vx-guide--banner .vx-btn--primary { background: var(--vx-text-on-strong); color: var(--vx-ink-base); box-shadow: none; }
 .vx-guide--banner .vx-btn:disabled { opacity: .65; }

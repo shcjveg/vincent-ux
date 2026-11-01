@@ -221,6 +221,11 @@ button.vx-toggle:hover {
   color: var(--vx-brand-critical);
 }
 
+.vx-tag--warning {
+  background: var(--vx-brand-warning-soft);
+  color: var(--vx-brand-warning);
+}
+
 /* 谁做的：自动 / AI 助理，安静的灰，固定宽度便于对齐 */
 .vx-by {
   min-width: 48px;

@@ -96,6 +96,8 @@
   --vx-brand-accent-soft: light-dark(#F8F3E9, rgba(217, 174, 87, 0.14));
   --vx-brand-critical: light-dark(#AE2F1D, #F77B68);
   --vx-brand-critical-soft: light-dark(#FBF0ED, rgba(247, 123, 104, 0.12));
+  --vx-brand-warning: light-dark(#7E5208, #E8B45A);
+  --vx-brand-warning-soft: light-dark(#FBF4E6, rgba(232, 180, 90, 0.14));
   --vx-viz-neutral: light-dark(rgba(60, 44, 20, 0.12), rgba(255, 245, 230, 0.14));
   --vx-viz-accent: light-dark(#C8962E, #E8BF6A);
   --vx-viz-series-1: light-dark(#9A6A12, #D9AE57);
@@ -165,6 +167,8 @@
   --vx-brand-accent-soft: light-dark(#EEF4FE, rgba(140, 181, 255, 0.14));
   --vx-brand-critical: light-dark(#AE2E24, #F77B6B);
   --vx-brand-critical-soft: light-dark(#FBF0EE, rgba(247, 123, 107, 0.12));
+  --vx-brand-warning: light-dark(#7E5208, #E8B45A);
+  --vx-brand-warning-soft: light-dark(#FBF4E6, rgba(232, 180, 90, 0.14));
   --vx-viz-neutral: light-dark(rgba(55, 46, 26, 0.12), rgba(250, 246, 236, 0.14));
   --vx-viz-accent: light-dark(#719EF1, #A6C6FF);
   --vx-viz-series-1: light-dark(#4F73B8, #8CB5FF);
@@ -222,6 +226,8 @@
   --vx-brand-accent-soft: light-dark(#F1F4F7, rgba(161, 183, 212, 0.14));
   --vx-brand-critical: light-dark(#AE2E24, #F77B6B);
   --vx-brand-critical-soft: light-dark(#FBF0EE, rgba(247, 123, 107, 0.12));
+  --vx-brand-warning: light-dark(#7E5208, #E8B45A);
+  --vx-brand-warning-soft: light-dark(#FBF4E6, rgba(232, 180, 90, 0.14));
   --vx-viz-neutral: light-dark(rgba(47, 47, 47, 0.12), rgba(246, 246, 246, 0.14));
   --vx-viz-accent: light-dark(#8AA2C0, #B1C7E4);
   --vx-viz-series-1: light-dark(#637690, #A1B7D4);
@@ -279,6 +285,8 @@
   --vx-brand-accent-soft: light-dark(#EBF5FF, rgba(119, 186, 255, 0.14));
   --vx-brand-critical: light-dark(#AE2C2E, #F77972);
   --vx-brand-critical-soft: light-dark(#FBF0EE, rgba(247, 121, 114, 0.12));
+  --vx-brand-warning: light-dark(#7E5208, #E8B45A);
+  --vx-brand-warning-soft: light-dark(#FBF4E6, rgba(232, 180, 90, 0.14));
   --vx-viz-neutral: light-dark(rgba(30, 48, 71, 0.12), rgba(241, 247, 255, 0.14));
   --vx-viz-accent: light-dark(#42A4FF, #97CAFF);
   --vx-viz-series-1: light-dark(#0077CD, #77BAFF);
@@ -336,6 +344,8 @@
   --vx-brand-accent-soft: light-dark(#EBF6FA, rgba(99, 196, 227, 0.14));
   --vx-brand-critical: light-dark(#AE2D29, #F77A6E);
   --vx-brand-critical-soft: light-dark(#FBF0EE, rgba(247, 122, 110, 0.12));
+  --vx-brand-warning: light-dark(#7E5208, #E8B45A);
+  --vx-brand-warning-soft: light-dark(#FBF4E6, rgba(232, 180, 90, 0.14));
   --vx-viz-neutral: light-dark(rgba(26, 51, 60, 0.12), rgba(236, 249, 254, 0.14));
   --vx-viz-accent: light-dark(#3BAFD1, #77D4F3);
   --vx-viz-series-1: light-dark(#19819D, #63C4E3);
@@ -393,6 +403,8 @@
   --vx-brand-accent-soft: light-dark(#E8F3F1, rgba(95, 202, 189, 0.14));
   --vx-brand-critical: light-dark(#AE2E24, #F77B6B);
   --vx-brand-critical-soft: light-dark(#FBF0EE, rgba(247, 123, 107, 0.12));
+  --vx-brand-warning: light-dark(#7E5208, #E8B45A);
+  --vx-brand-warning-soft: light-dark(#FBF4E6, rgba(232, 180, 90, 0.14));
   --vx-viz-neutral: light-dark(rgba(32, 53, 36, 0.12), rgba(240, 249, 242, 0.14));
   --vx-viz-accent: light-dark(#2CB3A5, #73DACD);
   --vx-viz-series-1: light-dark(#008479, #5FCABD);
@@ -450,6 +462,8 @@
   --vx-brand-accent-soft: light-dark(#FFF0E8, rgba(255, 151, 82, 0.14));
   --vx-brand-critical: light-dark(#AC2A51, #F57792);
   --vx-brand-critical-soft: light-dark(#FBEFF1, rgba(245, 119, 146, 0.12));
+  --vx-brand-warning: light-dark(#7E5208, #E8B45A);
+  --vx-brand-warning-soft: light-dark(#FBF4E6, rgba(232, 180, 90, 0.14));
   --vx-viz-neutral: light-dark(rgba(63, 43, 18, 0.12), rgba(255, 245, 233, 0.14));
   --vx-viz-accent: light-dark(#F47800, #FFB080);
   --vx-viz-series-1: light-dark(#B45700, #FF9752);
@@ -507,6 +521,8 @@
   --vx-brand-accent-soft: light-dark(#FBF0F4, rgba(231, 154, 188, 0.14));
   --vx-brand-critical: light-dark(#AD310E, #F67D5F);
   --vx-brand-critical-soft: light-dark(#FBF0ED, rgba(246, 125, 95, 0.12));
+  --vx-brand-warning: light-dark(#7E5208, #E8B45A);
+  --vx-brand-warning-soft: light-dark(#FBF4E6, rgba(232, 180, 90, 0.14));
   --vx-viz-neutral: light-dark(rgba(67, 38, 38, 0.12), rgba(255, 243, 243, 0.14));
   --vx-viz-accent: light-dark(#D581A7, #F8ABCC);
   --vx-viz-series-1: light-dark(#A05C7B, #E79ABC);
@@ -564,6 +580,8 @@
   --vx-brand-accent-soft: light-dark(#F8F0FB, rgba(216, 154, 235, 0.14));
   --vx-brand-critical: light-dark(#AE2C2E, #F77972);
   --vx-brand-critical-soft: light-dark(#FBF0EE, rgba(247, 121, 114, 0.12));
+  --vx-brand-warning: light-dark(#7E5208, #E8B45A);
+  --vx-brand-warning-soft: light-dark(#FBF4E6, rgba(232, 180, 90, 0.14));
   --vx-viz-neutral: light-dark(rgba(58, 39, 62, 0.12), rgba(253, 242, 255, 0.14));
   --vx-viz-accent: light-dark(#C580DA, #E8AAFB);
   --vx-viz-series-1: light-dark(#935BA4, #D89AEB);
@@ -621,6 +639,8 @@
   --vx-brand-accent-soft: light-dark(#F3F2FF, rgba(180, 167, 255, 0.14));
   --vx-brand-critical: light-dark(#AE2C2E, #F77972);
   --vx-brand-critical-soft: light-dark(#FBF0EE, rgba(247, 121, 114, 0.12));
+  --vx-brand-warning: light-dark(#7E5208, #E8B45A);
+  --vx-brand-warning-soft: light-dark(#FBF4E6, rgba(232, 180, 90, 0.14));
   --vx-viz-neutral: light-dark(rgba(47, 47, 50, 0.12), rgba(246, 246, 249, 0.14));
   --vx-viz-accent: light-dark(#A08AFF, #C4BBFF);
   --vx-viz-series-1: light-dark(#7A4CEE, #B4A7FF);

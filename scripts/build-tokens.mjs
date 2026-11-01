@@ -73,11 +73,11 @@ ${others.map((t) => `  ${v(t)}: ${t.dark};`).join('\n')}
 
 // —— 配色主题 ——
 // 角色：中性层（面、文字、线、填充、墨色、阴影、中性图表色）跟主题的中性色相；强调色（含焦点环、强调图表色）
-// 跟主题的强调色；危急色只换色相；涨跌色（data）不随主题变，保证正负含义稳定。
+// 跟主题的强调色；危急色只换色相；警示色默认不随主题变（主题可给 warning.hue）；涨跌色（data）不随主题变，保证正负含义稳定。
 const ACCENT_BASE_CHROMA = 0.098
 const role = (p) => {
   const [group, key] = p
-  if (group === 'brand') return key.startsWith('critical') ? 'critical' : 'accent'
+  if (group === 'brand') return key.startsWith('critical') ? 'critical' : key.startsWith('warning') ? 'warning' : 'accent'
   if (group === 'focus') return 'accent'
   if (group === 'viz') return key === 'accent' || ['series-1', 'series-3', 'series-5'].includes(key) ? 'accent' : 'neutral'
   if (['surface', 'fill', 'text', 'line', 'ink', 'shadow'].includes(group)) return 'neutral'
@@ -91,6 +91,7 @@ function shift(color, r, palette, mode) {
     const k = mode === 'dark' ? palette.neutral.darkChroma ?? palette.neutral.chroma : palette.neutral.chroma
     next = [L, C * k, palette.neutral.hue]
   } else if (r === 'accent') next = [L + (mode === 'light' ? palette.accent.lightness ?? 0 : 0), C * (palette.accent.chroma / ACCENT_BASE_CHROMA), palette.accent.hue]
+  else if (r === 'warning') next = [L, C, palette.warning?.hue ?? h]
   else next = [L, C, palette.critical.hue]
   return format([...fromOklch(next), c[3]])
 }
