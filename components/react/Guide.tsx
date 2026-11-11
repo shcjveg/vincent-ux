@@ -2,6 +2,7 @@
 // 实机导览：目标完整挖空，说明卡优先固定停靠；遮挡目标时由说明卡避让。每一步先 go() 再定位；
 // 找不到先用 alt，再找不到就按当前方向跳过。挖空框在步骤之间平滑移动、不闪回左上角。外观见 .vx-guide-*
 // 底部一排进度点标出当前步；末步之前有「跳过导览」文字链，等于退出。
+// 横幅只有两行：标题后跟进度，下一行说明；动作在右侧同一行，不另设阶段列。贴底会挡住目标时换到顶部。
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from './Icon'
@@ -116,13 +117,26 @@ export function Guide({ name, steps, onExit, scrollRoot, placement = 'bottom', v
           card.dataset.placement = layout.dock
           Object.assign(card.style, { left: `${layout.left}px`, top: layout.top == null ? 'auto' : `${layout.top}px`, bottom: layout.top == null ? '24px' : 'auto', width: `${layout.width}px`, maxHeight: `${layout.maxHeight}px`, transform: 'none' })
         }
+        // 横幅默认贴底；会挡住目标时换到顶部，挡不住了再回到底部。目标比剩下的空间还高时停在挡得少的一边，
+        // 高亮只框横幅以外看得见的那部分。
+        let shownGoal = goal
+        if (card && variant === 'banner') {
+          const edge = 16, gap = 8, h = card.offsetHeight, vh = window.innerHeight
+          const under = Math.max(0, goal.top + goal.height - (vh - edge - h - gap))
+          const over = Math.max(0, edge + h + gap - goal.top)
+          const next = !under ? 'bottom' : !over ? 'top' : under > over ? 'top' : 'bottom'
+          if (card.dataset.placement !== next) card.dataset.placement = next
+          const top = next === 'top' ? Math.max(goal.top, edge + h + gap) : goal.top
+          const bottom = next === 'bottom' ? Math.min(goal.top + goal.height, vh - edge - h - gap) : goal.top + goal.height
+          if (bottom > top) shownGoal = { ...goal, top, height: bottom - top }
+        }
         const c = cur.current
-        let nb = goal
+        let nb = shownGoal
         if (c && !reduced()) {
           const k = 1 - Math.exp(-dt / 90)
           const cap = 2.2 * dt // 每毫秒最多 2.2px
           const step = (from: number, to: number) => from + Math.max(-cap, Math.min(cap, (to - from) * k))
-          nb = { left: step(c.left, goal.left), top: step(c.top, goal.top), width: step(c.width, goal.width), height: step(c.height, goal.height) }
+          nb = { left: step(c.left, shownGoal.left), top: step(c.top, shownGoal.top), width: step(c.width, shownGoal.width), height: step(c.height, shownGoal.height) }
         }
         if (!c || Math.abs(nb.left - c.left) + Math.abs(nb.top - c.top) + Math.abs(nb.width - c.width) + Math.abs(nb.height - c.height) > 0.3) {
           cur.current = nb
@@ -151,18 +165,29 @@ export function Guide({ name, steps, onExit, scrollRoot, placement = 'bottom', v
     <div className={`vx-guide${variant === 'banner' ? ' vx-guide--banner' : ''}`} role="dialog" aria-modal="false" aria-label={name}>
       {box ? <div key="spotlight" className="vx-guide-hole" style={box} data-target={shown?.target} aria-hidden="true" /> : <div key="mask" className="vx-guide-mask" aria-hidden="true" />}
       <div className="vx-guide-card" ref={cardRef} tabIndex={-1}>
-        <div className="vx-guide-meta">
-          <span>{step.stage ?? name}</span>
-
-          <span className="vx-count">
-            {i + 1} / {steps.length}
-          </span>
-          <button type="button" className="vx-icon-btn" style={{ marginLeft: 'auto' }} aria-label="退出导览" onClick={onExit}>
+        {variant === 'banner' ? (
+          <button type="button" className="vx-icon-btn vx-guide-close" aria-label="退出导览" onClick={onExit}>
             <Icon name="close" />
           </button>
-        </div>
+        ) : (
+          <div className="vx-guide-meta">
+            <span>{step.stage ?? name}</span>
+
+            <span className="vx-count">
+              {i + 1} / {steps.length}
+            </span>
+            <button type="button" className="vx-icon-btn" style={{ marginLeft: 'auto' }} aria-label="退出导览" onClick={onExit}>
+              <Icon name="close" />
+            </button>
+          </div>
+        )}
         <div key={shown?.target} className="vx-guide-copy" aria-live="polite" aria-atomic="true">
-          <h3 className="vx-guide-title">{shown?.title ?? '正在定位…'}</h3>
+          {variant === 'banner' ? (
+            <div className="vx-guide-headline">
+              <h3 className="vx-guide-title">{shown?.title ?? '正在定位…'}</h3>
+              <span className="vx-count">{i + 1} / {steps.length}</span>
+            </div>
+          ) : <h3 className="vx-guide-title">{shown?.title ?? '正在定位…'}</h3>}
           <p className="vx-guide-text">{shown?.text}</p>
         </div>
         <div className="vx-guide-actions">
