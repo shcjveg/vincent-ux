@@ -676,7 +676,8 @@ button.vx-chip[aria-pressed='true'] {
 .vx-toast {
   position: fixed;
   left: 50%;
-  bottom: 28px;
+  /* 底部导览横幅出现时让到它上方 */
+  bottom: calc(28px + var(--vx-guide-space, 0px));
   transform: translateX(-50%);
   display: flex;
   align-items: center;

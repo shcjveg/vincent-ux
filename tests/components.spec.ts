@@ -254,7 +254,11 @@ test('待办分组与简化展开行保留键盘操作、详情和焦点恢复',
   await expect(demo.getByText('需要取得认证报告，核对持证主体与商品信息后再提交上架。')).toBeVisible()
   await page.keyboard.press('Space')
   await expect(row).toHaveAttribute('aria-expanded', 'false')
-  await expect(demo.getByText('需要取得认证报告，核对持证主体与商品信息后再提交上架。')).toBeHidden()
+  // 收起是高度过渡：内容所在区域 inert + aria-hidden，高度收到 0，而不是 hidden
+  const body = demo.getByText('需要取得认证报告，核对持证主体与商品信息后再提交上架。').locator('xpath=ancestor::*[contains(@class,"vx-fold-body")][1]')
+  await expect(body).toHaveAttribute('inert', '')
+  await expect(body).toHaveAttribute('aria-hidden', 'true')
+  await expect.poll(() => body.evaluate((el) => el.getBoundingClientRect().height)).toBe(0)
 })
 
 test('弹窗内容增减保持顶部锚点，长内容在正文滚动', async ({ page }) => {
@@ -420,6 +424,50 @@ test('横向导览保留操作门槛，完成与退出分开，浅深色文字�
     await expect(demo.getByText('导览已完成', { exact: true })).toBeVisible()
     expect(await page.evaluate(() => document.body.style.getPropertyValue('--vx-guide-space'))).toBe('')
   }
+})
+
+test('动作按钮上的提示随悬停出现，点击执行动作并收起、不固定；说明型触发器仍点击固定', async ({ page }) => {
+  const action = page.getByRole('button', { name: '复制链接', exact: true })
+  await action.hover()
+  await expect(page.getByRole('tooltip')).toBeVisible()
+  await action.click()
+  await expect(page.getByRole('tooltip')).toBeHidden()
+  await expect(page.getByRole('status').filter({ hasText: '已复制链接。' })).toBeVisible()
+  await page.mouse.move(0, 0)
+  await expect(page.getByRole('tooltip')).toBeHidden()
+  await action.hover()
+  await expect(page.getByRole('tooltip')).toBeVisible()
+  const info = page.getByRole('button', { name: '保存设置说明' })
+  await info.click()
+  await page.mouse.move(0, 0)
+  await expect(page.getByRole('tooltip', { name: '保存后立即生效；只影响当前设置。' })).toBeVisible()
+})
+
+test('modal={false} 的弹窗没有蒙层且外部可点，Esc 仍可关闭并恢复焦点', async ({ page }) => {
+  const trigger = page.getByRole('button', { name: '打开非模态弹窗' })
+  await trigger.click()
+  const dialog = page.getByRole('dialog', { name: '导览讲解' })
+  await expect(dialog).toBeVisible()
+  await expect(page.locator('.vx-scrim')).toHaveCount(0)
+  const field = page.getByLabel('售价（美元）')
+  await field.click()
+  await expect(field).toBeFocused()
+  await dialog.getByRole('button', { name: '知道了' }).focus()
+  await page.keyboard.press('Escape')
+  await expect(dialog).toHaveCount(0)
+  await expect(trigger).toBeFocused()
+})
+
+test('底部导览横幅出现时轻提示让到横幅上方', async ({ page }) => {
+  await page.evaluate(() => { const t = document.createElement('div'); t.className = 'vx-toast'; t.id = 't'; t.textContent = '已保存'; document.body.append(t) })
+  const bottom = () => page.locator('#t').evaluate(el => parseFloat(getComputedStyle(el).bottom))
+  expect(await bottom()).toBe(28)
+  await page.getByTestId('guide-demo').getByRole('button', { name: '体验底部横向导览' }).click()
+  await expect.poll(() => page.evaluate(() => parseFloat(document.body.style.getPropertyValue('--vx-guide-space')) || 0)).toBeGreaterThan(0)
+  await expect.poll(async () => {
+    const space = await page.evaluate(() => parseFloat(document.body.style.getPropertyValue('--vx-guide-space')))
+    return Math.abs((await bottom()) - (28 + space)) < 1
+  }).toBe(true)
 })
 
 test('沉浸式选择保持内容聚合与焦点循环', async ({ page }) => {
@@ -798,9 +846,16 @@ test('抽屉详情：待办进入即编辑态，计算字段只读且实时重�
  await expect(drawer.getByRole('combobox',{name:'类型'})).toContainText('周报')
  await summary.fill('发布前逐项核对标题、图片、目标和发布时间。')
  await expect(drawer.locator('.vx-prop',{hasText:'字数'}).locator('.vx-num')).toHaveText('21')
- await drawer.getByRole('button',{name:'保存',exact:true}).click()
+ await drawer.locator('.vx-overlay-foot .vx-btn--primary').click()
+ // 保存中（提交后等新内容读回）：保存显示加载中、取消不可点、正文只读，内容还是刚填的
+ await expect(drawer.locator('.vx-overlay-foot .vx-btn--primary')).toHaveAttribute('aria-busy','true')
+ await expect(drawer.locator('.vx-overlay-foot .vx-btn--primary')).toBeDisabled()
+ await expect(drawer.getByRole('button',{name:'取消',exact:true})).toBeDisabled()
+ await expect(drawer.locator('.vx-drawer-sections')).toHaveAttribute('inert','')
+ await expect(drawer.locator('.vx-drawer-sections')).toHaveAttribute('aria-busy','true')
  await expect(drawer.getByRole('textbox')).toHaveCount(0)
  await expect(drawer.getByRole('button',{name:'编辑',exact:true})).toBeVisible()
+ await expect(drawer.locator('.vx-drawer-sections')).not.toHaveAttribute('inert','')
  await expect(section.locator('.vx-drawer-section-title .vx-dot')).toHaveCount(0)
  await expect(section.locator('.vx-drawer-section-head .vx-tag')).toHaveText('已完成')
  await expect(drawer.locator('.vx-prop',{hasText:'类型'}).locator('.vx-prop-value')).toHaveText('周报')

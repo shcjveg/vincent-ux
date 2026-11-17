@@ -11,7 +11,10 @@ test('分组摘要展开后隐藏，关闭保留字段状态，数量与箭头�
  await expect(group.locator('.vx-fold-description')).toHaveCount(0)
  await expect(group.locator('.vx-count')).toHaveText('2 条')
  const toggle=group.getByRole('switch',{name:'来源检查',includeHidden:true});await toggle.uncheck()
- await head.press('Space');await expect(toggle).toBeHidden();await expect(head).toHaveAttribute('aria-expanded','false')
+ await head.press('Space');await expect(head).toHaveAttribute('aria-expanded','false')
+ // 收起是高度过渡：内容区 inert + aria-hidden，高度收到 0，键盘到不了
+ const body=group.locator('.vx-fold-body');await expect(body).toHaveAttribute('inert','');await expect(body).toHaveAttribute('aria-hidden','true')
+ await expect.poll(()=>body.evaluate(el=>el.getBoundingClientRect().height)).toBe(0)
  await head.press('Tab');await expect(toggle).not.toBeFocused()
  await head.click();await expect(toggle).not.toBeChecked()
  const history=page.getByTestId('history-disclosure'),pending=history.getByRole('button',{name:/待核对资料/}),records=history.getByRole('button',{name:/处理记录/})
