@@ -11,6 +11,7 @@
 - `Fold` 展开收起改为高度过渡（grid 行高 0fr ↔ 1fr，约 280ms），收起时内容用 `inert` 隔离而不是 `hidden`；内容外多了一层 `.vx-fold-inner`，原来写在 `.vx-fold-body` 上的内边距移到它上面。
 - `FilterBar` 新增 `side`：搜索框这类不参与换行的控件放进右侧一列（`.vx-filterbar-side`），筛选项在左边自己换行，不会挤进这一列；侧栏内上下排，适合把「清除筛选」放在搜索框下面。窄屏整列落到筛选项下方。
 - `ThemeToggle` 新增 `variant="inline"`：放进设置页的表单行里，普通小按钮写出当前模式，不再浮在左下角。
+- `DetailDrawer` 的 `saving` 覆盖到新内容读回为止：保存中「取消」不可点、正文只读并略微变淡（`.vx-drawer-sections[data-saving]`，`inert`、`aria-busy`）。[抽屉详情](components/drawer.md)补充「保存中」的规则。
 
 ## v1.5.0（2026-10-31）
 

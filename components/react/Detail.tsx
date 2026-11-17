@@ -11,22 +11,25 @@ import { TextTip } from './TextTip'
 /**
  * 详情抽屉。底部只有一个出口：查看时「编辑」，编辑时「取消 / 保存」；没有可编辑字段时不出现。
  * 新建对象直接以编辑态打开（editing 恒为 true，onCancel 关闭抽屉）。
+ * saving：从点「保存」到新内容读回来的整段时间都为 true。这期间「保存」显示加载中、「取消」不可点、正文只读（inert），
+ * 用户看得到正在保存，也不会再改出一份不会被提交的内容；读回后由宿主切回查看态。
  */
 export function DetailDrawer({ title, onClose, editable, editing, onEdit, onCancel, onSave, saving = false, dirty = true, children }: {
   title: string; onClose: () => void
   /** 当前账号对这个对象至少有一个可编辑字段。 */
   editable: boolean
   editing: boolean; onEdit: () => void; onCancel: () => void; onSave: () => void
+  /** 保存中：含提交之后等新内容读回的时间。 */
   saving?: boolean
   /** 没有改动时「保存」禁用。 */
   dirty?: boolean
   children: ReactNode
 }) {
   const foot = !editable ? undefined : editing
-    ? <><Button variant="ghost" onClick={onCancel}>取消</Button><Button variant="primary" loading={saving} disabled={!dirty} onClick={onSave}>保存</Button></>
+    ? <><Button variant="ghost" disabled={saving} onClick={onCancel}>取消</Button><Button variant="primary" loading={saving} disabled={!dirty} onClick={onSave}>保存</Button></>
     : <Button onClick={onEdit}><Icon name="edit" size="sm" />编辑</Button>
   return <Dialog open variant="drawer" title={title} onOpenChange={o => { if (!o) onClose() }} actions={foot}>
-    <div className="vx-drawer-sections" data-editing={editing || undefined}>{children}</div>
+    <div className="vx-drawer-sections" data-editing={editing || undefined} data-saving={saving || undefined} inert={saving || undefined} aria-busy={saving || undefined}>{children}</div>
   </Dialog>
 }
 

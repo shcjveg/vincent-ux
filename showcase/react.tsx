@@ -105,14 +105,17 @@ function ItemDrawer({ item, onClose, onSave }: { item: Item; onClose: () => void
   const [editing, setEditing] = useState(pending)
   const [draft, setDraft] = useState(item)
   const [error, setError] = useState<string>()
+  // 保存中：示例里用 600ms 模拟「提交后等新内容读回」，这段时间取消不可点、正文只读。
+  const [saving, setSaving] = useState(false)
   const dirty = JSON.stringify(draft) !== JSON.stringify(item)
   const save = () => {
     if (!draft.summary.trim()) { setError('请填写摘要'); return }
     const next = { ...draft, status: draft.summary.trim().length >= 12 ? '已完成' : '草稿', updatedAt: '2026-10-27T10:00:00+08:00' }
-    setError(undefined); setEditing(false); onSave(next)
+    setError(undefined); setSaving(true)
+    window.setTimeout(() => { setSaving(false); setEditing(false); onSave(next) }, 600)
   }
   const date = (iso: string) => iso.slice(0, 16).replace('T', ' ')
-  return <TipProvider><DetailDrawer title={item.title} onClose={onClose} editable editing={editing} dirty={dirty}
+  return <TipProvider><DetailDrawer title={item.title} onClose={onClose} editable editing={editing} dirty={dirty} saving={saving}
     onEdit={() => { setDraft(item); setEditing(true) }} onCancel={() => { setDraft(item); setError(undefined); setEditing(false) }} onSave={save}>
     <DrawerSection title="基本信息">
       <div className="vx-props">
