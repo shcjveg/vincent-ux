@@ -254,7 +254,11 @@ test('待办分组与简化展开行保留键盘操作、详情和焦点恢复',
   await expect(demo.getByText('需要取得认证报告，核对持证主体与商品信息后再提交上架。')).toBeVisible()
   await page.keyboard.press('Space')
   await expect(row).toHaveAttribute('aria-expanded', 'false')
-  await expect(demo.getByText('需要取得认证报告，核对持证主体与商品信息后再提交上架。')).toBeHidden()
+  // 收起是高度过渡：内容所在区域 inert + aria-hidden，高度收到 0，而不是 hidden
+  const body = demo.getByText('需要取得认证报告，核对持证主体与商品信息后再提交上架。').locator('xpath=ancestor::*[contains(@class,"vx-fold-body")][1]')
+  await expect(body).toHaveAttribute('inert', '')
+  await expect(body).toHaveAttribute('aria-hidden', 'true')
+  await expect.poll(() => body.evaluate((el) => el.getBoundingClientRect().height)).toBe(0)
 })
 
 test('弹窗内容增减保持顶部锚点，长内容在正文滚动', async ({ page }) => {
