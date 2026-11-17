@@ -176,6 +176,7 @@ function InteractionDemo() {
   const [busy, setBusy] = useState(false)
   const [message, setMessage] = useState('')
   const [dialog, setDialog] = useState(false)
+  const [floating, setFloating] = useState(false)
   const [pending, setPending] = useState<string>()
   const [decisionError, setDecisionError] = useState<string>()
   const [done, setDone] = useState<string>()
@@ -197,6 +198,7 @@ function InteractionDemo() {
       <RadioGroup label="执行方式" name="permission" value={permission} onChange={setPermission} options={[{ value: 'remind', label: '只提醒' }, { value: 'approve', label: '需我批准' }, { value: 'auto', label: '自动执行', disabled: true }]} />
       <div className="vx-cluster"><Button type="submit" variant="primary" loading={busy}>保存设置</Button>
         <Tip content="保存后立即生效；只影响当前设置。"><button type="button" className="vx-icon-btn" aria-label="保存设置说明"><Icon name="info" /></button></Tip>
+        <Tip content="复制当前设置的链接"><Button onClick={() => setMessage('已复制链接。')}>复制链接</Button></Tip>
         <p role="status" className="vx-meta">{message}</p>
       </div>
     </form>
@@ -205,6 +207,10 @@ function InteractionDemo() {
       <Dialog open={dialog} onOpenChange={setDialog} title="确认发布" description="将发布给全部团队成员；已发送的通知无法撤回。" dismissible={false}
         trigger={<Button>打开确认框</Button>} actions={<><Button onClick={() => setDialog(false)}>取消</Button><Button variant="primary" onClick={() => setDialog(false)}>发布内容</Button></>}>
         <Field label="发布备注">{props => <input {...props} className="vx-input" placeholder="选填" />}</Field>
+      </Dialog>
+      <Dialog modal={false} dismissible={false} open={floating} onOpenChange={setFloating} title="导览讲解" description="没有蒙层，外部仍可点击。"
+        trigger={<Button>打开非模态弹窗</Button>} actions={<Button onClick={() => setFloating(false)}>知道了</Button>}>
+        <p className="vx-body">用于导览期间讲解弹窗内的操作。</p>
       </Dialog>
       <Tabs label="内容页签" variant="workspace" links={[{ label: '外部看板', href: 'https://example.com/board' }]} actions={<UserMenu name="林同学" meta="内容运营 · lin@example.com" items={[{ label: '退出登录', icon: 'switch-user', onClick: () => {} }]} />} value={tab} onChange={setTab} onClose={() => setDetailsTab(false)} items={[
         { value: 'overview', label: '概览', content: <p className="vx-body">方向键切换页签，关闭后焦点回到相邻页签。</p> },

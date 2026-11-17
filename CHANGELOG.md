@@ -13,6 +13,10 @@
 - `ThemeToggle` 新增 `variant="inline"`：放进设置页的表单行里，普通小按钮写出当前模式，不再浮在左下角。
 - `DetailDrawer` 的 `saving` 覆盖到新内容读回为止：保存中「取消」不可点、正文只读并略微变淡（`.vx-drawer-sections[data-saving]`，`inert`、`aria-busy`）。[抽屉详情](components/drawer.md)补充「保存中」的规则。
 
+- `Dialog` 新增 `modal`（默认 `true`）：`modal={false}` 不加蒙层、不锁定外部，供导览讲解弹窗内的操作使用；Esc 与焦点恢复不变。
+- `Tip` 的触发器自带 `onClick`（动作按钮）时，提示只随悬停、聚焦出现，点击执行动作并收起、不固定；说明型触发器仍然点击固定、再次点击收起。
+- `.vx-toast` 的 `bottom` 加上 `--vx-guide-space`：底部导览横幅出现时轻提示让到它上方。
+
 ## v1.5.0（2026-10-31）
 
 新增配色主题、对客门户模板与一组从产品原型收回的组件；公开接口保持兼容，按 `npm run sync -- <目录> --dry-run` 比较后同步即可。

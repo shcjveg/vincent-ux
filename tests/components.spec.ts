@@ -422,6 +422,50 @@ test('横向导览保留操作门槛，完成与退出分开，浅深色文字�
   }
 })
 
+test('动作按钮上的提示随悬停出现，点击执行动作并收起、不固定；说明型触发器仍点击固定', async ({ page }) => {
+  const action = page.getByRole('button', { name: '复制链接', exact: true })
+  await action.hover()
+  await expect(page.getByRole('tooltip')).toBeVisible()
+  await action.click()
+  await expect(page.getByRole('tooltip')).toBeHidden()
+  await expect(page.getByRole('status').filter({ hasText: '已复制链接。' })).toBeVisible()
+  await page.mouse.move(0, 0)
+  await expect(page.getByRole('tooltip')).toBeHidden()
+  await action.hover()
+  await expect(page.getByRole('tooltip')).toBeVisible()
+  const info = page.getByRole('button', { name: '保存设置说明' })
+  await info.click()
+  await page.mouse.move(0, 0)
+  await expect(page.getByRole('tooltip', { name: '保存后立即生效；只影响当前设置。' })).toBeVisible()
+})
+
+test('modal={false} 的弹窗没有蒙层且外部可点，Esc 仍可关闭并恢复焦点', async ({ page }) => {
+  const trigger = page.getByRole('button', { name: '打开非模态弹窗' })
+  await trigger.click()
+  const dialog = page.getByRole('dialog', { name: '导览讲解' })
+  await expect(dialog).toBeVisible()
+  await expect(page.locator('.vx-scrim')).toHaveCount(0)
+  const field = page.getByLabel('售价（美元）')
+  await field.click()
+  await expect(field).toBeFocused()
+  await dialog.getByRole('button', { name: '知道了' }).focus()
+  await page.keyboard.press('Escape')
+  await expect(dialog).toHaveCount(0)
+  await expect(trigger).toBeFocused()
+})
+
+test('底部导览横幅出现时轻提示让到横幅上方', async ({ page }) => {
+  await page.evaluate(() => { const t = document.createElement('div'); t.className = 'vx-toast'; t.id = 't'; t.textContent = '已保存'; document.body.append(t) })
+  const bottom = () => page.locator('#t').evaluate(el => parseFloat(getComputedStyle(el).bottom))
+  expect(await bottom()).toBe(28)
+  await page.getByTestId('guide-demo').getByRole('button', { name: '体验底部横向导览' }).click()
+  await expect.poll(() => page.evaluate(() => parseFloat(document.body.style.getPropertyValue('--vx-guide-space')) || 0)).toBeGreaterThan(0)
+  await expect.poll(async () => {
+    const space = await page.evaluate(() => parseFloat(document.body.style.getPropertyValue('--vx-guide-space')))
+    return Math.abs((await bottom()) - (28 + space)) < 1
+  }).toBe(true)
+})
+
 test('沉浸式选择保持内容聚合与焦点循环', async ({ page }) => {
   const trigger = page.getByRole('button', { name: '选择使用路线', exact: true })
   await trigger.click()
