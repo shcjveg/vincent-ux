@@ -1,4 +1,4 @@
-// vincent-ux v1.5.0 · components/react/Guide.tsx
+// vincent-ux v1.6.0 · components/react/Guide.tsx
 // 实机导览：目标完整挖空，说明卡优先固定停靠；遮挡目标时由说明卡避让。每一步先 go() 再定位；
 // 找不到先用 alt，再找不到就按当前方向跳过。挖空框在步骤之间平滑移动、不闪回左上角。外观见 .vx-guide-*
 // 底部一排进度点标出当前步；末步之前有「跳过导览」文字链，等于退出。

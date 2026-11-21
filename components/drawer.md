@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.5.0 · components/drawer.md -->
+<!-- vincent-ux v1.6.0 · components/drawer.md -->
 # 抽屉详情
 
 在不离开当前页的前提下查看、编辑或处理一个对象。抽屉只承载一个对象；多对象比较、批量处理回到页面。外观与焦点行为由 `DetailDrawer`（基于 `Dialog variant="drawer"`）提供，正文只用三种零件：分区 `DrawerSection`、字段 `Property`、追加记录 `.vx-log`。

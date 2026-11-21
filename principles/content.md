@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.5.0 · principles/content.md -->
+<!-- vincent-ux v1.6.0 · principles/content.md -->
 
 # 内容原则
 

@@ -82,7 +82,7 @@ export default function App() {
 | `aubergine` | 梅子 | 暖冷之间 · 硬 · 浊 | 高端品牌、会员、时尚与奢侈品、对外汇报 |
 | `pop` | 霓虹 | 中 · 硬 · 极清 | 潮流与联名、社区、创意活动 |
 
-主题参数在 `tokens/src/palettes.json`：每套只给中性色相与浓淡、强调色色相与彩度、危急色色相，色值由 `npm run build` 从默认配色派生，明度不变，`npm run check` 逐套核对对比度（正文 4.5:1）以及强调色与危急色的色相间隔（≥ 40°）。分类依据见 [配色主题分类调研](research/color-theme-taxonomy.md)。只想换品牌强调色时，在 `palettes.json` 新增一套主题，不要直接改 `brand.tokens.json` 的默认值。
+主题参数在 `tokens/src/palettes.json`：每套只给中性色相与浓淡、强调色色相与彩度、危急色色相，色值由 `npm run build` 从默认配色派生，明度不变，`npm run check` 逐套核对对比度（正文 4.5:1）以及强调色与危急色的色相间隔（≥ 40°）。警示色（拖了一阵但还没到阻断）默认保留原色相，需要随主题调整时给该套配色写 `warning.hue`。分类依据见 [配色主题分类调研](research/color-theme-taxonomy.md)。只想换品牌强调色时，在 `palettes.json` 新增一套主题，不要直接改 `brand.tokens.json` 的默认值。
 
 设计变量由仓库自带脚本解析，接入时使用生成的 CSS；变量含义与视觉约定见 [视觉原则](../principles/visual.md)。
 

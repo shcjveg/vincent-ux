@@ -55,8 +55,7 @@ function BrowserDemo() {
   ]
   return <div className="vx-stack vx-stack--lg" data-testid="browser-demo">
     <div data-tour="browse-search">
-      <FilterBar filters={filters} onClear={reset}>
-        <SearchField label="搜索内容" placeholder="搜索标题" value={query} onChange={change(setQuery)} />
+      <FilterBar filters={filters} onClear={reset} side={<SearchField label="搜索内容" placeholder="搜索标题" value={query} onChange={change(setQuery)} />}>
         <Select variant="filter" allValue="全部" label="内容类型" value={type} onChange={change(setType)} options={['全部', '报告', '模板', '笔记'].map(value => ({ value, label: value }))} />
         <Select variant="filter" allValue="全部" label="内容状态" value={status} onChange={change(setStatus)} options={['全部', '草稿', '已完成'].map(value => ({ value, label: value }))} />
         <Select variant="filter" allValue="全部" label="待办" attention={drafts > 0} value={todo} onChange={change(setTodo)} options={[{ value: '全部', label: '全部' }, { value: '补全草稿', label: '补全草稿', attention: drafts }]} />
@@ -192,8 +191,10 @@ function InteractionDemo() {
       </div>
       <Switch label="自动保存草稿" name="autosave" defaultChecked />
       <RadioGroup label="执行方式" name="permission" value={permission} onChange={setPermission} options={[{ value: 'remind', label: '只提醒' }, { value: 'approve', label: '需我批准' }, { value: 'auto', label: '自动执行', disabled: true }]} />
+      <div className="vx-cluster"><span className="vx-meta">界面明暗</span><ThemeToggle variant="inline" /></div>
       <div className="vx-cluster"><Button type="submit" variant="primary" loading={busy}>保存设置</Button>
         <Tip content="保存后立即生效；只影响当前设置。"><button type="button" className="vx-icon-btn" aria-label="保存设置说明"><Icon name="info" /></button></Tip>
+        <Tip content="把当前设置导出为文件"><Button onClick={() => setMessage('已导出设置。')}>导出设置</Button></Tip>
         <p role="status" className="vx-meta">{message}</p>
       </div>
     </form>

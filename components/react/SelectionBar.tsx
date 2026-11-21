@@ -1,4 +1,4 @@
-// vincent-ux v1.5.0 · components/react/SelectionBar.tsx
+// vincent-ux v1.6.0 · components/react/SelectionBar.tsx
 // 多选后的批量操作条：选中至少一项时浮在结果区底部，左侧已选数量与清除，右侧本次可做的动作。
 // 外观见 components/css/molecules.css（.vx-selection-bar），规则见 patterns/browse.md「分页与选择」。
 import { useEffect, useRef, type ReactNode } from 'react'

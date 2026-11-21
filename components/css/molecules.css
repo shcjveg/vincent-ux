@@ -1,4 +1,4 @@
-/* vincent-ux v1.5.0 · components/css/molecules.css */
+/* vincent-ux v1.6.0 · components/css/molecules.css */
 /* 分子：由原子组成、单一用途的小件。依赖 tokens.css、base.css、atoms.css。 */
 
 /* ---------- 内容收纳：Fold 的分组与对象行，行内步骤和对话过程见各自语义结构 ---------- */
@@ -676,7 +676,8 @@ button.vx-chip[aria-pressed='true'] {
 .vx-toast {
   position: fixed;
   left: 50%;
-  bottom: 28px;
+  /* 底部导览横幅出现时让到它上方 */
+  bottom: calc(28px + var(--vx-guide-space, 0px));
   transform: translateX(-50%);
   display: flex;
   align-items: center;

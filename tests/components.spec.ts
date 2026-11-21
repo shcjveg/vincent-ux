@@ -21,6 +21,18 @@ test('搜索、组合筛选和移除条件保持一致', async ({ page }) => {
   await expect(demo.getByText('共 8 项', { exact: true })).toBeVisible()
 })
 
+test('筛选栏把搜索框放进侧栏，窄屏整列落到筛选项下方', async ({ page }) => {
+  const demo = browse(page)
+  const side = demo.locator('.vx-filterbar-side')
+  await expect(side.getByRole('searchbox', { name: '搜索内容' })).toBeVisible()
+  await expect(demo.locator('.vx-filterbar .vx-search')).toHaveCount(0)
+  const itemsTop = async () => (await demo.locator('.vx-filterbar').first().boundingBox())!.y
+  const sideTop = async () => (await side.boundingBox())!.y
+  expect(await sideTop()).toBeLessThan(await itemsTop() + 1)
+  await page.setViewportSize({ width: 320, height: 900 })
+  expect(await sideTop()).toBeGreaterThan(await itemsTop())
+})
+
 test('列表与网格切换保留选择，分页有清晰边界', async ({ page }) => {
   const demo = browse(page)
   await demo.getByRole('checkbox', { name: '选择本周运营回顾', exact: true }).check()
@@ -215,6 +227,8 @@ test('导览穿过裁剪容器、允许操作目标，并在完成后恢复入�
   await expect(hole).toHaveAttribute('data-target', 'guide-workspace')
   expect(await guide.evaluate(el => el.parentElement === document.body)).toBe(true)
   await expect(guide).toHaveAttribute('aria-modal', 'false')
+  await expect(guide.locator('.vx-guide-dots i[data-on]')).toHaveCount(1)
+  await expect(guide.locator('.vx-guide-skip')).toBeVisible()
   await demo.getByRole('textbox', { name: '工作区名称' }).fill('我的资料库')
   await page.keyboard.press('ArrowRight')
   await expect(guide.getByRole('heading', { name: '工作区名称' })).toBeVisible()
@@ -227,6 +241,7 @@ test('导览穿过裁剪容器、允许操作目标，并在完成后恢复入�
   await expect(demo.getByRole('button', { name: /^摘要卡片/ })).toHaveAttribute('aria-pressed', 'true')
   await guide.getByRole('button', { name: '下一步' }).click()
   await expect(hole).toHaveAttribute('data-target', 'guide-save')
+  await expect(guide.locator('.vx-guide-skip')).toHaveCount(0)
   await expect(demo.getByRole('status')).toHaveText('')
   await guide.getByRole('button', { name: '完成导览' }).click()
   await expect(guide).toHaveCount(0)
@@ -254,7 +269,7 @@ test('待办分组与简化展开行保留键盘操作、详情和焦点恢复',
   await expect(demo.getByText('需要取得认证报告，核对持证主体与商品信息后再提交上架。')).toBeVisible()
   await page.keyboard.press('Space')
   await expect(row).toHaveAttribute('aria-expanded', 'false')
-  await expect(demo.getByText('需要取得认证报告，核对持证主体与商品信息后再提交上架。')).toBeHidden()
+  await expect(demo.locator('.vx-fold-body[inert]').filter({ hasText: '需要取得认证报告' })).toHaveCount(1)
 })
 
 test('弹窗内容增减保持顶部锚点，长内容在正文滚动', async ({ page }) => {
@@ -406,6 +421,10 @@ test('横向导览保留操作门槛，完成与退出分开，浅深色文字�
     const card = guide.locator('.vx-guide-card')
     expect((await card.boundingBox())!.width).toBeGreaterThan(1300)
     expect((await card.boundingBox())!.height).toBeLessThan(220)
+    const sameRow = () => guide.locator('.vx-guide-actions .vx-btn').evaluateAll(els => new Set(els.map(e => Math.round(e.getBoundingClientRect().top))).size)
+    await guide.getByRole('button', { name: '下一步' }).click()
+    expect(await sameRow()).toBe(1)
+    await guide.getByRole('button', { name: '上一步' }).click()
     await guide.getByRole('button', { name: '下一步' }).click()
     await expect(guide.locator('.vx-guide-hole')).toHaveAttribute('data-target', 'guide-preference')
     await guide.getByRole('button', { name: '下一步' }).click()
@@ -420,6 +439,35 @@ test('横向导览保留操作门槛，完成与退出分开，浅深色文字�
     await expect(demo.getByText('导览已完成', { exact: true })).toBeVisible()
     expect(await page.evaluate(() => document.body.style.getPropertyValue('--vx-guide-space'))).toBe('')
   }
+})
+
+test('横向导览挡住目标时换到顶部，挡不住了回到底部', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.setViewportSize({ width: 1280, height: 720 })
+  const demo = page.getByTestId('guide-demo')
+  const target = demo.locator('[data-tour="guide-workspace"]')
+  await demo.locator('.sc-guide-sample').evaluate(el => { (el as HTMLElement).style.transform = 'none' })
+  await target.evaluate(el => { Object.assign((el as HTMLElement).style, { position: 'fixed', left: '200px', top: '640px', width: '400px', height: '60px', zIndex: '1' }) })
+  await demo.getByRole('button', { name: '体验底部横向导览' }).click()
+  const guide = page.getByRole('dialog', { name: '浏览偏好导览' })
+  const card = guide.locator('.vx-guide-card')
+  const clear = () => guide.evaluate(el => {
+    const c = el.querySelector('.vx-guide-card')!.getBoundingClientRect()
+    const t = document.querySelector('[data-tour="guide-workspace"]')!.getBoundingClientRect()
+    return c.bottom <= t.top || c.top >= t.bottom
+  })
+  await expect(card).toHaveAttribute('data-placement', 'top')
+  await expect.poll(clear).toBe(true)
+  await target.evaluate(el => { (el as HTMLElement).style.top = '200px' })
+  await expect(card).toHaveAttribute('data-placement', 'bottom')
+  await expect.poll(clear).toBe(true)
+  // 比剩下的空间还高的目标：停在挡得少的一边，高亮只框横幅以外看得见的部分。
+  await target.evaluate(el => { Object.assign((el as HTMLElement).style, { top: '40px', height: '660px' }) })
+  await expect.poll(() => guide.evaluate(el => {
+    const c = el.querySelector('.vx-guide-card')!.getBoundingClientRect(), h = el.querySelector('.vx-guide-hole')!.getBoundingClientRect()
+    return h.height > 0 && (h.bottom <= c.top || h.top >= c.bottom)
+  })).toBe(true)
+  await page.keyboard.press('Escape')
 })
 
 test('沉浸式选择保持内容聚合与焦点循环', async ({ page }) => {
@@ -485,6 +533,18 @@ test('说明 tooltip 支持点击固定、再次点击、外部点击与触屏',
   await touch.getByRole('button',{name:'保存设置说明'}).tap()
   await expect(touch.getByRole('tooltip')).toBeHidden()
   await context.close()
+})
+
+
+test('动作按钮的 tooltip 只随悬停出现，点击执行动作后收起、不固定', async ({ page }) => {
+  const action = page.getByRole('button', { name: '导出设置' })
+  await action.hover()
+  await expect(page.getByRole('tooltip')).toContainText('导出为文件')
+  await action.click()
+  await expect(page.getByRole('tooltip')).toBeHidden()
+  await expect(page.getByRole('status').filter({ hasText: '已导出设置。' })).toBeVisible()
+  await page.mouse.move(0, 0)
+  await expect(page.getByRole('tooltip')).toBeHidden()
 })
 
 
@@ -843,7 +903,7 @@ test('配色主题：切换后语义变量随之改变，明暗仍然生效，�
 test('明暗切换：点一下切换并记住选择，名称说明下一步', async({page})=>{
  await page.evaluate(()=>{localStorage.removeItem('vx-theme');document.documentElement.dataset.theme='light'})
  await page.reload()
- const toggle=page.locator('.vx-theme-toggle')
+ const toggle=page.locator('.vx-theme-toggle:not(.vx-theme-toggle--inline)')
  await expect(toggle).toHaveAttribute('aria-label','切换到暗色')
  await toggle.click()
  expect(await page.evaluate(()=>document.documentElement.dataset.theme)).toBe('dark')
@@ -853,5 +913,18 @@ test('明暗切换：点一下切换并记住选择，名称说明下一步', as
  await page.reload()
  expect(await page.evaluate(()=>document.documentElement.dataset.theme)).toBe('dark')
  await expect(toggle).toHaveAttribute('aria-label','切换到浅色')
+ await page.evaluate(()=>localStorage.removeItem('vx-theme'))
+})
+
+test('设置页的内联明暗切换写成普通小按钮，点击切换并记住选择', async({page})=>{
+ await page.evaluate(()=>{localStorage.removeItem('vx-theme');document.documentElement.dataset.theme='light'})
+ await page.reload()
+ const inline=page.locator('#interaction-demo').locator('.vx-theme-toggle--inline')
+ await expect(inline).toHaveText('浅色')
+ await expect(inline).toHaveAttribute('aria-label','切换到暗色')
+ await inline.click()
+ await expect(inline).toHaveText('暗色')
+ expect(await page.evaluate(()=>document.documentElement.dataset.theme)).toBe('dark')
+ expect(await page.evaluate(()=>localStorage.getItem('vx-theme'))).toBe('dark')
  await page.evaluate(()=>localStorage.removeItem('vx-theme'))
 })
