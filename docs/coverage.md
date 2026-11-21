@@ -1,6 +1,6 @@
 # 设计沉淀覆盖表
 
-以 v1.5.0（2026-10-31）的近期界面改进为核对范围。沉淀完成需同时满足：规则能被找到、旧说法已修正、组件可复用、示例能操作、关键行为可验证、导出资源一致。修改本表引用的规范原文，不再另存一份规则副本。
+以 v1.6.0（2026-11-21）的近期界面改进为核对范围。沉淀完成需同时满足：规则能被找到、旧说法已修正、组件可复用、示例能操作、关键行为可验证、导出资源一致。修改本表引用的规范原文，不再另存一份规则副本。
 
 | 通用问题 | 规则来源 | 组件与可运行示例 | 验证与责任 |
 |---|---|---|---|
@@ -15,13 +15,19 @@
 | 抽屉里分区重叠、靠卡片粗线收起展开，字段样式与编辑出口各不相同 | [抽屉详情](../components/drawer.md) | `DetailDrawer` / `DrawerSection` / `Property` / `.vx-log`；DetailDrawerDemo | 组件测试：查看态无控件、编辑后同位置出现控件、计算字段不可编辑、分区红点在标题左上角、底部只有一个出口；视觉检查：只有极细线分隔、文字三档 |
 | 列表里看不出哪些对象等我处理，筛选不知道各类有多少 | [对象列表与筛选](../patterns/todo-and-badge.md#对象列表与筛选) | `Select attention` / 选项 `attention` / `AttentionMark`；BrowserDemo | 组件测试：触发器有点不计数、选项行尾计数、零项无计数、行标题左上角红点不改变文字位置 |
 | 对客入口与内部工作台一样朴素，缺少品牌感；或为了“高级”到处加渐变与动效 | [对客门户](../templates/README.md) | `.vx-portal` / `PortalFeed` / `.vx-portal-hero` / `.vx-rise`；PortalDemo | 组件测试：氛围层对读屏隐藏、快捷登录可键盘触发、减少动态效果时动画停住；视觉检查：唯一强调色、无真实内容 |
+| 「拖了一阵」和「已经阻断」都用红色，用户分不清哪件更急 | [视觉原则 · 颜色只表达意义](../principles/visual.md)、[使用指南 · 配色与主题](usage.md#配色与主题) | `--vx-brand-warning` / `--vx-brand-warning-soft`、`[data-tone='warning']`、`.vx-tag--warning` / `.vx-text-warning`；OrganismsExamples 状态列 | `npm run check`：10 套配色下警示色对比度与色相间隔；视觉检查：warning 只用于未到阻断的一档 |
+| 导览遮住被讲解的目标，或讲弹窗里的操作时弹窗把说明卡锁在外面 | [功能导览](../patterns/guide.md) | `Guide variant="banner"` 贴底／换顶、`Dialog modal={false}`；[GuideDemo](../showcase/react.tsx) | [组件测试](../tests/components.spec.ts)：挡住目标时换到顶部、挡住不了回到底部、超高目标只框可见部分；横幅动作保持同一行 |
+| 动作按钮上的提示被点开固定，挡住后续弹窗 | [组件指南](../components/README.md) | `Tip` / `TextTip`；InteractionDemo 导出按钮 | 组件测试：动作按钮的提示只随悬停出现、点击执行后收起、不固定；说明型触发器仍可点击固定 |
+| 展开收起闪断，关闭后的输入与子组件状态丢失 | [收起与展开](../components/disclosure.md) | `Fold` / `.vx-fold-inner`；DisclosureExamples | [收纳回归](../tests/disclosure.spec.ts)：高度过渡、关闭后内容 `inert` 且不进入键盘顺序、重开保留输入 |
+| 搜索框和筛选项挤在同一行互相换行，条件区跳动 | [浏览与筛选](../patterns/browse.md)、[组件指南](../components/README.md) | `FilterBar side` / `.vx-filterbar-side`；BrowserDemo | 组件测试：搜索框位于侧栏、筛选项自行换行、320px 整列落到筛选项下方 |
+| 设置页的明暗切换只能浮在左下角 | [组件指南](../components/README.md) | `ThemeToggle variant="inline"`；InteractionDemo 设置行 | 组件测试：普通小按钮写出当前模式、点击切换并记住选择 |
 | 点击或切换后错误清除提醒 | [待办与红点](../patterns/todo-and-badge.md) | `Attention` / `AttentionTitle` / `TaskCard` / `Tabs.indicator` | 组件测试：选中态红点保留、标签宽度稳定、完成终点消失；宿主负责同一未处理实例集合及旧实例不重复提醒 |
 | 空状态随页面变化，更新时间摆放无依据 | [空状态与数据时间](../components/README.md#空状态数据时间与操作自适应) | `EmptyState` / `DataTime` / `SectionCard updatedAt`；[ComponentStatesDemo](../showcase/WorkspaceDemo.tsx) | [工作区与状态测试](../tests/workspace-state.spec.ts)：同类空态样式一致、无需动作时不加按钮、可靠时间居右、无来源不生成时间 |
 | 窄区域裁字、按钮与表格挤坏 | [空间按内容分配](../patterns/page-composition.md#空间按内容分配) | `Button` / `TableScroll`；ComponentStatesDemo | 320／390／1440px：短按钮完整、长动作增高、表格局部滚动；实际产品另查最长数据和组合宽度 |
 | 侧栏收起后图标偏移、用户入口重复 | [导航](../patterns/nav-overflow.md)、[模板](../templates/README.md) | `.vx-nav` / `ActionMenu` / `WorkspaceOverlay`；WorkspaceDemo | 工作区测试：同一图标中线、头像单入口、手机抽屉焦点与 Esc 恢复 |
 | 隐藏页面丢失上下文，切换会话互相覆盖 | [页面与对话](../patterns/page-chat-flow.md) | `Tabs keepMounted/hidden` / `.vx-app[data-render="closed"]`；WorkspaceDemo | 工作区测试：两个会话独立保存页签、输入、搜索、滚动、右侧开关；宿主负责持久化、订阅与业务数据同步 |
 | 发送按钮启禁状态难以辨认 | [组件状态](../components/README.md#空状态数据时间与操作自适应)、[派活](../patterns/delegate.md) | `.vx-composer-send`；WorkspaceDemo | 浅深主题测试：禁用悬停不变、启用可辨、发送后清空、无障碍扫描；输入法完整流程由宿主检查 |
-| React 与 HTML 接入得到不同图标 | [图标指南](../icons/README.md)、[接入](usage.md) | `icons.json` → React `Icon` 与 `sprite.svg`；构建生成 67 个语义图标 | [工具链测试](../tests/tooling.test.mjs)：清单、React 语义与复制后的 HTML 图标集合一致 |
+| React 与 HTML 接入得到不同图标 | [图标指南](../icons/README.md)、[接入](usage.md) | `icons.json` → React `Icon` 与 `sprite.svg`；构建生成 75 个语义图标 | [工具链测试](../tests/tooling.test.mjs)：清单、React 语义与复制后的 HTML 图标集合一致 |
 
 ## 本轮补齐
 

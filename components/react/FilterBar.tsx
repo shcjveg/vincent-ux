@@ -1,4 +1,4 @@
-// vincent-ux v1.5.0 · components/react/FilterBar.tsx
+// vincent-ux v1.6.0 · components/react/FilterBar.tsx
 import type { ReactNode } from 'react'
 import { Button } from './Button'
 import { Icon } from './Icon'

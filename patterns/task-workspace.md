@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.5.0 · patterns/task-workspace.md -->
+<!-- vincent-ux v1.6.0 · patterns/task-workspace.md -->
 
 # 待办工作页
 

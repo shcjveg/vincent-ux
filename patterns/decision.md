@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.5.0 · patterns/decision.md -->
+<!-- vincent-ux v1.6.0 · patterns/decision.md -->
 
 # 关键节点拍板
 
