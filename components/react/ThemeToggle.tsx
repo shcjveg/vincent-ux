@@ -1,4 +1,4 @@
-// vincent-ux v1.8.0 · components/react/ThemeToggle.tsx
+// vincent-ux v1.9.0 · components/react/ThemeToggle.tsx
 // 左下角的明暗切换：一个随字号缩放的小圆钮，点一下在浅色与暗色之间切换，记住上次选择。
 // 优先用上次的选择；没有选择时用页面写在根元素上的默认明暗（例如嵌入浅色宿主时写
 // data-theme="light"），都没有时跟随系统。存不了选择的环境（沙箱 iframe）只在本次生效。

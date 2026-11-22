@@ -1,4 +1,4 @@
-// vincent-ux v1.8.0 · components/react/PalettePicker.tsx
+// vincent-ux v1.9.0 · components/react/PalettePicker.tsx
 import { useId } from 'react'
 import { Icon } from './Icon'
 import { Select } from './Select'

@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.8.0 · patterns/delegate.md -->
+<!-- vincent-ux v1.9.0 · patterns/delegate.md -->
 
 # 委派时的上下文
 

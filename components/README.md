@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.8.0 · components/README.md -->
+<!-- vincent-ux v1.9.0 · components/README.md -->
 # 组件选用指南
 
 按组件职责选型。需要规定多个组件如何配合时查[交互模式](../patterns/README.md)。需要自定义组件时先确定[设计要求与验收方法](../docs/tasks.md)。

@@ -1,4 +1,4 @@
-// vincent-ux v1.8.0 · components/react/Button.tsx
+// vincent-ux v1.9.0 · components/react/Button.tsx
 import { forwardRef, type ButtonHTMLAttributes } from 'react'
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {

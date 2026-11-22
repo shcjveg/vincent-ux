@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.8.0 · templates/README.md -->
+<!-- vincent-ux v1.9.0 · templates/README.md -->
 # 模板选用指南
 
 按页面的空间关系选模板。模板确定各区域的位置、阅读顺序和窄屏重排方式，区域内的控件见[组件选用指南](../components/README.md)。

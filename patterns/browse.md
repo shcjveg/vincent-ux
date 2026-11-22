@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.8.0 · patterns/browse.md -->
+<!-- vincent-ux v1.9.0 · patterns/browse.md -->
 
 # 内容浏览与筛选
 

@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.8.0 · patterns/write-levels.md -->
+<!-- vincent-ux v1.9.0 · patterns/write-levels.md -->
 
 # 自动执行的授权范围
 

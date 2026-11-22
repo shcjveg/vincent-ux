@@ -1,4 +1,4 @@
-// vincent-ux v1.8.0 · components/react/WorkspaceOverlay.tsx
+// vincent-ux v1.9.0 · components/react/WorkspaceOverlay.tsx
 import { useThemeContainer } from './ThemeScope'
 import { Dialog } from '@base-ui/react/dialog'
 import { type ReactNode } from 'react'

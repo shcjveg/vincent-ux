@@ -1,4 +1,4 @@
-// vincent-ux v1.8.0 · components/react/PortalFeed.tsx
+// vincent-ux v1.9.0 · components/react/PortalFeed.tsx
 // 对客门户的氛围层：几列缓慢漂移的抽象内容卡（瀑布流）。纯装饰，对读屏隐藏，不放真实业务内容。
 // 外观见 templates/css/templates.css「对客门户」；减少动态效果时停住。
 import type { CSSProperties } from 'react'

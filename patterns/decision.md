@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.8.0 · patterns/decision.md -->
+<!-- vincent-ux v1.9.0 · patterns/decision.md -->
 
 # 方案选择与执行授权
 

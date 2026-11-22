@@ -1,4 +1,4 @@
-/* vincent-ux v1.8.0 · tokens/dist/embedded.css */
+/* vincent-ux v1.9.0 · tokens/dist/embedded.css */
 :where(.vx-theme:not(.vx-theme .vx-theme)) {
   color-scheme: light dark;
   --vx-light: initial;
@@ -1666,7 +1666,7 @@
 }
 
 @scope (.vx-theme) {
-/* vincent-ux v1.8.0 · components/css/base.css */
+/* vincent-ux v1.9.0 · components/css/base.css */
 /* 基础重置与全局排版。依赖 tokens/dist/tokens.css。 */
 
 *,
@@ -1916,7 +1916,7 @@ a {
 
 }
 @scope (.vx-theme) {
-/* vincent-ux v1.8.0 · components/css/atoms.css */
+/* vincent-ux v1.9.0 · components/css/atoms.css */
 /* 原子：按钮、图标、标签、红点、缩略图与头像、输入框、开关、复选框、数字、骨架、转圈。依赖 tokens.css、base.css。 */
 
 /* ---------- 按钮：主（主题动作色）· 次（凹面）· 文字 ---------- */
@@ -2423,7 +2423,7 @@ button.vx-toggle:hover {
 
 }
 @scope (.vx-theme) {
-/* vincent-ux v1.8.0 · components/css/molecules.css */
+/* vincent-ux v1.9.0 · components/css/molecules.css */
 /* 分子：由原子组成、单一用途的小件。依赖 tokens.css、base.css、atoms.css。 */
 
 /* ---------- 内容收纳：Fold 的分组与对象行，行内步骤和对话过程见各自语义结构 ---------- */
@@ -3753,7 +3753,7 @@ button.vx-chip[aria-pressed='true'] {
 
 }
 @scope (.vx-theme) {
-/* vincent-ux v1.8.0 · components/css/organisms.css */
+/* vincent-ux v1.9.0 · components/css/organisms.css */
 /* 组织：完成一块完整内容的组件。依赖 tokens.css、base.css、atoms.css、molecules.css。 */
 
 /* ---------- 页头：一个标题 + 一句结论 + 页面级动作 ---------- */
@@ -5148,7 +5148,7 @@ button.vx-stat:hover {
 
 }
 @scope (.vx-theme) {
-/* vincent-ux v1.8.0 · templates/css/templates.css */
+/* vincent-ux v1.9.0 · templates/css/templates.css */
 /* 模板：应用与页面的骨架。依赖 tokens.css 与 components/css/*。
    结构：.vx-app > .vx-nav（可收起）+ .vx-chat（按需出现）+ .vx-render（.vx-tabs + .vx-render-body > .vx-page） */
 
