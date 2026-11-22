@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.6.0 · components/README.md -->
+<!-- vincent-ux v1.7.0 · components/README.md -->
 # 组件选用指南
 
 按「要做的事」分八组，一个组件只出现在一组里。每组先说什么情况用哪个，再说常见的误用。长什么样看 `showcase/index.html`；多个组件怎么配合看 `patterns/`；颜色语义看 `principles/visual.md`。带「React」的有交互组件，其余直接用类名。
@@ -9,6 +9,8 @@
 
 | 组件 | 规范与用途 | 展示入口 |
 |---|---|---|
+| `ThemeScope` / `ThemeToggle` | 局部主题、明暗切换和浮层挂载范围 | [独立项目的嵌入示例](../examples/embedded/index.html) |
+| `useDraftForm` | [保存与重试](../docs/usage.md#保存与重试)，由产品提供实际保存方法 | [设置表单](../showcase/SettingsExample.tsx)、[独立项目编辑器](../examples/embedded/main.tsx) |
 | `Breadcrumbs` | [面包屑与二级页](breadcrumbs.md)：路径替换页头、返回原范围、历史空态 | [面包屑](../showcase/index.html#breadcrumbs) |
 | `Fold` | [收起与展开](disclosure.md)：分组、详情、编辑、步骤与状态保留 | [收起与展开](../showcase/index.html#disclosure) |
 | `Button` / `Field` / `Checkbox` / `Switch` / `RadioGroup` / `Select` | 输入、字段关联、禁用与保存 | [交互与状态](../showcase/index.html#interactive)、[字段与范围](../showcase/index.html#molecules) |
@@ -20,7 +22,7 @@
 | `TextTip` / `Tip` / `TipProvider` | 口径与补充解释；Provider 提供提示上下文 | [板块说明](../showcase/index.html#molecules)、[交互](../showcase/index.html#interactive) |
 | `DecisionCard` / `ActionBar` / `AgentAction` | [决定](../patterns/decision.md)与[派活](../patterns/delegate.md)；ActionBar 组合在决定区 | [单次决定](../showcase/index.html#interactive)、[派活入口](../showcase/index.html#molecules) |
 | `Dialog` / `DetailDrawer` / `DrawerSection` / `Property` / `Guide` | 模态工作面、[抽屉详情](drawer.md)与[功能导览](../patterns/guide.md) | [弹层](../showcase/index.html#interactive)、[选择与导览](../showcase/index.html#guide) |
-| `Tabs` / `WorkspaceOverlay` / `ActionMenu` / `useViewportQuery` | [外壳模板](../templates/README.md)、[会话状态](../patterns/page-chat-flow.md)；hook 控制断点 | [真实工作区](../showcase/index.html#session-workspace) |
+| `Tabs` / `WorkspaceOverlay` / `ActionMenu` / `useWorkspaceLayout` | [外壳模板](../templates/README.md)、[会话状态](../patterns/page-chat-flow.md)；hook 控制断点 | [真实工作区](../showcase/index.html#session-workspace) |
 | `Icon` | [语义图标](../icons/README.md) | [图标目录](../showcase/index.html#icons) |
 
 ## 1. 文字、数字与标识
@@ -58,7 +60,7 @@
 | 填文字 | `.vx-input` / `.vx-textarea`，外面套 `Field`（React，关联标签、说明、错误）或 `.vx-field` |
 | 从有限选项中选一个 | `Select`（React，可搜索，无选中对号占位）；纯 HTML 用 `.vx-select` |
 | 两到四个互斥视图之间切换 | `Segmented`（React）/ `.vx-seg` |
-| 立即生效的开关 | `Switch`（React）/ `.vx-switch`；保存型表单里的开关随表单提交 |
+| 立即生效的开关 | `Switch`（React）/ `.vx-switch` 用于当场生效的单项设置。统一保存或应用的二元字段使用 `Checkbox`；[按生效时点选型](../principles/interaction.md#操作何时生效) |
 | 行尾切换一个属性，状态要写出来（置顶 / 已置顶） | `.vx-toggle` |
 | 表单里的勾选 | `Checkbox`（React，含半选）/ `.vx-check` |
 | 少量互斥选项 | `RadioGroup`（React，原生 radio） |
@@ -217,7 +219,7 @@
 
 `WorkspaceOverlay` 将常驻内容切为模态面板：`active=false` 保留内联布局，`active=true` 时由 `open` 控制带遮罩的弹层。`variant="nav"` 用于左侧实色导航抽屉，默认 `panel` 用于对话等完整工作面。标题来自 `label`；关闭、初始焦点与焦点恢复由 `onOpenChange`、`initialFocus`、`finalFocus` 接入。底层使用 Base UI 的模态、键盘循环与 Esc 行为。
 
-通过 `useViewportQuery` 跟随视口变化。桌面展开偏好与移动抽屉状态分开保存；跨断点关闭抽屉，导航后关闭覆盖层。对话草稿与会话状态放在宿主，跨布局切换和收起后继续保留。
+通过 `useWorkspaceLayout` 跟随所在工作区的宽度。`useViewportQuery` 可继续用于真正按视口决定的行为。桌面展开偏好与移动抽屉状态分开保存；跨断点关闭抽屉，导航后关闭覆盖层。对话草稿与会话状态放在宿主，跨布局切换和收起后继续保留。
 
 导航分组标题使用 `.vx-nav-group-title`，左侧名称、右侧 `.vx-icon-btn` 管理或新建入口。空状态统一用 `.vx-nav-empty`：`text-muted` 比标题浅一档，保持 11px 辅助字号；该文字色只用于 `surface-shell` 或 `surface-card`，浅深主题均检查 4.5:1。
 
@@ -242,5 +244,7 @@
 - `SectionCard updatedAt` / `SectionHeader updatedAt` 使用 `DataTime` 在标题区右侧呈现源数据时间。只在新鲜度影响判断且有可靠来源时显示；没有来源不补当前时间，不拿查看时间或业务截止时间充当更新时间。统计期间留在范围控件，逐行更新时间不同则归属于各记录。窄屏可在标题区内换行，仍居右。
 - 表格保留可读列宽并使用 `TableScroll` 局部滚动；短动作标签不拆字，输入框有稳定的可操作宽度，操作组整体换行。普通长按钮可以换行时，按钮高度随内容增长，禁止固定高度裁字。
 - 对话发送使用 `.vx-composer-send`，不要混用主按钮与通用图标按钮的颜色规则。可发送时深底亮色图标；空输入禁用时浅底辅助色图标，禁用不响应悬停。
+
+追加消息的对话区用 `ChatTranscript`。阅读位置由宿主按会话保存，接入见[持续输出与回读](../patterns/page-chat-flow.md#持续输出与回读)。
 
 工作区 `Tabs keepMounted` 保留各页签实例，`hidden` 隐藏整个页签组；应用按会话保存组、当前页签与开关，并给页面实例提供其自身上下文。关闭整个右侧放在 `actions`，恢复图标用 `open-workspace`；`.vx-app[data-render="closed"]` 让对话占满剩余空间。

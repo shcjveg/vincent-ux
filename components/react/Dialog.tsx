@@ -1,4 +1,5 @@
-// vincent-ux v1.6.0 · components/react/Dialog.tsx
+// vincent-ux v1.7.0 · components/react/Dialog.tsx
+import { useThemeContainer } from './ThemeScope'
 import { Dialog as D } from '@base-ui/react/dialog'
 import type { ReactElement, ReactNode } from 'react'
 import { Icon } from './Icon'
@@ -13,6 +14,7 @@ export function Dialog({ open, onOpenChange, trigger, title, description, childr
   dismissible?: boolean
   modal?: boolean
 }) {
+  const container = useThemeContainer()
   const content = <>
     <div className="vx-overlay-head">
       <D.Title className="vx-title">{title}</D.Title>
@@ -26,7 +28,7 @@ export function Dialog({ open, onOpenChange, trigger, title, description, childr
   </>
   return <D.Root modal={modal} open={open} onOpenChange={onOpenChange} disablePointerDismissal={!dismissible}>
     {trigger && <D.Trigger render={trigger} />}
-    <D.Portal>
+    <D.Portal container={container}>
       {modal && <D.Backdrop className="vx-scrim" />}
       <D.Popup aria-modal="true" className={variant === 'drawer' ? 'vx-drawer' : variant === 'stage' ? 'vx-stage-dialog' : 'vx-dialog'} initialFocus={initialFocus} finalFocus={finalFocus}>
         {variant === 'stage' ? <>

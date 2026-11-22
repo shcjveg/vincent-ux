@@ -1,0 +1,91 @@
+[
+  {
+    "id": "ink-gold",
+    "name": "墨金",
+    "default": true
+  },
+  {
+    "id": "sapphire-jade",
+    "name": "宝蓝荧绿"
+  },
+  {
+    "id": "navy-fuchsia",
+    "name": "藏青亮粉"
+  },
+  {
+    "id": "cobalt-bubblegum",
+    "name": "钴蓝泡泡糖"
+  },
+  {
+    "id": "aubergine",
+    "name": "梅子"
+  },
+  {
+    "id": "cream-ember",
+    "name": "奶油焦橙"
+  },
+  {
+    "id": "pop",
+    "name": "霓虹"
+  },
+  {
+    "id": "navy-coral",
+    "name": "浅蓝珊瑚"
+  },
+  {
+    "id": "mist",
+    "name": "晴雾"
+  },
+  {
+    "id": "blush",
+    "name": "柔雾"
+  },
+  {
+    "id": "spark",
+    "name": "珊瑚"
+  },
+  {
+    "id": "scholar",
+    "name": "书卷"
+  },
+  {
+    "id": "grove",
+    "name": "松林"
+  },
+  {
+    "id": "burgundy-butter",
+    "name": "松木酒红"
+  },
+  {
+    "id": "mono",
+    "name": "素白"
+  },
+  {
+    "id": "charcoal-cobalt",
+    "name": "炭沙电蓝"
+  },
+  {
+    "id": "sky-ember",
+    "name": "天蓝琥珀红"
+  },
+  {
+    "id": "sky-berry",
+    "name": "天蓝莓粉"
+  },
+  {
+    "id": "midnight-melon",
+    "name": "午夜蜜橙"
+  },
+  {
+    "id": "signal",
+    "name": "信号"
+  },
+  {
+    "id": "raven-poppy",
+    "name": "鸦黑罂粟"
+  },
+  {
+    "id": "vermilion-lime",
+    "name": "朱橙荧黄"
+  }
+]

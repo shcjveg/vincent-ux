@@ -1,19 +1,24 @@
-import { useEffect, useState } from 'react'
+import palettes from '../tokens/dist/palettes.json'
+import { downloadJson } from './download'
+import { PortalExample } from './PortalExample'
+import { ReportExample } from './ReportExample'
+import { SettingsExample } from './SettingsExample'
+import { useEffect, useRef, useState } from 'react'
 import { WorkspaceDemo, ComponentStatesDemo } from './WorkspaceDemo'
 import { BreadcrumbExamples } from './NavigationExamples'
 import { DisclosureExamples, ControlsExamples, OrganismsExamples } from './ComponentExamples'
 import { createRoot } from 'react-dom/client'
 import { DataTime, EmptyState, Button, Checkbox, Collection, DecisionCard, Dialog, Field, FilterBar, Fold, Guide, Icon,
-  Breadcrumbs, ThemeToggle, UserMenu, DateFilter, SortMenu, TaskStatus, TaskCard, ActionMenu, AttentionMark, AttentionTitle, ActionSummary, DetailDrawer, DrawerSection, Property, Metric, ObjectPreview, PortalFeed, SectionCard, SectionAction, SectionHeader, Pagination, RadioGroup, SearchField, Segmented, Select, SelectionBar, Switch, TableScroll, Tabs, Tip, TipProvider, type GuideStep } from '../components/react'
+  Breadcrumbs, ThemeToggle, UserMenu, DateFilter, SortMenu, TaskStatus, TaskCard, ActionMenu, AttentionMark, AttentionTitle, ActionSummary, DetailDrawer, DrawerSection, Property, Metric, ObjectPreview, SectionCard, SectionAction, SectionHeader, Pagination, RadioGroup, SearchField, Segmented, Select, SelectionBar, TableScroll, Tabs, Tip, TipProvider, type GuideStep } from '../components/react'
 
-type Item = { id: string; title: string; type: string; status: string; summary: string; updatedAt: string }
+type Item = { id: string; title: string; type: string; status: string; summary: string; updatedAt: string; folder?: string; archived?: boolean }
 const initialContent: Item[] = [
   { id: '1', title: '本周运营回顾', type: '报告', status: '已完成', summary: '关键变化、待办和下一步计划。', updatedAt: '2026-10-26T10:00:00+08:00' },
   { id: '2', title: '内容发布检查表', type: '模板', status: '草稿', summary: '发布前逐项核对标题、图片和目标。', updatedAt: '2026-10-25T09:00:00+08:00' },
-  { id: '3', title: '访谈要点', type: '笔记', status: '已完成', summary: '整理用户提出的问题与需求。', updatedAt: '2026-10-24T11:00:00+08:00' },
+  { id: '3', title: '访谈要点', type: '笔记', status: '已完成', summary: '整理用户提出的问题与需求，附上访谈中观察到的实际操作和仍需确认的例外。', updatedAt: '2026-10-24T11:00:00+08:00' },
   { id: '4', title: '新项目启动清单', type: '模板', status: '已完成', summary: '明确范围、负责人和交付时间。', updatedAt: '2026-10-24T11:00:00+08:00' },
   { id: '5', title: '月度数据复盘', type: '报告', status: '草稿', summary: '比较本月变化并补充原因。', updatedAt: '2026-10-23T10:00:00+08:00' },
-  { id: '6', title: '产品反馈汇总', type: '笔记', status: '草稿', summary: '归纳需要进一步验证的反馈。', updatedAt: '2026-10-22T10:00:00+08:00' },
+  { id: '6', title: '产品反馈汇总', type: '笔记', status: '草稿', summary: '', updatedAt: '2026-10-22T10:00:00+08:00' },
   { id: '7', title: '周会记录模板', type: '模板', status: '已完成', summary: '记录结论、负责人和截止日期。', updatedAt: '2026-10-21T10:00:00+08:00' },
   { id: '8', title: '年度规划草案', type: '报告', status: '草稿', summary: '梳理年度重点与阶段性目标。', updatedAt: '2026-10-20T10:00:00+08:00' },
 ]
@@ -22,7 +27,10 @@ const tour: GuideStep[] = [
   { target: 'browse-results', title: '选择适合的浏览方式', text: '列表适合快速扫描，卡片适合浏览摘要。筛选和已选项会保留。' },
 ]
 
+const itemStatus = (item: Item) => item.archived ? '已归档' : item.status
+
 function BrowserDemo() {
+  const resultRegion = useRef<HTMLDivElement>(null)
   const [content, setContent] = useState(initialContent)
   const [query, setQuery] = useState('')
   const [todo, setTodo] = useState('全部')
@@ -32,13 +40,15 @@ function BrowserDemo() {
   const [layout, setLayout] = useState<'list' | 'grid'>('grid')
   const [page, setPage] = useState(1)
   const [selected, setSelected] = useState<string[]>([])
+  const [receipt, setReceipt] = useState('')
+  const [lastArchived, setLastArchived] = useState<string[]>([])
   const [detail, setDetail] = useState<Item | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string>()
   const [guide, setGuide] = useState<GuideStep[] | null>(null)
   // 草稿就是「等我完善」的待办：筛选器、选项计数、行标题红点和抽屉分区红点来自同一个集合。
-  const drafts = content.filter(item => item.status === '草稿').length
-  const filtered = content.filter(item => item.title.includes(query.trim()) && (type === '全部' || item.type === type) && (status === '全部' || item.status === status) && (todo === '全部' || item.status === '草稿'))
+  const drafts = content.filter(item => itemStatus(item) === '草稿').length
+  const filtered = content.filter(item => item.title.includes(query.trim()) && (type === '全部' || item.type === type) && (status === '全部' || itemStatus(item) === status) && (todo === '全部' || itemStatus(item) === '草稿'))
   const direction = order === 'desc' ? -1 : 1
   filtered.sort((a, b) => (Date.parse(a.updatedAt) - Date.parse(b.updatedAt)) * direction || a.id.localeCompare(b.id) * direction)
   const totalPages = Math.ceil(filtered.length / 6)
@@ -47,6 +57,19 @@ function BrowserDemo() {
   const change = (set: (value: string) => void) => (value: string) => { set(value); setPage(1) }
   const reset = () => { setQuery(''); setType('全部'); setStatus('全部'); setTodo('全部'); setPage(1) }
   const reload = () => { setError(undefined); setLoading(true); window.setTimeout(() => setLoading(false), 600) }
+  const chosen = content.filter(item => selected.includes(item.id))
+  const moveTo = (folder: string) => {
+    setContent(items => items.map(item => selected.includes(item.id) ? { ...item, folder } : item))
+    setReceipt(`已将 ${chosen.length} 项放入「${folder}」。`)
+  }
+  const archive = () => {
+    const ids = chosen.filter(item => !item.archived).map(item => item.id)
+    setContent(items => items.map(item => ids.includes(item.id) ? { ...item, archived: true } : item))
+    setLastArchived(ids)
+    setReceipt(`已归档 ${ids.length} 项。`)
+    setSelected([])
+    requestAnimationFrame(() => document.getElementById('browse-batch-receipt')?.focus())
+  }
   const filters = [
     ...(query ? [{ id: 'query', label: `搜索：${query}`, onRemove: () => change(setQuery)('') }] : []),
     ...(type !== '全部' ? [{ id: 'type', label: `类型：${type}`, onRemove: () => change(setType)('全部') }] : []),
@@ -57,7 +80,7 @@ function BrowserDemo() {
     <div data-tour="browse-search">
       <FilterBar filters={filters} onClear={reset} side={<SearchField label="搜索内容" placeholder="搜索标题" value={query} onChange={change(setQuery)} />}>
         <Select variant="filter" allValue="全部" label="内容类型" value={type} onChange={change(setType)} options={['全部', '报告', '模板', '笔记'].map(value => ({ value, label: value }))} />
-        <Select variant="filter" allValue="全部" label="内容状态" value={status} onChange={change(setStatus)} options={['全部', '草稿', '已完成'].map(value => ({ value, label: value }))} />
+        <Select variant="filter" allValue="全部" label="内容状态" value={status} onChange={change(setStatus)} options={['全部', '草稿', '已完成', '已归档'].map(value => ({ value, label: value }))} />
         <Select variant="filter" allValue="全部" label="待办" attention={drafts > 0} value={todo} onChange={change(setTodo)} options={[{ value: '全部', label: '全部' }, { value: '补全草稿', label: '补全草稿', attention: drafts }]} />
       </FilterBar>
     </div>
@@ -68,25 +91,33 @@ function BrowserDemo() {
       <span className="vx-spacer" />
       <Segmented label="浏览方式" value={layout} options={[{ id: 'list', label: '列表' }, { id: 'grid', label: '卡片' }]} onChange={setLayout} />
     </div>
-    <div data-tour="browse-results">
+    <div data-tour="browse-results" ref={resultRegion} role="group" aria-label="浏览结果" tabIndex={-1}>
       <Collection items={shown} getKey={item => item.id} layout={layout} total={filtered.length} label="内容结果" actions={<SortMenu order={order} onChange={next=>{setOrder(next);setPage(1)}}/>}
         loading={loading} error={error} onRetry={reload} emptyTitle="没有匹配的内容" emptyDescription="试试其他关键词，或清除筛选条件。"
         emptyAction={<Button onClick={reset}>清除筛选</Button>}
         renderItem={item => <>
           <Checkbox label="选择" aria-label={`选择${item.title}`} checked={selected.includes(item.id)} onChange={e => setSelected(e.target.checked ? [...selected, item.id] : selected.filter(id => id !== item.id))} />
           <div className="vx-browse-item-main">
-            <AttentionMark on={item.status === '草稿'}><button type="button" className="vx-result-title" onClick={() => setDetail(item)}>{item.title}</button></AttentionMark>
-            <p className="vx-body">{item.summary}</p>
+            <AttentionMark on={itemStatus(item) === '草稿'}><button type="button" className="vx-result-title" onClick={() => setDetail(item)}>{item.title}</button></AttentionMark>
+            {item.summary && <p className="vx-body">{item.summary}</p>}
           </div>
-          <div className="vx-cluster"><span className="vx-tag">{item.type}</span><span className="vx-tag">{item.status}</span><DataTime text={item.updatedAt.slice(5,16).replace('T',' ')} dateTime={item.updatedAt} detail="示例记录更新时间 · 北京时间"/></div>
+          <div className="vx-cluster"><span className="vx-tag">{item.type}</span><span className="vx-tag">{itemStatus(item)}</span><DataTime text={item.updatedAt.slice(5,16).replace('T',' ')} dateTime={item.updatedAt} detail="示例记录更新时间 · 北京时间"/></div>
         </>} />
     </div>
     <Pagination page={currentPage} totalPages={totalPages} onChange={setPage} disabled={loading} />
-    <SelectionBar count={selected.length} hidden={selected.filter(id => !filtered.some(item => item.id === id)).length} onClear={() => setSelected([])}>
-      <Button size="sm">移动到</Button>
-      <Button size="sm">导出</Button>
-      <Button size="sm" variant="primary">归档</Button>
+    <SelectionBar fallbackFocus={resultRegion} count={selected.length} hidden={selected.filter(id => !filtered.some(item => item.id === id)).length} onClear={() => setSelected([])}>
+      <ActionMenu label="移动到" className="vx-btn vx-btn--sm" items={['项目资料', '团队共享'].map(folder => ({ label: folder, onClick: () => moveTo(folder) }))}>移动到<Icon name="expand" size="sm" /></ActionMenu>
+      <Button size="sm" onClick={() => { downloadJson('已选内容.json', chosen); setReceipt(`已导出 ${chosen.length} 项。`) }}>导出</Button>
+      <Button size="sm" variant="primary" disabled={chosen.every(item => item.archived)} onClick={archive}>归档</Button>
     </SelectionBar>
+    <div className="vx-cluster" hidden={!receipt && !lastArchived.length}>
+      <span id="browse-batch-receipt" className="vx-body" role="status" tabIndex={-1}>{receipt}</span>
+      {lastArchived.length > 0 && <Button size="sm" onClick={() => {
+        setContent(items => items.map(item => lastArchived.includes(item.id) ? { ...item, archived: false } : item))
+        setReceipt(`已撤销 ${lastArchived.length} 项归档。`); setLastArchived([])
+        requestAnimationFrame(() => document.getElementById('browse-batch-receipt')?.focus())
+      }}>撤销归档</Button>}
+    </div>
     <details className="sc-test-tools"><summary>体验导览与不同状态</summary><div className="vx-cluster">
       <Button size="sm" onClick={() => setGuide(tour)}>开始浏览导览</Button>
       <Button size="sm" onClick={reload}>演示加载</Button>
@@ -100,7 +131,7 @@ function BrowserDemo() {
 
 /** 抽屉详情：一个编辑出口、MECE 分区、两态字段；草稿从待办进入时直接是编辑态。 */
 function ItemDrawer({ item, onClose, onSave }: { item: Item; onClose: () => void; onSave: (item: Item) => void }) {
-  const pending = item.status === '草稿'
+  const pending = itemStatus(item) === '草稿'
   const [editing, setEditing] = useState(pending)
   const [draft, setDraft] = useState(item)
   const [error, setError] = useState<string>()
@@ -117,10 +148,11 @@ function ItemDrawer({ item, onClose, onSave }: { item: Item; onClose: () => void
       <div className="vx-props">
         <Property label="标题" tip="列表与搜索使用的名称" editing={editing} value={item.title}>{p => <input {...p} className="vx-input" value={draft.title} onChange={e => setDraft({ ...draft, title: e.target.value })} />}</Property>
         <Property label="类型" tip="报告、模板或笔记，可以在下拉里新增类型" editing={editing} value={item.type}>{p => <Select label={p['aria-label']} creatable value={draft.type} onChange={v => setDraft({ ...draft, type: v })} options={[...new Set(['报告', '模板', '笔记', draft.type])].map(t => ({ value: t, label: t }))} />}</Property>
+        <Property label="所在文件夹" value={item.folder ?? '未分类'} />
         <Property label="更新时间" tip="最近一次保存的时间，系统记录" editing={editing} value={date(item.updatedAt)} />
       </div>
     </DrawerSection>
-    <DrawerSection title="内容" status={<span className="vx-tag">{item.status}</span>} attention={pending}>
+    <DrawerSection title="内容" status={<span className="vx-tag">{itemStatus(item)}</span>} attention={pending}>
       <div className="vx-props">
         <Property label="摘要" tip="写满 12 个字后，草稿自动转为已完成" wide required editing={editing} error={error} value={item.summary}>{p => <textarea {...p} className="vx-textarea" rows={3} value={draft.summary} onChange={e => setDraft({ ...draft, summary: e.target.value })} />}</Property>
         <Property label="字数" tip="摘要的字数，随填写实时计算" editing={editing} value={<span className="vx-num">{(editing ? draft : item).summary.trim().length}</span>} />
@@ -140,37 +172,13 @@ function ItemDrawer({ item, onClose, onSave }: { item: Item; onClose: () => void
   </DetailDrawer></TipProvider>
 }
 
-function PortalDemo() {
-  const [busy, setBusy] = useState<string | null>(null)
-  const [signed, setSigned] = useState<string | null>(null)
-  const accounts = [['品牌 A · 系列一', 'brand-a'], ['品牌 B · 系列二', 'brand-b']]
-  return <main className="vx-portal" data-testid="portal-demo">
-    <PortalFeed />
-    <section className="vx-portal-panel">
-      <div className="vx-rise" style={{ '--i': 0 } as React.CSSProperties}><p className="vx-portal-eyebrow">示例 · 客户入口</p><h1 className="vx-portal-title">内容看板</h1><p className="vx-portal-lead">{signed ? `已登录 ${signed}` : '用分配给你的账号登录。'}</p></div>
-      <form className="vx-portal-form vx-rise" style={{ '--i': 1 } as React.CSSProperties} onSubmit={e => e.preventDefault()}>
-        <div className="vx-portal-fields">
-          <label className="vx-portal-field"><span>账号</span><input className="vx-portal-input" autoComplete="username" /></label>
-          <label className="vx-portal-field"><span>密码</span><input className="vx-portal-input" type="password" autoComplete="current-password" /></label>
-        </div>
-        <Button type="submit" variant="primary">登录</Button>
-      </form>
-      <div className="vx-portal-quick vx-rise" style={{ '--i': 2 } as React.CSSProperties}>
-        <span className="vx-portal-quick-caption">演示账号</span>
-        {accounts.map(([name, login]) => <button key={login} type="button" className="vx-portal-account" aria-busy={busy === login || undefined}
-          onClick={() => { setBusy(login); window.setTimeout(() => { setBusy(null); setSigned(name) }, 300) }}>
-          <span><span className="vx-portal-account-name">{name}</span><span className="vx-portal-account-meta">{login}</span></span><Icon name="next" /></button>)}
-      </div>
-    </section>
-  </main>
-}
-
 function InteractionDemo() {
-  const [price, setPrice] = useState('28')
-  const [channel, setChannel] = useState<string | null>(null)
-  const [permission, setPermission] = useState<string | null>('approve')
-  const [busy, setBusy] = useState(false)
-  const [message, setMessage] = useState('')
+  const [signedIn, setSignedIn] = useState(true)
+  const accountExample = useRef<HTMLDivElement>(null)
+  const changedAccount = useRef(false)
+  useEffect(() => {
+    if (changedAccount.current) accountExample.current?.querySelector<HTMLButtonElement>(signedIn ? '.vx-user-trigger' : 'button')?.focus()
+  }, [signedIn])
   const [dialog, setDialog] = useState(false)
   const [pending, setPending] = useState<string>()
   const [decisionError, setDecisionError] = useState<string>()
@@ -178,37 +186,19 @@ function InteractionDemo() {
   const [decisionNote,setDecisionNote]=useState('')
   const [tab, setTab] = useState('overview')
   const [detailsTab, setDetailsTab] = useState(true)
-  const error = Number(price) > 0 ? undefined : '售价要大于 0'
   return <TipProvider><div className="vx-stack vx-stack--lg">
-    <form className="vx-card vx-card--padded vx-stack sc-interaction-card" aria-label="表单示例" noValidate onSubmit={e => {
-      e.preventDefault(); if (busy) return
-      if (error || !channel) { setMessage('请填写有效售价并选择渠道。'); return }
-      setBusy(true); setMessage(''); window.setTimeout(() => { setBusy(false); setMessage('已保存设置。') }, 800)
-    }}>
-      <div className="vx-grid vx-grid--2">
-        <Field label="售价（美元）" hint="填写大于 0 的金额。" required error={error}>{props => <input {...props} className="vx-input" type="number" name="price" value={price} onChange={e => setPrice(e.target.value)} />}</Field>
-        <Field label="发布渠道" required hint="未开放的渠道不可选择。">{props => <Select {...props} name="channel" value={channel} onChange={setChannel} options={[{ value: 'web', label: '网站' }, { value: 'mail', label: '邮件' }, { value: 'coming', label: '新渠道（暂未开放）', disabled: true }]} />}</Field>
-      </div>
-      <Switch label="自动保存草稿" name="autosave" defaultChecked />
-      <RadioGroup label="执行方式" name="permission" value={permission} onChange={setPermission} options={[{ value: 'remind', label: '只提醒' }, { value: 'approve', label: '需我批准' }, { value: 'auto', label: '自动执行', disabled: true }]} />
-      <div className="vx-cluster"><span className="vx-meta">界面明暗</span><ThemeToggle variant="inline" /></div>
-      <div className="vx-cluster"><Button type="submit" variant="primary" loading={busy}>保存设置</Button>
-        <Tip content="保存后立即生效；只影响当前设置。"><button type="button" className="vx-icon-btn" aria-label="保存设置说明"><Icon name="info" /></button></Tip>
-        <Tip content="把当前设置导出为文件"><Button onClick={() => setMessage('已导出设置。')}>导出设置</Button></Tip>
-        <p role="status" className="vx-meta">{message}</p>
-      </div>
-    </form>
+    <SettingsExample />
     <div className="vx-card vx-card--padded vx-stack sc-interaction-card">
       <h3 className="vx-title">弹层与页签</h3>
       <Dialog open={dialog} onOpenChange={setDialog} title="确认发布" description="将发布给全部团队成员；已发送的通知无法撤回。" dismissible={false}
         trigger={<Button>打开确认框</Button>} actions={<><Button onClick={() => setDialog(false)}>取消</Button><Button variant="primary" onClick={() => setDialog(false)}>发布内容</Button></>}>
         <Field label="发布备注">{props => <input {...props} className="vx-input" placeholder="选填" />}</Field>
       </Dialog>
-      <Tabs label="内容页签" variant="workspace" links={[{ label: '外部看板', href: 'https://example.com/board' }]} actions={<UserMenu name="林同学" meta="内容运营 · lin@example.com" items={[{ label: '退出登录', icon: 'switch-user', onClick: () => {} }]} />} value={tab} onChange={setTab} onClose={() => setDetailsTab(false)} items={[
+      <div ref={accountExample}>{signedIn ? <><Tabs label="内容页签" variant="workspace" links={[{ label: '外部看板', href: 'https://example.com/board' }]} actions={<UserMenu name="林同学" meta="内容运营 · lin@example.com" items={[{ label: '退出登录', icon: 'switch-user', onClick: () => { changedAccount.current = true; setSignedIn(false) } }]} />} value={tab} onChange={setTab} onClose={() => setDetailsTab(false)} items={[
         { value: 'overview', label: '概览', content: <p className="vx-body">方向键切换页签，关闭后焦点回到相邻页签。</p> },
         ...(detailsTab ? [{ value: 'detail', label: '明细', closable: true, indicator:<span className="vx-dot" aria-hidden="true"/>, content: <p className="vx-body">可按 Delete 关闭本页签。</p> }] : []),
       ]} />
-      {!detailsTab && <Button size="sm" onClick={() => setDetailsTab(true)}>恢复明细页签</Button>}
+      {!detailsTab && <Button size="sm" onClick={() => setDetailsTab(true)}>恢复明细页签</Button>}</> : <div className="vx-cluster"><span role="status">已退出示例账号。</span><Button onClick={() => setSignedIn(true)}>重新进入示例账号</Button></div>}</div>
     </div>
     <DecisionCard attention title="是否应用新的发布设置？" summary="将更新 2 个发布渠道的默认设置。" impact="影响：仅作用于之后的新内容；已经发布的内容保持原样。"
       recommendation="先应用于新草稿，确认后再发布。" options={[{ id: 'apply', label: '应用设置', recommended: true }, { id: 'later', label: '稍后处理' }]}
@@ -323,17 +313,14 @@ function GuideDemo() {
 /** 导航里的配色选择：只读写根元素的 data-palette，色卡区点选也改同一个属性。 */
 function PalettePick() {
   const root = document.documentElement
-  const [palettes, setPalettes] = useState<{ value: string; label: string; default?: boolean }[]>([])
   const [current, setCurrent] = useState(root.dataset.palette ?? '')
   useEffect(() => {
-    fetch(new URL('../tokens/dist/tokens.json', import.meta.url)).then(r => r.json())
-      .then(({ palettes = {} }: { palettes?: Record<string, { name: string; default?: boolean }> }) => setPalettes(Object.entries(palettes).map(([value, p]) => ({ value, label: p.name, default: p.default }))))
     const watch = new MutationObserver(() => setCurrent(root.dataset.palette ?? ''))
     watch.observe(root, { attributes: true, attributeFilter: ['data-palette'] })
     return () => watch.disconnect()
   }, [])
-  const fallback = palettes.find(p => p.default)?.value ?? null
-  return <Select label="配色主题" value={current || fallback} options={palettes.map(({ value, label }) => ({ value, label }))}
+  const fallback = palettes.find(p => p.default)?.id ?? null
+  return <Select label="配色主题" value={current || fallback} options={palettes.map(({ id, name }) => ({ value: id, label: name }))}
     onChange={id => { if (id === fallback) delete root.dataset.palette; else root.dataset.palette = id }} />
 }
 createRoot(document.getElementById('palette-pick')!).render(<PalettePick />)
@@ -344,7 +331,7 @@ createRoot(document.getElementById('browse-demo')!).render(<BrowserDemo />)
 createRoot(document.getElementById('interaction-demo')!).render(<InteractionDemo />)
 
 createRoot(document.getElementById('guide-demo')!).render(<GuideDemo />)
-createRoot(document.getElementById('portal-demo')!).render(<PortalDemo />)
+createRoot(document.getElementById('portal-demo')!).render(<PortalExample />)
 
 createRoot(document.getElementById('molecules-demo')!).render(<MoleculesDemo />)
 
@@ -389,3 +376,5 @@ createRoot(document.getElementById('controls-demo')!).render(<ControlsExamples /
 createRoot(document.getElementById('organisms-demo')!).render(<OrganismsExamples />)
 
 createRoot(document.getElementById('breadcrumbs-demo')!).render(<BreadcrumbExamples />)
+
+createRoot(document.getElementById('report-demo')!).render(<ReportExample />)

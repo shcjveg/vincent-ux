@@ -1,4 +1,4 @@
-// vincent-ux v1.6.0 · components/react/Detail.tsx
+// vincent-ux v1.7.0 · components/react/Detail.tsx
 // 抽屉详情：一个编辑出口（DetailDrawer）、一种分区（DrawerSection）、一种字段（Property）。
 // 外观见 components/css/organisms.css「抽屉详情」，规则见 components/drawer.md。
 import { useEffect, useId, useState, type ReactNode } from 'react'

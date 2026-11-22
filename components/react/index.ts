@@ -1,4 +1,4 @@
-// vincent-ux v1.6.0 · components/react/index.ts
+// vincent-ux v1.7.0 · components/react/index.ts
 // React 组件：只收需要状态或可访问性逻辑的组件，以及用来固定一条容易写走样的规则的组件；纯外观直接用 CSS 类名（见 components/css/）。
 export { Icon, type IconName } from './Icon'
 export { Fold } from './Fold'
@@ -51,3 +51,8 @@ export { Breadcrumbs, type BreadcrumbItem } from './Breadcrumbs'
 
 export { EmptyState } from './EmptyState'
 export { DataTime, type DataTimeValue } from './DataTime'
+export { ChatTranscript, type ChatReadingPosition } from './ChatTranscript'
+export { ThemeScope } from './ThemeScope'
+export { useDraftForm } from './useDraftForm'
+export { useAppliedQuery } from './useAppliedQuery'
+export { useWorkspaceLayout } from './useWorkspaceLayout'

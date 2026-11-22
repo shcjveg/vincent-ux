@@ -73,24 +73,29 @@
       "$type": "color",
       "light": "#1C1814",
       "dark": "#F3EEE7",
-      "$description": "标题、正文"
+      "$description": "标题、关键结论与输入值"
     },
     "secondary": {
       "$type": "color",
-      "light": "#5E574E",
-      "dark": "#B9B0A4",
-      "$description": "次级正文"
+      "light": "#49423B",
+      "dark": "#CFC6BA",
+      "$description": "连续正文与必要说明"
     },
     "tertiary": {
       "$type": "color",
       "light": "#655D52",
-      "dark": "#A39A8D",
+      "dark": "#B1A89B",
       "$description": "辅助文字；所有常用面上达到普通文本 4.5:1"
     },
     "disabled": {
       "$type": "color",
       "light": "#B4ACA1",
       "dark": "#5E574E"
+    },
+    "link": {
+      "$type": "color",
+      "$value": "var(--vx-brand-accent)",
+      "$description": "正文内的可访问链接。网站主题由第三色派生可读字色，下划线保留动作含义"
     },
     "on-strong": {
       "$type": "color",
@@ -124,6 +129,13 @@
       "dark": "#A39A8D",
       "$description": "输入与未选中控件的必要边界；与装饰分隔线分开"
     }
+  },
+  "action": {
+    "$description": "主要操作的底、悬停底、文字与边界成套使用。危险操作和选中状态有各自的语义色。",
+    "fill": { "$type": "string", "$value": "linear-gradient(180deg, var(--vx-ink-top), var(--vx-ink-base))" },
+    "text": { "$type": "color", "$value": "var(--vx-text-on-strong)" },
+    "edge": { "$type": "color", "$value": "transparent" },
+    "fill-hover": { "$type": "color", "$value": "var(--vx-ink-top)" }
   },
   "ink": {
     "$description": "墨：主按钮、强调文字。暗色下反转为浅色主按钮。",

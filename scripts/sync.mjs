@@ -9,39 +9,55 @@ if (!dest || dest.startsWith('--') || flags.some(f => !['--no-react', '--overwri
   process.exit(2)
 }
 const out = resolve(dest)
+const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'))
 const plan = [
+  ['scripts/consumer-readme.md', 'README.md'],
   ['LICENSE', 'LICENSE'],
   ['THIRD_PARTY_NOTICES.md', 'THIRD_PARTY_NOTICES.md'],
   ['licenses/lucide.txt', 'licenses/lucide.txt'],
   ['tokens/dist/tokens.css', 'tokens.css'],
+  ['tokens/dist/palettes.json', 'palettes.json'],
+  ['tokens/dist/embedded.css', 'embedded.css'],
   ...readdirSync(join(ROOT, 'components/css')).filter(f => f.endsWith('.css')).map(f => [`components/css/${f}`, `css/${f}`]),
   ['templates/css/templates.css', 'css/templates.css'],
   ['icons/dist/sprite.svg', 'icons/sprite.svg'],
   ['scripts/audit.js', 'audit.js'],
   ['styles.css', 'styles.css'],
   ['examples/basic.html', 'example.html'],
+  ...(flags.includes('--no-react') ? [] : [['examples/embedded/index.html', 'example-react/index.html'], ['examples/embedded/main.tsx', 'example-react/main.tsx']]),
   ...(flags.includes('--no-react') ? [] : readdirSync(join(ROOT, 'components/react')).filter(f => /\.(tsx?|jsx?)$/.test(f)).map(f => [`components/react/${f}`, `react/${f}`])),
 ].map(([from, to]) => {
   let content = readFileSync(join(ROOT, from), 'utf8')
+  if (to === 'README.md') {
+    const dependencies = Object.entries(pkg.dependencies).map(([name, version]) => name + '@' + version)
+    content = content.replace('{{version}}', pkg.version).replace('{{dependencies}}', dependencies.join(' '))
+  }
   if (from === 'styles.css') content = content.replace('./tokens/dist/tokens.css', './tokens.css').replaceAll('./components/css/', './css/').replace('./templates/css/', './css/')
+  if (from === 'examples/embedded/index.html') content = content.replace('../../tokens/dist/embedded.css', '../embedded.css')
+  if (from === 'examples/embedded/main.tsx') content = content.replace('../../components/react', '../react')
   if (from === 'examples/basic.html') content = content.replace('../styles.css', './styles.css').replaceAll('../icons/dist/sprite.svg', './icons/sprite.svg')
   const path = join(out, to)
   const previous = existsSync(path) ? readFileSync(path, 'utf8') : undefined
   return { path, to, content, changed: previous !== content, conflict: previous !== undefined && previous !== content }
 })
-const conflicts = plan.filter(f => f.conflict)
-if (conflicts.length && !flags.includes('--overwrite')) {
+const changed = plan.filter(f => f.changed)
+const conflicts = changed.filter(f => f.conflict)
+const overwrite = flags.includes('--overwrite')
+if (flags.includes('--dry-run')) {
+  for (const file of changed) {
+    const action = file.conflict ? (overwrite ? '覆盖' : '冲突') : '新增'
+    console.log(`${action} ${file.to}`)
+  }
+  if (!changed.length) console.log('无需更新')
+  process.exit(conflicts.length && !overwrite ? 1 : 0)
+}
+if (conflicts.length && !overwrite) {
   console.error('已有文件与来源不同，未写入任何文件：\n' + conflicts.map(f => `  ${f.to}`).join('\n'))
   console.error('比较并保留本地修改后，使用 --overwrite 显式覆盖；--dry-run 可预览。')
   process.exit(1)
 }
-const changed = plan.filter(f => f.changed)
-if (flags.includes('--dry-run')) {
-  console.log(changed.map(f => `${f.conflict ? '覆盖' : '新增'} ${f.to}`).join('\n') || '无需更新')
-} else {
-  for (const file of changed) {
-    mkdirSync(dirname(file.path), { recursive: true })
-    writeFileSync(file.path, file.content)
-  }
-  console.log(`vincent-ux → ${out}：${plan.length} 个文件，更新 ${changed.length} 个；打开 example.html 查看接入示例`)
+for (const file of changed) {
+  mkdirSync(dirname(file.path), { recursive: true })
+  writeFileSync(file.path, file.content)
 }
+console.log(`vincent-ux → ${out}：${plan.length} 个文件，更新 ${changed.length} 个；接入说明见 README.md`)

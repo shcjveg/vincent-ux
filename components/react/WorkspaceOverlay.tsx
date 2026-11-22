@@ -1,4 +1,5 @@
-// vincent-ux v1.6.0 · components/react/WorkspaceOverlay.tsx
+// vincent-ux v1.7.0 · components/react/WorkspaceOverlay.tsx
+import { useThemeContainer } from './ThemeScope'
 import { Dialog } from '@base-ui/react/dialog'
 import { type ReactNode } from 'react'
 
@@ -8,9 +9,10 @@ export function WorkspaceOverlay({ active, open, onOpenChange, label, variant = 
   variant?: 'panel' | 'nav'; children: ReactNode
   initialFocus?: Dialog.Popup.Props['initialFocus']; finalFocus?: Dialog.Popup.Props['finalFocus']
 }) {
+  const container = useThemeContainer()
   if (!active) return children
   return <Dialog.Root open={open} onOpenChange={onOpenChange} modal>
-    <Dialog.Portal>
+    <Dialog.Portal container={container}>
       <Dialog.Backdrop className="vx-scrim" />
       <Dialog.Popup className={`vx-workspace-overlay vx-workspace-overlay--${variant}`} aria-label={label} initialFocus={initialFocus} finalFocus={finalFocus}>
         {children}

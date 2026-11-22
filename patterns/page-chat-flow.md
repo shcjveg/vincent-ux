@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.6.0 · patterns/page-chat-flow.md -->
+<!-- vincent-ux v1.7.0 · patterns/page-chat-flow.md -->
 
 # 页面与对话双向流转
 
@@ -33,3 +33,9 @@
 `Tabs variant="workspace" keepMounted` 保留各页签实例，`hidden` 隐藏整组；稳定 key 防止恢复时重新创建页面。`actions` 放整体关闭，`.vx-app[data-render="closed"]` 让对话填满。若页面很多，可由宿主卸载并显式保存／恢复状态；隐藏不等于暂停请求或副作用，订阅和资源释放仍由宿主管理。相同 ID 的页签刷新业务数据时不重置用户输入。
 
 示例：[WorkspaceDemo](../showcase/WorkspaceDemo.tsx)。验收切换两个会话、编辑输入、切换页签、关闭／恢复、滚动与手机导航；隐藏面板不在键盘路径中，自动化定位只检查当前可见页。业务版本校验与持久化由使用方另测。
+
+## 持续输出与回读
+
+阅读位置归当前会话。停在末尾时可以跟随新增内容；主动上翻时保留当前视口和键盘焦点，回复继续生成。读者返回底部或使用「跳至最新」后恢复跟随。收起面板、切走再回来时，分别恢复该会话的跟随状态和阅读位置。输入法选词回车仍交给输入法。
+
+用 `ChatTranscript` 承载追加的消息内容。宿主按会话保留 `ChatReadingPosition`，挂载时传入 `initialPosition`，滚动时通过 `onPositionChange` 更新。替换会话时按会话 ID 设置 React key。追加历史到顶部、虚拟列表、跨设备阅读进度需由宿主以稳定消息 ID 恢复锚点。例见[工作区](../showcase/WorkspaceDemo.tsx)。

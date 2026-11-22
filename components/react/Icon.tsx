@@ -1,4 +1,4 @@
-// vincent-ux v1.6.0 · components/react/Icon.tsx
+// vincent-ux v1.7.0 · components/react/Icon.tsx
 // 按含义引用图标：<Icon name="chat" />。含义表见 icons/icons.json；新增含义先登记再用。
 // 依赖：lucide-react
 import type { SVGProps } from 'react'
@@ -32,7 +32,7 @@ const ICONS = {
 } satisfies Record<string, LucideIcon>
 
 export type IconName = keyof typeof ICONS
-const SIZE = { sm: 14, md: 16, lg: 18 } as const
+const SIZE = { sm: 'var(--vx-size-icon-sm, 14px)', md: 'var(--vx-size-icon-md, 16px)', lg: 'var(--vx-size-icon-lg, 18px)' } as const
 
 type IconProps = { name: IconName; size?: keyof typeof SIZE; label?: string } & Omit<SVGProps<SVGSVGElement>, 'name' | 'ref'>
 

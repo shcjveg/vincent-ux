@@ -1,24 +1,57 @@
-import { useRef, useState } from 'react'
-import { ActionMenu, DateFilter, Button, EmptyState, Field, Icon, SearchField, SectionCard, TableScroll, Tabs, WorkspaceOverlay, useViewportQuery } from '../components/react'
+import { useEffect, useRef, useState } from 'react'
+import { ChatTranscript, type ChatReadingPosition, ActionMenu, DateFilter, Button, EmptyState, Field, Icon, SearchField, SectionCard, TableScroll, Tabs, WorkspaceOverlay, useWorkspaceLayout } from '../components/react'
 
 import type { DateFilterValue } from '../components/react/DateFilter'
 
-type SessionState = { id:string; title:string; active:string; renderOpen:boolean; chatOpen:boolean; draft:string; messages:string[] }
+type Turn = { id: number; question: string; lines: string[] }
+const replyLines = [
+ '先核对当前任务的对象、负责人和截止时间。',
+ '检查引用资料的来源与更新时间，标记还需要确认的条目。',
+ '把需要拍板的事项留在待办中，附上范围与影响。',
+ '确认后保存方案，再查看本次变更的处理记录。',
+]
+
+type SessionState = { id:string; title:string; active:string; renderOpen:boolean; chatOpen:boolean; draft:string; messages:Turn[] }
 const seed = (id:string,title:string):SessionState => ({id,title,active:'draft',renderOpen:true,chatOpen:false,draft:'',messages:[]})
 
 // Reference host: session state is separate from each mounted page's own unsaved state.
 export function WorkspaceDemo(){
  const [sessions,setSessions]=useState([seed('plan','方案讨论'),seed('sources','资料核对')]),[active,setActive]=useState('plan')
  const [desktopNav,setDesktopNav]=useState(true),[mobileNav,setMobileNav]=useState(false)
- const compactNav=useViewportQuery('(max-width:740px)'),compactChat=useViewportQuery('(max-width:980px)')
+ const {ref:root, drawerNavigation:compactNav, overlayChat:compactChat}=useWorkspaceLayout(desktopNav)
+ useEffect(() => { if (!compactNav) setMobileNav(false) }, [compactNav])
  const navOpen=compactNav?mobileNav:desktopNav,current=sessions.find(s=>s.id===active)!
  const navTrigger=useRef<HTMLButtonElement>(null),navClose=useRef<HTMLButtonElement>(null),input=useRef<HTMLTextAreaElement>(null)
- const root=useRef<HTMLDivElement>(null)
  const update=(id:string,patch:Partial<SessionState>)=>setSessions(prev=>prev.map(s=>s.id===id?{...s,...patch}:s))
  const reveal=()=>{update(active,{renderOpen:true,...(compactChat?{chatOpen:false}:{})});requestAnimationFrame(()=>root.current?.querySelector<HTMLButtonElement>('.vx-tabset:not([hidden]) [role=tab][aria-selected=true]')?.focus())}
  const closeRender=()=>{update(active,{renderOpen:false,chatOpen:true});requestAnimationFrame(()=>input.current?.focus())}
  const closeChat=()=>{update(active,{chatOpen:false,renderOpen:true});requestAnimationFrame(()=>root.current?.querySelector<HTMLButtonElement>('.vx-tabset:not([hidden]) [role=tab][aria-selected=true]')?.focus())}
- const send=()=>{if(!current.draft.trim())return;update(active,{messages:[...current.messages,current.draft.trim()],draft:''})}
+ const positions = useRef(new Map<string, ChatReadingPosition>())
+ const timers = useRef(new Set<number>())
+ const nextTurn = useRef(0)
+ useEffect(() => {
+   const pending = timers.current
+   return () => pending.forEach(timer => window.clearInterval(timer))
+ }, [])
+ function send() {
+   const question = current.draft.trim()
+   if (!question) return
+   const sessionId = current.id
+   const turnId = ++nextTurn.current
+   setSessions(previous => previous.map(session => session.id === sessionId
+     ? { ...session, draft: '', messages: [...session.messages, { id: turnId, question, lines: [] }] } : session))
+   let count = 0
+   const timer = window.setInterval(() => {
+     const lines = replyLines.slice(0, ++count)
+     setSessions(previous => previous.map(session => session.id === sessionId
+       ? { ...session, messages: session.messages.map(turn => turn.id === turnId ? { ...turn, lines } : turn) } : session))
+     if (count === replyLines.length) {
+       window.clearInterval(timer)
+       timers.current.delete(timer)
+     }
+   }, 300)
+   timers.current.add(timer)
+ }
  const navButton=<button type="button" ref={navTrigger} className="vx-icon-btn" aria-label="展开示例导航" aria-expanded={navOpen} onClick={()=>setMobileNav(true)}><Icon name="expand-sidebar"/></button>
  return <div ref={root} className="vx-app sc-session-workspace" data-testid="session-workspace" data-nav={navOpen?undefined:'collapsed'} data-render={current.renderOpen?undefined:'closed'}>
   <WorkspaceOverlay active={compactNav} open={mobileNav} onOpenChange={setMobileNav} label="示例导航" variant="nav" initialFocus={navClose} finalFocus={navTrigger}>
@@ -34,7 +67,16 @@ export function WorkspaceDemo(){
   {current.chatOpen&&<WorkspaceOverlay active={compactChat&&current.renderOpen} open onOpenChange={open=>{if(!open)closeChat()}} label="示例对话" initialFocus={input} finalFocus={false}>
    <section className="vx-chat" aria-label="示例对话" onKeyDown={e=>{if(e.key==='Escape'&&!e.defaultPrevented&&!mobileNav&&!e.nativeEvent.isComposing){e.preventDefault();closeChat()}}}>
     <header className="vx-chat-head">{compactNav&&!current.renderOpen?navButton:<Icon name="chat"/>}<span className="vx-chat-title">{current.title}</span>{!current.renderOpen&&<button className="vx-icon-btn" aria-label="恢复示例页面" onClick={reveal}><Icon name="open-workspace"/></button>}<button className="vx-icon-btn" aria-label="收起示例对话" onClick={closeChat}><Icon name="collapse-sidebar"/></button></header>
-    <div className="vx-chat-body"><p className="vx-body">讨论当前资料，并保留页面中的工作进度。</p>{current.messages.map((message,i)=><p className="vx-msg vx-msg--user" key={i}>{message}</p>)}</div>
+    <ChatTranscript key={current.id} initialPosition={positions.current.get(current.id)}
+      onPositionChange={position => positions.current.set(current.id, position)}>
+      <p className="vx-body">讨论当前资料，并保留页面中的工作进度。</p>
+      {current.messages.map(turn => <div key={turn.id} className="vx-transcript-content">
+        <p className="vx-msg vx-msg--user">{turn.question}</p>
+        <div className="vx-msg vx-msg--ai" role="group" aria-label="示例回复">
+          {turn.lines.map(line => <p key={line}>{line}</p>)}
+        </div>
+      </div>)}
+    </ChatTranscript>
     <div className="vx-composer"><textarea ref={input} aria-label="示例对话输入" value={current.draft} onChange={e=>update(active,{draft:e.target.value})} onKeyDown={e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.nativeEvent.isComposing){e.preventDefault();send()}}}/><div className="vx-composer-bar"><span className="vx-spacer"/><button className="vx-composer-send" aria-label="发送示例消息" disabled={!current.draft.trim()} onClick={send}><Icon name="send"/></button></div></div>
    </section>
   </WorkspaceOverlay>}

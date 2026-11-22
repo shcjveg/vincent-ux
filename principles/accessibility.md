@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.6.0 · principles/accessibility.md -->
+<!-- vincent-ux v1.7.0 · principles/accessibility.md -->
 
 # 无障碍底线
 
@@ -11,8 +11,8 @@
 | 键盘 | 原生按钮、输入框；复合控件遵循方向键、Home/End、Enter/Space 约定 | 下拉、页签与表单走完整流程 |
 | 浮层 | 模态打开后移入焦点、Tab 循环、Esc 关闭、关闭后恢复入口；入口消失则指定合理落点 | `Dialog` / drawer；必要时设置 `initialFocus`、`finalFocus` |
 | 标签与反馈 | 字段有 label、说明和错误关联；图标按钮有名称；状态有文字并适当用 status / alert 宣告 | `Field`、组件测试与读屏检查 |
-| 点击区域 | 桌面交互区域至少 32×32px；复选框小图形由可点击 label 扩大命中区 | `size-hit`；触控密集页面建议 44px |
-| 动效和高对比 | 尊重减少动效和强制色彩，不能仅靠颜色传达状态 | `components/css/base.css`；系统设置实测 |
+| 点击区域 | 独立操作的桌面目标至少 32×32px；分页、关闭页签等在粗指针设备使用 44px 目标。复选框小图形由可点击 label 扩大命中区 | `size-hit`；触控密集页面建议 44px |
+| 动效和高对比 | 尊重减少动效和强制色彩，不能仅靠颜色传达状态 | `components/css/base.css`；同时检查动画时长、启动延迟与焦点 |
 
 非模态导览允许操作页面目标，不锁住焦点；方向键只在说明卡内生效，输入框保留自己的按键。关闭后回到启动按钮。
 

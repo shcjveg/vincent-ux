@@ -55,70 +55,31 @@
   font-size: var(--vx-font-size-xl);
 }
 
-/* 配色主题对比：每套一张卡，色条取自生成产物，跟随当前明暗 */
+/* 每张卡的底、文字、色条和可操作按钮共用同一主题。 */
 .sc-palettes {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: var(--vx-space-3);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 218px), 1fr));
+  gap: var(--vx-space-4);
 }
-
 .sc-palette {
-  display: flex;
-  flex-direction: column;
-  gap: var(--vx-space-2);
-  padding: var(--vx-space-3);
-  border-radius: var(--vx-radius-lg);
-  background: var(--vx-surface-card);
-  box-shadow: var(--vx-shadow-card);
-  text-align: left;
-}
-
-.sc-palette[aria-pressed='true'] {
-  box-shadow: 0 0 0 2px var(--vx-focus-ring);
-}
-
-.sc-palette-preview {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--vx-space-1-5);
-  padding: var(--vx-space-2-5);
-  border-radius: var(--vx-radius-md);
+  gap: var(--vx-space-4);
+  padding: var(--vx-space-5);
+  border-radius: var(--vx-radius-lg);
+  background: var(--vx-surface-shell);
+  color: var(--vx-text-primary);
+  box-shadow: inset 0 0 0 1px var(--vx-line-faint);
 }
-
-.sc-palette-preview > div {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: var(--vx-space-2);
-  border-radius: var(--vx-radius-sm);
-  font-size: var(--vx-font-size-sm);
-}
-
-.sc-palette-preview strong {
-  font-family: var(--vx-font-family-num);
-  font-size: var(--vx-font-size-xl);
-}
-
-.sc-palette-viz {
-  display: flex;
-  gap: 2px;
-  height: 10px;
-}
-
-.sc-palette-viz i {
-  flex: 1;
-  border-radius: 2px;
-}
-
-.sc-palette b {
-  font-size: var(--vx-font-size-lg);
-}
-
-.sc-palette p {
-  margin: 0;
-  font-size: var(--vx-font-size-sm);
-  color: var(--vx-text-secondary);
-}
+.sc-palette[data-current] { box-shadow: inset 0 0 0 2px var(--vx-focus-ring); }
+.sc-palette h4 { margin: 0; font-size: var(--vx-font-size-lg); }
+.sc-palette .vx-btn { justify-self: start; }
+.sc-palette-roles { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--vx-space-2); margin: 0; }
+.sc-palette-roles dt { font-size: var(--vx-font-size-sm); color: var(--vx-text-secondary); }
+.sc-palette-roles dd { margin: var(--vx-space-1) 0 0; height: 8px; border-radius: var(--vx-radius-full); }
+.sc-palette-paper { background: var(--vx-surface-shell); box-shadow: inset 0 0 0 1px var(--vx-line-faint); }
+.sc-palette-ink { background: var(--vx-text-secondary); }
+.sc-palette-action { background: var(--vx-action-fill); }
+.sc-reading-sample { max-inline-size: 60ch; margin-block-end: var(--vx-space-5); }
 
 .sc-main {
   padding: 40px 48px 96px;
@@ -162,7 +123,7 @@
 /* ---------- 面分层、色板、文字 ---------- */
 .sc-surfaces {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8rem), 1fr));
   gap: var(--vx-space-3);
   padding: var(--vx-space-4);
   border-radius: var(--vx-radius-xl);
@@ -195,7 +156,7 @@
 
 .sc-swatches {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
   gap: var(--vx-space-3);
 }
 
@@ -220,6 +181,8 @@
 
 .sc-type-row {
   display: flex;
+  flex-wrap: wrap;
+  overflow-wrap: anywhere;
   align-items: baseline;
   gap: var(--vx-space-6);
 }
@@ -232,11 +195,12 @@
 /* ---------- 图标 ---------- */
 .sc-icons {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 10rem), 1fr));
   gap: 6px;
 }
 
 .sc-icon {
+  overflow-wrap: anywhere;
   display: flex;
   align-items: center;
   gap: 8px;

@@ -1,10 +1,10 @@
-// vincent-ux v1.6.0 · components/react/SelectionBar.tsx
+// vincent-ux v1.7.0 · components/react/SelectionBar.tsx
 // 多选后的批量操作条：选中至少一项时浮在结果区底部，左侧已选数量与清除，右侧本次可做的动作。
 // 外观见 components/css/molecules.css（.vx-selection-bar），规则见 patterns/browse.md「分页与选择」。
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useEffect, useRef, type RefObject, type ReactNode } from 'react'
 import { Icon } from './Icon'
 
-export function SelectionBar({ count, unit = '项', hidden = 0, onClear, children, label = '批量操作' }: {
+export function SelectionBar({ count, unit = '项', hidden = 0, onClear, children, fallbackFocus, label = '批量操作' }: {
   /** 已选总数，含当前筛选外的项目；为 0 时不渲染。 */
   count: number
   unit?: string
@@ -13,6 +13,7 @@ export function SelectionBar({ count, unit = '项', hidden = 0, onClear, childre
   onClear: () => void
   /** 动作按钮：一般用 `.vx-btn`，最多一个 `.vx-btn--primary`，更多动作收进 `ActionMenu`。 */
   children?: ReactNode
+  fallbackFocus?: RefObject<HTMLElement | null>
   label?: string
 }) {
   const shown = count > 0
@@ -23,7 +24,10 @@ export function SelectionBar({ count, unit = '项', hidden = 0, onClear, childre
   const clear = () => {
     onClear()
     const back = origin.current
-    requestAnimationFrame(() => { if (back?.isConnected) back.focus() })
+    requestAnimationFrame(() => {
+      if (back?.isConnected && !back.matches(':disabled') && !back.closest('[hidden], [inert]') && back.getClientRects().length) back.focus()
+      else fallbackFocus?.current?.focus()
+    })
   }
   return <div className="vx-selection-bar" role="toolbar" aria-label={label}
     onKeyDown={e => { if (e.key === 'Escape') { e.stopPropagation(); clear() } }}>

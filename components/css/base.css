@@ -1,4 +1,4 @@
-/* vincent-ux v1.6.0 · components/css/base.css */
+/* vincent-ux v1.7.0 · components/css/base.css */
 /* 基础重置与全局排版。依赖 tokens/dist/tokens.css。 */
 
 *,
@@ -17,9 +17,11 @@ body {
   font-size: var(--vx-font-size-md);
   line-height: var(--vx-font-leading-normal);
   color: var(--vx-text-primary);
-  background: var(--vx-surface-canvas);
   -webkit-font-smoothing: antialiased;
 }
+
+/* 整页绘制画布。局部主题由内容自己选择承载面。 */
+html > body { background: var(--vx-surface-canvas); }
 
 h1,
 h2,
@@ -45,7 +47,7 @@ button {
 }
 
 a {
-  color: var(--vx-brand-accent);
+  color: var(--vx-text-link);
   text-decoration: underline;
   text-underline-offset: 0.18em;
 }
@@ -157,6 +159,8 @@ a {
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
+    transition-delay: 0s !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
@@ -178,18 +182,15 @@ a {
   gap: var(--vx-space-4);
 }
 
-.vx-grid--2 {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+/* 即使没有工作台外壳，列数也受栅格自身宽度和正文字号约束。 */
+.vx-grid--2 { --vx-grid-columns: 2; }
+.vx-grid--3 { --vx-grid-columns: 3; }
+.vx-grid--4 { --vx-grid-columns: 4; }
+:is(.vx-grid--2, .vx-grid--3, .vx-grid--4) {
+  --vx-grid-gap: var(--vx-space-4);
+  gap: var(--vx-grid-gap);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, max(16rem, calc((100% + var(--vx-grid-gap)) / var(--vx-grid-columns) - var(--vx-grid-gap)))), 1fr));
 }
-
-.vx-grid--3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.vx-grid--4 {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-}
-
 /* 纵向内容组：16px；独立区块：24px。见 principles/visual.md 的间距约定。 */
 .vx-stack {
   display: flex;
@@ -216,7 +217,7 @@ a {
 @container render (max-width: 860px) {
   .vx-grid--3,
   .vx-grid--4 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    --vx-grid-columns: 2;
   }
 }
 
@@ -224,6 +225,6 @@ a {
   .vx-grid--2,
   .vx-grid--3,
   .vx-grid--4 {
-    grid-template-columns: minmax(0, 1fr);
+    --vx-grid-columns: 1;
   }
 }

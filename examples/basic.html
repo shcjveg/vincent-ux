@@ -3,24 +3,38 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>vincent-ux 接入示例</title>
+  <title>内容库 · Vincent UX 示例</title>
   <link rel="stylesheet" href="../styles.css" />
 </head>
 <body>
   <main class="vx-page vx-page--narrow">
     <header class="vx-pagehead"><div><h1>内容库</h1><p>先筛选，再查看需要处理的内容。</p></div></header>
-    <form class="vx-card vx-stack" id="filters">
+    <form class="vx-card vx-card--padded vx-stack" id="filters">
       <label class="vx-field"><span class="vx-field-label">搜索内容</span><input name="q" type="search" class="vx-input" placeholder="输入标题" /></label>
       <label class="vx-field"><span class="vx-field-label">状态</span><select name="status" class="vx-select"><option value="">全部状态</option><option value="draft">草稿</option></select></label>
       <div class="vx-cluster"><button type="submit" class="vx-btn vx-btn--primary"><svg class="vx-icon" aria-hidden="true"><use href="../icons/dist/sprite.svg#search" /></svg>筛选</button><button type="reset" class="vx-btn">清除条件</button></div>
-      <p class="vx-meta" role="status" id="result">这是可独立使用的 HTML 接入示例。</p>
+      <p class="vx-meta" role="status" id="result">共 3 项</p>
     </form>
+    <ul id="items" class="vx-body">
+      <li data-state="done">月度回顾</li>
+      <li data-state="draft">发布检查表</li>
+      <li data-state="draft">访谈纪要</li>
+    </ul>
   </main>
   <script>
-    document.querySelector('#filters').addEventListener('submit', event => {
-      event.preventDefault(); document.querySelector('#result').textContent = '条件已准备好；由你的应用查询并展示结果。';
-    });
-    document.querySelector('#filters').addEventListener('reset', () => { document.querySelector('#result').textContent = '已清除筛选条件。'; });
+    const form = document.querySelector('#filters')
+    const items = [...document.querySelectorAll('#items li')]
+    function apply(query, status) {
+      for (const item of items) item.hidden = !(item.textContent.includes(query) && (!status || item.dataset.state === status))
+      const visible = items.filter(item => !item.hidden).length
+      document.querySelector('#result').textContent = visible ? '共 ' + visible + ' 项' : '当前条件下没有内容。'
+    }
+    form.addEventListener('submit', event => {
+      event.preventDefault()
+      const fields = new FormData(form)
+      apply(fields.get('q').trim(), fields.get('status'))
+    })
+    form.addEventListener('reset', () => apply('', ''))
   </script>
 </body>
 </html>

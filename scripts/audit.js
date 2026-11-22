@@ -1,4 +1,4 @@
-// vincent-ux v1.6.0 · scripts/audit.js
+// vincent-ux v1.7.0 · scripts/audit.js
 // 规则检查（在浏览器里跑）：把视觉与交互原则里能机器判断的部分变成断言，截图评审只看机器判断不了的。
 // 用法：页面里注入本文件后调用 window.vxAudit()，返回 [{ rule, text, where }]；空数组表示已覆盖规则无发现，不等于完整可访问性认证。
 // Playwright：await page.addScriptTag({ path }); const r = await page.evaluate(() => vxAudit())
@@ -18,11 +18,11 @@
     '.vx-field-error', '.vx-stat-delta--down', '.vx-bar--critical', '.vx-callout--critical', '[data-state="blocked"]', '[data-tone="critical"]',
   ]
   const ACCENT_OK = [
-    'a[href]', '.vx-stat-delta--up', '.vx-money--accent', '.vx-tag--accent', '.vx-money', '.vx-stat-value--accent', '.vx-bar', '.vx-spark', '.vx-callout--accent', '.vx-dot--accent',
+    'a[href]', 'button.vx-link', '.vx-stat-delta--up', '.vx-money--accent', '.vx-tag--accent', '.vx-money', '.vx-stat-value--accent', '.vx-bar', '.vx-spark', '.vx-callout--accent', '.vx-dot--accent',
     '.vx-choice', '.vx-guide-progress', '.vx-text-accent', '[data-tone="accent"]', '[aria-pressed="true"]', '[aria-selected="true"]',
   ]
   const ENTRY = '.vx-nav-item, .vx-tab, .vx-todo-group-head, [data-entry]'
-  const REGION = '[data-vx-region], .vx-browse-item, .vx-card, .vx-decision, .vx-flow, .vx-chat, .vx-guide-card, .vx-pagehead, .vx-dialog, .vx-drawer'
+  const REGION = 'article, form, [role="toolbar"], [role="dialog"], [data-vx-region], .vx-browse-item, .vx-card, .vx-decision, .vx-flow, .vx-chat, .vx-guide-card, .vx-pagehead, .vx-dialog, .vx-drawer'
 
   const visible = (el) => {
     const r = el.getBoundingClientRect()
@@ -38,10 +38,10 @@
     return parts.join(' > ')
   }
   // 把设计变量解析成浏览器里的实际颜色，再和每个元素的计算值比较
-  const resolve = (v) => {
+  const resolve = (scope, v) => {
     const p = document.createElement('i')
     p.style.color = `var(${v})`
-    document.body.appendChild(p)
+    scope.appendChild(p)
     const c = getComputedStyle(p).color
     p.remove()
     return c
@@ -78,17 +78,19 @@
       if (visible(badge)) add('dot', badge, '导航入口不计数，待办列表项不重复红点')
 
     const regions = new Map()
-    for (const b of root.querySelectorAll('.vx-btn--primary')) {
+    for (const b of root.querySelectorAll('.vx-btn--primary, .vx-action')) {
       if (!visible(b) || b.disabled) continue
       const r = b.closest(REGION) || document.body
       regions.set(r, [...(regions.get(r) || []), b])
     }
     for (const [r, bs] of regions) if (bs.length > 1) add('primary', r, `${bs.length} 个主按钮：${bs.map(text).join(' / ')}`)
 
-    const critical = resolve('--vx-brand-critical')
-    const accent = resolve('--vx-brand-accent')
+    const paletteColors = new Map()
     for (const el of all) {
       if (el.closest('[data-vx-swatch]')) continue
+      const scope = el.closest('.vx-theme') || document.body
+      if (!paletteColors.has(scope)) paletteColors.set(scope, [resolve(scope, '--vx-brand-critical'), resolve(scope, '--vx-brand-accent')])
+      const [critical, accent] = paletteColors.get(scope)
       const cs = getComputedStyle(el)
       const own = (prop) => cs[prop] !== (el.parentElement ? getComputedStyle(el.parentElement)[prop] : '')
       for (const [rule, color, ok] of [['critical', critical, CRITICAL_OK], ['accent', accent, ACCENT_OK]]) {
