@@ -1451,6 +1451,18 @@ a {
   gap: var(--vx-space-2);
 }
 
+/* 带标签的行内表单让提交动作跟选项、输入框共用底边。 */
+.vx-form-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--vx-space-2) var(--vx-space-4);
+}
+.vx-form-row > * { min-width: 0; max-width: 100%; }
+.vx-form-row > :is(.vx-input, .vx-select) { flex: 1 1 12em; width: auto; }
+.vx-form-row > button[type="submit"] { min-inline-size: min(100%, 5em); }
+.vx-form-row .vx-control-label { min-height: var(--vx-size-control-md); }
+
 .vx-spacer {
   flex: 1;
 }
@@ -2147,7 +2159,6 @@ button.vx-toggle:hover {
   display: flex;
   align-items: center;
   min-height: var(--vx-size-hit);
-  width: fit-content;
   min-inline-size: min(100%, var(--vx-size-hit));
   max-width: 100%;
   overflow-wrap: anywhere;
@@ -2166,6 +2177,22 @@ button.vx-toggle:hover {
     border: 0;
   }
 }
+
+/* 同一区域的目录项用位置与整行命中区标识；段落中的链接沿用正文规则。 */
+:is(.vx-index, .vx-nav-links) a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--vx-size-hit);
+  padding-inline: var(--vx-space-2);
+  border-radius: var(--vx-radius-sm);
+  color: var(--vx-text-secondary);
+  text-decoration: none;
+}
+:is(.vx-index, .vx-nav-links) a:is(:hover, :focus-visible) {
+  color: var(--vx-text-primary);
+  background: var(--vx-fill-hover);
+}
+.vx-index .vx-index-group a { display: flex; width: 100%; }
 
 /* ---------- 分段控件 / 页内切换：凹槽 + 凸起滑块 ---------- */
 .vx-seg {
@@ -2196,6 +2223,46 @@ button.vx-toggle:hover {
   color: var(--vx-text-primary);
   font-weight: var(--vx-font-weight-medium);
   box-shadow: var(--vx-shadow-card);
+}
+
+/* 少量互斥选项共用一块选中底面。等宽轨道稳定文字位置，也能按容器换行。 */
+.vx-seg--switch {
+  position: relative;
+  isolation: isolate;
+  --vx-segment-offset: var(--vx-segment);
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(var(--vx-size-hit), 1fr);
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.vx-seg--switch > button {
+  height: auto;
+  min-height: var(--vx-size-control-sm);
+  padding: var(--vx-space-1) var(--vx-space-3);
+  overflow-wrap: anywhere;
+  font-weight: var(--vx-font-weight-medium);
+}
+.vx-seg--switch > button:focus-visible { outline-offset: -2px; }
+.vx-seg--switch > button[aria-pressed='true'] { background: transparent; box-shadow: none; }
+.vx-seg--switch[data-selected]::before {
+  content: '';
+  position: absolute;
+  grid-area: 1 / 1 / 2 / 2;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: var(--vx-radius-sm);
+  background: var(--vx-surface-card);
+  box-shadow: var(--vx-shadow-card);
+  transform: translateX(calc(var(--vx-segment-offset) * (100% + var(--vx-space-0-5))));
+  transition: transform var(--vx-motion-duration-base) var(--vx-motion-ease-standard);
+}
+.vx-seg--switch:dir(rtl) { --vx-segment-offset: calc(-1 * var(--vx-segment)); }
+
+@media (forced-colors: active) {
+  .vx-seg--switch > button[aria-pressed='true'] { box-shadow: none; border: 1px solid ButtonText; }
 }
 
 /* ---------- 列表行：间距分组，悬停一档填充，不画行线 ---------- */
@@ -4142,8 +4209,13 @@ button.vx-stat:hover {
 }
 
 /* 结果浏览：列表和卡片网格共享内容，切换视图不改变筛选或选择。 */
-.vx-results-head { display:flex;align-items:center;justify-content:space-between;gap:var(--vx-space-3); }
+.vx-results-head { display:flex; flex-wrap:wrap; align-items:center; gap:var(--vx-space-2) var(--vx-space-3); }
+.vx-results-head > :nth-child(2) { margin-inline-start: auto; }
 .vx-collection { display: flex; flex-direction: column; gap: var(--vx-space-3); }
+.vx-collection > :is(.vx-rows, .vx-browse-list, .vx-browse-grid) {
+  animation: vx-results-in var(--vx-motion-duration-base) var(--vx-motion-ease-standard);
+}
+@keyframes vx-results-in { from { opacity: 0; } }
 .vx-browse-list, .vx-browse-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--vx-space-3); }
 .vx-browse-grid { gap: var(--vx-space-4); grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); }
 .vx-browse-item { min-width: 0; padding: var(--vx-space-4); border-radius: var(--vx-radius-lg); background: var(--vx-surface-card); }
@@ -4365,7 +4437,7 @@ button.vx-stat:hover {
 .vx-section-heading { flex: 1 1 auto; }
 .vx-card-extra { margin-left: auto; }
 .vx-section-chat { flex-shrink: 0; width: var(--vx-size-hit); height: var(--vx-size-hit); color: var(--vx-text-secondary); }
-.vx-section-action { min-width: var(--vx-size-hit); min-height: var(--vx-size-hit); display: inline-flex; align-items: center; justify-content: center; padding: var(--vx-space-1-5) var(--vx-space-2-5); gap: var(--vx-space-2); border-radius: var(--vx-radius-md); background: var(--vx-fill-quiet); color: var(--vx-text-secondary); font-size: var(--vx-font-size-sm); font-weight: var(--vx-font-weight-regular); line-height: var(--vx-font-leading-normal); white-space: nowrap; transition: background var(--vx-motion-duration-fast), color var(--vx-motion-duration-fast); }
+.vx-section-action { text-decoration: none; min-width: var(--vx-size-hit); min-height: var(--vx-size-hit); display: inline-flex; align-items: center; justify-content: center; padding: var(--vx-space-1-5) var(--vx-space-2-5); gap: var(--vx-space-2); border-radius: var(--vx-radius-md); background: var(--vx-fill-quiet); color: var(--vx-text-secondary); font-size: var(--vx-font-size-sm); font-weight: var(--vx-font-weight-regular); line-height: var(--vx-font-leading-normal); white-space: nowrap; transition: background var(--vx-motion-duration-fast), color var(--vx-motion-duration-fast); }
 .vx-section-action:hover { background: var(--vx-fill-hover); color: var(--vx-text-primary); }
 .vx-section-action:disabled { color: var(--vx-text-disabled); cursor: default; }
 .vx-section-columns { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--vx-space-6); align-items: start; }

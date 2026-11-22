@@ -45,7 +45,10 @@ export function SettingsExample() {
 
   return <>
     <form className="vx-card vx-card--padded vx-stack sc-interaction-card" aria-label="表单示例" noValidate onSubmit={submit}>
-      <h3 className="vx-title">发布设置</h3>
+      <div className="vx-results-head">
+        <h3 className="vx-title">发布设置</h3>
+        <Tip content="把已保存的设置导出为文件"><Button size="sm" onClick={() => { downloadJson('settings.json', saved); setMessage('已导出设置。') }}><Icon name="download" size="sm" />导出设置</Button></Tip>
+      </div>
       <div className="vx-grid vx-grid--2">
         <Field label="售价（美元）" hint="填写大于 0 的金额。" required error={error}>{props => <input {...props} className="vx-input" type="number" name="price" value={draft.price} disabled={busy} onChange={e => edit({ price: e.target.value })} />}</Field>
         <Field label="发布渠道" required hint="未开放的渠道不可选择。">{props => <Select {...props} name="channel" value={draft.channel} disabled={busy} onChange={channel => edit({ channel })} options={[{ value: 'web', label: '网站' }, { value: 'mail', label: '邮件' }, { value: 'coming', label: '新渠道（暂未开放）', disabled: true }]} />}</Field>
@@ -56,9 +59,8 @@ export function SettingsExample() {
         <Button type="submit" variant="primary" loading={busy}>保存设置</Button>
         <Tip content="保存后立即生效；只影响当前设置。"><button type="button" className="vx-icon-btn" aria-label="保存设置说明"><Icon name="info" /></button></Tip>
         <Button disabled={busy} onClick={() => { form.discard(); setMessage('已恢复上次保存的设置。') }}>放弃修改</Button>
-        <Tip content="把已保存的设置导出为文件"><Button onClick={() => { downloadJson('settings.json', saved); setMessage('已导出设置。') }}>导出设置</Button></Tip>
-        <p role="status" className="vx-meta">{message}</p>
       </div>
+      <p role="status" className={message ? 'vx-meta' : 'vx-sr-only'}>{message}</p>
     </form>
     <div className="vx-card vx-card--padded vx-cluster" role="group" aria-label="浏览偏好">
       <span className="vx-body">界面明暗</span><ThemeToggle variant="inline" />

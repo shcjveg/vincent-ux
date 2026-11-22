@@ -282,7 +282,11 @@
 .sc-principles dl { margin: var(--vx-space-3) 0; }
 .sc-principles dt { font-weight: var(--vx-font-weight-semibold); }
 .sc-principles dd { margin: var(--vx-space-1) 0 0; color: var(--vx-text-secondary); }
-.sc-reference { margin-block: var(--vx-space-2) var(--vx-space-4); }
+.sc-section-heading { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:var(--vx-space-2) var(--vx-space-4); margin-block-end:var(--vx-space-4); }
+.sc-report-results { padding-block-start:var(--vx-space-5); border-block-start:1px solid var(--vx-line-faint); }
+
+.sc-reference { display:flex; flex-wrap:wrap; gap:var(--vx-space-2); margin-block:var(--vx-space-2) var(--vx-space-4); }
+.sc-reference a { gap:var(--vx-space-2); }
 
 .sc-skip { position: absolute; inset-inline-start: var(--vx-space-2); transform: translateY(-150%); }
 .sc-skip:focus { transform: none; z-index: var(--vx-z-overlay); padding: var(--vx-space-2); background: var(--vx-surface-card); }

@@ -51,7 +51,7 @@
 | 当前用户入口（外壳没有用户卡片时） | `UserMenu`（React）：右上角一个头像，点开是名字、身份和账户动作的极简菜单 |
 | 明暗切换 | `ThemeToggle`（React）：左下角最底一个半透明小圆钮，点一下在浅色与暗色之间切换，记住选择；没选过时用根元素上的默认明暗（嵌入浅色宿主时写 `data-theme="light"`），再没有就跟随系统。左下角的其它浮钮让到它上方。设置页这类表单行用 `variant="inline"`，写成普通小按钮 |
 
-误用：用强调色做按钮；用箭头表示「去对话」（箭头只表示去另一页）。
+行内提交用 `.vx-form-row` 将按钮对齐输入控件。字段带帮助或错误时，把输入框和提交按钮放在 `Field` 的同一行，说明由字段排在行下。结果级操作用 `.vx-results-head` 排在标题行末端。忙碌时用 `Button loading` 保留标签宽度。用真实控件走一遍等待、切换和重试，核对作用范围与位置。[按钮布局与状态](../principles/interaction.md#按作用范围放置按钮)
 
 ## 3. 输入与选择
 
@@ -59,7 +59,7 @@
 |---|---|
 | 填文字 | `.vx-input` / `.vx-textarea`，外面套 `Field`（React，关联标签、说明、错误）或 `.vx-field` |
 | 在较长的选项列表中查找并选择 | `Select`（React，可搜索，无选中对号占位）；纯 HTML 用 `.vx-select` |
-| 两到四个互斥视图之间切换 | `Segmented`（React）/ `.vx-seg` |
+| 两到四个互斥视图之间切换 | `Segmented`（React），按内容收宽，选中底面连续移动，减少动态效果时立即就位。纯 HTML 可使用 `.vx-seg` 的静态选中态 |
 | 立即生效的开关 | `Switch`（React）/ `.vx-switch` 用于当场生效的单项设置。统一保存或应用的二元字段使用 `Checkbox`；[按生效时点选型](../principles/interaction.md#操作何时生效) |
 | 行尾切换一个属性，状态要写出来（置顶 / 已置顶） | `.vx-toggle` |
 | 表单里的勾选 | `Checkbox`（React，含半选）/ `.vx-check` |

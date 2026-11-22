@@ -63,7 +63,7 @@
           <div class="sc-principles">
             <h3 id="design-principles" tabindex="-1">设计原则</h3>
             <dl data-principles></dl>
-            <nav aria-label="原则与评审" class="sc-row">
+            <nav aria-label="原则与评审" class="sc-row vx-nav-links">
               <a href="./handbook.html?doc=principles/README.md">阅读完整原则与案例</a>
               <a href="./handbook.html?doc=principles/visual.md">视觉</a>
               <a href="./handbook.html?doc=principles/interaction.md">交互</a>
@@ -76,14 +76,20 @@
 
         <section class="sc-sec" data-catalog="整页任务" id="browse">
           <h2>浏览与筛选</h2><p class="sc-lead">搜索、类型与状态筛选、列表与卡片、分页、选择和详情。下面使用实际 React 组件，所有条件可以组合。</p>
-          <p class="sc-reference"><a href="./handbook.html?doc=patterns/browse.md">内容浏览的选择与批量范围</a></p>
+          <p class="sc-reference vx-nav-links"><a href="./handbook.html?doc=patterns/browse.md"><svg class="vx-icon" aria-hidden="true"><use href="../icons/dist/sprite.svg#note"/></svg>内容浏览的选择与批量范围</a></p>
           <div class="sc-board" id="browse-demo"></div>
           <a href="../examples/batch/index.html">批量修改与失败重试示例</a>
         </section>
 
-        <section class="sc-sec" data-catalog="整页任务" id="report"><h2>按范围查询与导出</h2><p class="sc-reference"><a href="./handbook.html?doc=patterns/browse.md#已应用的查询范围">验收查询与导出的范围</a></p><div class="sc-board" id="report-demo"></div></section>
+        <section class="sc-sec" data-catalog="整页任务" id="report">
+          <header class="sc-section-heading">
+            <h2>按范围查询与导出</h2>
+            <a class="vx-section-action" href="./handbook.html?doc=patterns/browse.md#已应用的查询范围"><svg class="vx-icon" aria-hidden="true"><use href="../icons/dist/sprite.svg#note"/></svg>验收查询与导出的范围</a>
+          </header>
+          <div id="report-demo"></div>
+        </section>
 
-        <section class="sc-sec" data-catalog="整页任务" id="session-workspace"><h2>会话与页面状态</h2><p class="sc-lead">在两个会话中分别填写草稿、浏览资料，试着切换页签或关闭整个右侧，再回到原来的进度。</p><p class="sc-reference" id="templates"><a href="./handbook.html?doc=templates/README.md">工作区模板指南</a> · <a href="./handbook.html?doc=patterns/page-chat-flow.md#持续输出与回读">验收持续输出与回读</a></p><div id="session-workspace-demo"></div></section>
+        <section class="sc-sec" data-catalog="整页任务" id="session-workspace"><h2>会话与页面状态</h2><p class="sc-lead">在两个会话中分别填写草稿、浏览资料，试着切换页签或关闭整个右侧，再回到原来的进度。</p><p class="sc-reference vx-nav-links" id="templates"><a href="./handbook.html?doc=templates/README.md"><svg class="vx-icon" aria-hidden="true"><use href="../icons/dist/sprite.svg#note"/></svg>工作区模板指南</a> <a href="./handbook.html?doc=patterns/page-chat-flow.md#持续输出与回读"><svg class="vx-icon" aria-hidden="true"><use href="../icons/dist/sprite.svg#note"/></svg>验收持续输出与回读</a></p><div id="session-workspace-demo"></div></section>
 
         <section class="sc-sec" data-catalog="整页任务" id="task-workspace"><h2>待办实例与历史</h2><div class="sc-board" id="task-card-demo"></div></section>
 
@@ -133,7 +139,7 @@
 
         <section class="sc-sec" data-catalog="组件用法" id="interactive">
           <h2>交互与状态</h2><p class="sc-lead">试试键盘操作、输入错误、加载与重试，以及关闭弹层后的焦点恢复。决定卡第一次提交会演示失败，再次提交成功。</p>
-          <p class="sc-reference"><a href="./handbook.html?doc=principles/interaction.md#根据任务确定参数">怎样确定交互参数</a></p>
+          <p class="sc-reference vx-nav-links"><a href="./handbook.html?doc=principles/interaction.md#根据任务确定参数"><svg class="vx-icon" aria-hidden="true"><use href="../icons/dist/sprite.svg#note"/></svg>怎样确定交互参数</a></p>
           <div class="sc-board" id="interaction-demo"></div>
         </section>
 
@@ -201,7 +207,7 @@
           <span id="leo-palettes"></span>
           <h3 class="sc-sub" id="palettes">配色主题</h3>
           <p class="sc-lead">每张卡都使用该主题的页面底色、文字和主按钮。应用后，可在<a href="#text-colors">正文</a>和<a href="#portal">登录表单</a>中查看效果。</p>
-          <p class="sc-reference"><a href="./handbook.html?doc=docs/usage.md#从三种品牌色接入">查看按钮底色、配文和边界的搭配规则</a></p>
+          <p class="sc-reference vx-nav-links"><a href="./handbook.html?doc=docs/usage.md#从三种品牌色接入"><svg class="vx-icon" aria-hidden="true"><use href="../icons/dist/sprite.svg#note"/></svg>查看按钮底色、配文和边界的搭配规则</a></p>
           <div class="sc-palettes" data-palettes></div>
         </section>
 

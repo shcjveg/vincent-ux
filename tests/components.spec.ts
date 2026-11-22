@@ -847,7 +847,8 @@ test('抽屉详情：待办进入即编辑态，计算字段只读且实时重�
  await expect(summary).toBeVisible()
  await expect(drawer.getByRole('textbox',{name:'更新时间'})).toHaveCount(0)
  await expect(drawer.locator('.vx-overlay-foot .vx-btn--primary')).toHaveCount(1)
- await expect(drawer.locator('.vx-prop-label .vx-tip-label')).toHaveCount(6)
+ await expect(drawer.getByRole('button',{name:'类型说明'})).toBeVisible()
+ await expect(drawer.getByRole('button',{name:'标题说明'})).toHaveCount(0)
  // 极简收起：第三个分区默认收起，只留标题与箭头；点开后显示记录
  const history=drawer.getByRole('region',{name:'历史'})
  await expect(history.getByRole('button',{name:/历史/})).toHaveAttribute('aria-expanded','false')

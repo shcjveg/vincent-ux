@@ -210,6 +210,18 @@ a {
   gap: var(--vx-space-2);
 }
 
+/* 带标签的行内表单让提交动作跟选项、输入框共用底边。 */
+.vx-form-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--vx-space-2) var(--vx-space-4);
+}
+.vx-form-row > * { min-width: 0; max-width: 100%; }
+.vx-form-row > :is(.vx-input, .vx-select) { flex: 1 1 12em; width: auto; }
+.vx-form-row > button[type="submit"] { min-inline-size: min(100%, 5em); }
+.vx-form-row .vx-control-label { min-height: var(--vx-size-control-md); }
+
 .vx-spacer {
   flex: 1;
 }

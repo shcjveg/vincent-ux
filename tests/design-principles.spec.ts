@@ -104,6 +104,37 @@ test('长短和缺省摘要保留可比较的对象、状态和时间', async ({
   expect(await fields()).toEqual(original)
 })
 
+for (const width of [1280, 320]) test(`${width}px 下查询对齐选项，切城市时查询与导出留在原位`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 820 })
+  const report = page.getByRole('region', { name: '明细查询' })
+  const submit = report.getByRole('button', { name: '查询', exact: true })
+  await submit.click()
+  const cities = report.getByRole('group', { name: '查看城市明细' })
+  await expect(cities).toBeVisible()
+  const bounds = () => report.evaluate(region => {
+    const rect = (selector: string) => region.querySelector(selector)!.getBoundingClientRect()
+    const origin = region.getBoundingClientRect()
+    const query = rect('button[type="submit"]'), option = rect('label'), download = rect('.vx-results-head button')
+    return { centerOffset: (query.top + query.height / 2) - (option.top + option.height / 2),
+      query: [query.x - origin.x, query.y - origin.y], export: [download.x - origin.x, download.y - origin.y] }
+  })
+  const before = await bounds()
+  expect(Math.abs(before.centerOffset)).toBeLessThanOrEqual(1)
+  await cities.getByRole('button', { name: '上海' }).press('Enter')
+  await expect(cities.getByRole('button', { name: '上海' })).toHaveAttribute('aria-pressed', 'true')
+  expect(await bounds()).toEqual(before)
+  const indicatorOffset = () => cities.evaluate(el => {
+    const selected = el.querySelector<HTMLButtonElement>('[aria-pressed="true"]')!
+    const first = el.querySelector<HTMLButtonElement>('button')!
+    const indicator = new DOMMatrix(getComputedStyle(el, '::before').transform)
+    return Math.abs(indicator.m41 - (selected.offsetLeft - first.offsetLeft))
+  })
+  await expect.poll(indicatorOffset).toBeLessThanOrEqual(1)
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await cities.getByRole('button', { name: '全部城市' }).press('Enter')
+  await expect.poll(indicatorOffset).toBeLessThanOrEqual(1)
+})
+
 test('待查询条件、失败请求、下钻和明细导出共享最后成功的范围', async ({ page }) => {
   const report = page.getByRole('region', { name: '明细查询' })
   await report.getByRole('button', { name: '查询', exact: true }).click()

@@ -147,7 +147,7 @@ function ItemDrawer({ item, onClose, onSave }: { item: Item; onClose: () => void
     onEdit={() => { setDraft(item); setEditing(true) }} onCancel={() => { setDraft(item); setError(undefined); setEditing(false) }} onSave={save}>
     <DrawerSection title="基本信息" collapsible={false}>
       <div className="vx-props">
-        <Property label="标题" tip="列表与搜索使用的名称" editing={editing} value={item.title}>{p => <input {...p} className="vx-input" value={draft.title} onChange={e => setDraft({ ...draft, title: e.target.value })} />}</Property>
+        <Property label="标题" editing={editing} value={item.title}>{p => <input {...p} className="vx-input" value={draft.title} onChange={e => setDraft({ ...draft, title: e.target.value })} />}</Property>
         <Property label="类型" tip="报告、模板或笔记，可以在下拉里新增类型" editing={editing} value={item.type}>{p => <Select label={p['aria-label']} creatable value={draft.type} onChange={v => setDraft({ ...draft, type: v })} options={[...new Set(['报告', '模板', '笔记', draft.type])].map(t => ({ value: t, label: t }))} />}</Property>
         <Property label="所在文件夹" value={item.folder ?? '未分类'} />
         <Property label="更新时间" tip="最近一次保存的时间，系统记录" editing={editing} value={date(item.updatedAt)} />
@@ -155,8 +155,12 @@ function ItemDrawer({ item, onClose, onSave }: { item: Item; onClose: () => void
     </DrawerSection>
     <DrawerSection title="内容" collapsible={false} status={<span className="vx-tag">{itemStatus(item)}</span>} attention={pending}>
       <div className="vx-props">
-        <Property label="摘要" tip="写满 12 个字后，草稿自动转为已完成" wide required editing={editing} error={error} value={item.summary}>{p => <textarea {...p} className="vx-textarea" rows={3} value={draft.summary} onChange={e => setDraft({ ...draft, summary: e.target.value })} />}</Property>
-        <Property label="字数" tip="摘要的字数，随填写实时计算" editing={editing} value={<span className="vx-num">{(editing ? draft : item).summary.trim().length}</span>} />
+        <Property label="摘要" wide required editing={editing} error={error} value={item.summary}>{p => <>
+          <textarea {...p} aria-describedby={[`${p.id}-hint`, p['aria-describedby']].filter(Boolean).join(' ')} className="vx-textarea" rows={3}
+            value={draft.summary} onChange={e => setDraft({ ...draft, summary: e.target.value })} />
+          <span className="vx-meta" id={`${p.id}-hint`}>保存时摘要满 12 个字，草稿会转为已完成。</span>
+        </>}</Property>
+        <Property label="字数" editing={editing} value={<span className="vx-num">{(editing ? draft : item).summary.trim().length}</span>} />
       </div>
     </DrawerSection>
     <DrawerSection title="历史" defaultOpen={false}>

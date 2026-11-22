@@ -168,7 +168,6 @@
   display: flex;
   align-items: center;
   min-height: var(--vx-size-hit);
-  width: fit-content;
   min-inline-size: min(100%, var(--vx-size-hit));
   max-width: 100%;
   overflow-wrap: anywhere;
@@ -187,6 +186,22 @@
     border: 0;
   }
 }
+
+/* 同一区域的目录项用位置与整行命中区标识；段落中的链接沿用正文规则。 */
+:is(.vx-index, .vx-nav-links) a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--vx-size-hit);
+  padding-inline: var(--vx-space-2);
+  border-radius: var(--vx-radius-sm);
+  color: var(--vx-text-secondary);
+  text-decoration: none;
+}
+:is(.vx-index, .vx-nav-links) a:is(:hover, :focus-visible) {
+  color: var(--vx-text-primary);
+  background: var(--vx-fill-hover);
+}
+.vx-index .vx-index-group a { display: flex; width: 100%; }
 
 /* ---------- 分段控件 / 页内切换：凹槽 + 凸起滑块 ---------- */
 .vx-seg {
@@ -217,6 +232,46 @@
   color: var(--vx-text-primary);
   font-weight: var(--vx-font-weight-medium);
   box-shadow: var(--vx-shadow-card);
+}
+
+/* 少量互斥选项共用一块选中底面。等宽轨道稳定文字位置，也能按容器换行。 */
+.vx-seg--switch {
+  position: relative;
+  isolation: isolate;
+  --vx-segment-offset: var(--vx-segment);
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(var(--vx-size-hit), 1fr);
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.vx-seg--switch > button {
+  height: auto;
+  min-height: var(--vx-size-control-sm);
+  padding: var(--vx-space-1) var(--vx-space-3);
+  overflow-wrap: anywhere;
+  font-weight: var(--vx-font-weight-medium);
+}
+.vx-seg--switch > button:focus-visible { outline-offset: -2px; }
+.vx-seg--switch > button[aria-pressed='true'] { background: transparent; box-shadow: none; }
+.vx-seg--switch[data-selected]::before {
+  content: '';
+  position: absolute;
+  grid-area: 1 / 1 / 2 / 2;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: var(--vx-radius-sm);
+  background: var(--vx-surface-card);
+  box-shadow: var(--vx-shadow-card);
+  transform: translateX(calc(var(--vx-segment-offset) * (100% + var(--vx-space-0-5))));
+  transition: transform var(--vx-motion-duration-base) var(--vx-motion-ease-standard);
+}
+.vx-seg--switch:dir(rtl) { --vx-segment-offset: calc(-1 * var(--vx-segment)); }
+
+@media (forced-colors: active) {
+  .vx-seg--switch > button[aria-pressed='true'] { box-shadow: none; border: 1px solid ButtonText; }
 }
 
 /* ---------- 列表行：间距分组，悬停一档填充，不画行线 ---------- */
