@@ -130,15 +130,34 @@ import { Button, ThemeScope } from './vincent-ux/react'
 
 默认主题跟随系统；在根元素上设置 `data-theme="light"` 或 `data-theme="dark"` 可手动切换。要让用户自己切换，放一个 [`ThemeToggle`](../components/README.md)（React）：左下角最底的小圆钮，记住用户的选择；根元素上写的 `data-theme` 作为没选过时的默认值，适合嵌入固定浅色宿主的页面。
 
-在根元素上设置 `data-palette="主题 id"` 切换配色，默认使用墨金。22 套主题共用一个选择器。打开本地展示页的「颜色 → 配色主题」，先比较同一张卡里的页面、正文和主按钮，再应用到整页。切换明暗可继续比较同一任务。[主题预览](http://127.0.0.1:5190/showcase/#palettes)
+在根元素上设置 `data-palette` 切换整页主题。在嵌入模块上使用 `<ThemeScope palette={id}>`，模块内的控件和浮层一起切换。配色与明暗独立，默认配色为墨金。[主题预览](http://127.0.0.1:5190/showcase/#palettes)
+
+需要用户选择时，将副本中的 `palettes.json` 传给 `PalettePicker`。默认网格整卡可点，方向键可切换。空间紧张时加 `variant="compact"`，可按名称搜索。两种布局都从候选主题的实际颜色生成预览。共用同一个 `value` 和 `onChange` 即可同步多个入口。[可运行的嵌入示例](../examples/embedded/main.tsx)
+
+### 一次选择如何控制整页
+
+首次接入或升级已有页面，先按阅读、品牌入口或操作任务划分主导面、辅助面和点缀。再用下面的角色绑定容器和控件，切换主题时就能保留原有主次。[按页面任务分配颜色](../principles/visual.md#按页面任务分配颜色)
+
+页面或嵌入区只需要一处选定配色。设计系统从配色源文件生成各角色在浅色和暗色下的值，组件直接读取最近主题的 CSS 变量。菜单与弹窗挂到同一个 `ThemeScope`。新文档有自己的根元素，多页项目应在路由或产品偏好中传递这项选择。展示页与独立示例通过 `?palette=主题ID` 传递。[嵌入示例](../examples/embedded/main.tsx)
+
+| 自定义界面需要画什么 | 使用的角色 |
+|---|---|
+| 品牌识别区及标题 | `.vx-brand-panel`，或成对使用 `brand-field` 和 `brand-on-field` |
+| 页面、导航、内容卡、浮层 | `surface-canvas`、`surface-shell`、`surface-card`、`surface-overlay` |
+| 标题、正文、说明、行内链接 | `text-primary`、`text-secondary`、`text-tertiary`、`text-link` |
+| 主要操作及反馈 | `.vx-action` 或主按钮组件；反色说明面使用 `action-edge-on-strong` 保证边界可见 |
+| 已选控件与键盘位置 | `selection-fill`、`selection-on-fill`，键盘焦点用 `focus-ring` |
+| 错误、警示、数据变化 | `brand-critical`、`brand-warning`、`data-positive`、`data-negative`。涨跌含义跨品牌保持稳定 |
+
+表中变量的 CSS 前缀为 `--vx-`。新增配色在 `tokens/src/palettes.json` 登记。默认墨金保留墨色主按钮，另外九套基础主题使用各自的强调色，三色主题使用指定的动作原色。新增组件按角色取色即可跟随已有主题。[视觉规范](../principles/visual.md#颜色只表达意义)
 
 ### 从三种品牌色接入
 
-在主题源文件的 `swatches` 中填写两种基础色和一种动作强调色。两种基础色给承载面和内容定调。动作强调色提供按钮的色相，构建脚本按明暗分别生成填充、悬停填充、低彩度文字和必要的细边界。例如选择「奶油焦橙」，浅色门户用深焦橙按钮配暖白字，暗色门户用浅橙按钮配深色字。[配色源文件](../tokens/src/palettes.json) · [奶油焦橙门户](http://127.0.0.1:5190/showcase/?palette=cream-ember#portal)
+在主题源文件的 `swatches` 中依次填写主色、辅助色和动作色。品牌识别区使用 `--vx-brand-field` 搭配 `--vx-brand-on-field`。第一种原色直接铺在品牌区，第二种原色在对比度足够时用于其上的文字。画布、阅读面和正文从两种基础色派生各自的明暗层级。主按钮常态保留第三种原色，根据实际对比度选择字色、悬停色和边界。例如「翠绿朱红」在明暗模式下都使用翠绿品牌区和白字朱红按钮。[配色源文件](../tokens/src/palettes.json) · [翠绿朱红主题](http://127.0.0.1:5190/showcase/?palette=emerald-vermilion#palettes)
 
-在页面使用 `Button variant="primary"` 或 `.vx-btn--primary`。已有形状的自定义主操作控件可以加 `.vx-action`，一起取得 `action-fill`、`action-fill-hover`、`action-text` 和 `action-edge`。图标继承文字颜色。反色横幅在局部提供整组颜色。新增主题后运行 `npm run build` 和 `npm run check`，再用键盘试一次选中、提交和等待反馈。[颜色规则](../principles/visual.md#颜色只表达意义)
+在页面使用 `Button variant="primary"` 或 `.vx-btn--primary`。已有形状的自定义主操作控件可以加 `.vx-action`，一起取得 `action-fill`、`action-fill-hover`、`action-text` 和 `action-edge`。图标继承文字颜色。反色横幅沿用动作底色、字色和悬停色，按承载面选择边界。新增主题后运行 `npm run build` 和 `npm run check`，再用键盘试一次选中、提交和等待反馈。[颜色规则](../principles/visual.md#颜色只表达意义)
 
-配色参考包括产品调性分类，以及 Leo 边减边设计《高级感网站配色》三条视频中的 12 组原色。[分类研究](research/color-theme-taxonomy.md) · [原色记录](../tokens/src/palettes.json)
+三色主题的原始色号展示在「原案色号」一行。同步副本的 `palettes.json` 在有品牌原色的主题上提供 `swatches`，依次为两种基础色和强调色。例如用 `data-palette="forest-violet"` 接入「森林电紫」，正文、焦点和按钮自动沿用对应的语义变量。配色参考包括 Leo 边减边设计拆解的 12 组与 A BLUE DOT 演示的 6 组。[三色搭配与用色比例](research/three-color-composition.md) · [主题分类研究](research/color-theme-taxonomy.md)
 
 接入文字时，标题用 `.vx-title`，段落用 `.vx-body`，日期或来源用 `.vx-meta`。行内链接使用原生 `a`，按钮形态的文字链接使用 `.vx-link`。这些角色会随主题和明暗切换。比如「奶油焦橙」在浅色模式下使用墨黑标题、暖灰正文和较深的橙色链接，焦橙保留给主按钮。[预览同一段文字](http://127.0.0.1:5190/showcase/?palette=cream-ember#text-colors) · [文字用色规则](../principles/visual.md#文字三级)
 

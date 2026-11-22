@@ -1,4 +1,4 @@
-// vincent-ux v1.8.0 · components/react/Tip.tsx
+// vincent-ux v1.9.0 · components/react/Tip.tsx
 // 提示：基于 Base UI Tooltip。应用根部包一层 <TipProvider>。外观用 .vx-popup.vx-tip
 // 说明型触发器（自身没有点击动作，如信息图标）点击固定、再次点击收起；动作按钮（自带 onClick）只在悬停、聚焦时提示，点击执行动作并收起。
 // 依赖：@base-ui/react

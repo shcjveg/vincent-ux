@@ -1,5 +1,8 @@
+import paletteSource from '../tokens/src/palettes.json' with { type: 'json' }
 import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
+
+const paletteCount = Object.keys(paletteSource).filter(key => !key.startsWith('$')).length
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/showcase/')
@@ -409,6 +412,7 @@ test('导览导航引起宿主重渲染时，每一步只进入一次', async ({
 })
 
 test('横向导览保留操作门槛，完成与退出分开，浅深色文字可读', async ({ page }) => {
+  await page.goto('/showcase/?palette=emerald-vermilion')
   await page.emulateMedia({ reducedMotion: 'reduce' })
   const demo = page.getByTestId('guide-demo')
   for (const theme of ['light', 'dark']) {
@@ -419,6 +423,8 @@ test('横向导览保留操作门槛，完成与退出分开，浅深色文字�
     const card = guide.locator('.vx-guide-card')
     expect((await card.boundingBox())!.width).toBeGreaterThan(1300)
     expect((await card.boundingBox())!.height).toBeLessThan(220)
+    await expect(guide.locator('.vx-btn--primary')).toHaveCSS('background-color', 'rgb(231, 21, 6)')
+    await expect(guide.locator('.vx-btn--primary')).toHaveCSS('color', 'rgb(255, 255, 255)')
     const sameRow = () => guide.locator('.vx-guide-actions .vx-btn').evaluateAll(els => new Set(els.map(e => Math.round(e.getBoundingClientRect().top))).size)
     await guide.getByRole('button', { name: '下一步' }).click()
     expect(await sameRow()).toBe(1)
@@ -897,13 +903,13 @@ test('配色主题：切换后语义变量随之改变，明暗仍然生效，�
  const accent=()=>page.evaluate(()=>{const el=document.createElement('i');el.style.color='var(--vx-brand-accent)';document.body.append(el);const c=getComputedStyle(el).color;el.remove();return c})
  const palette=()=>page.evaluate(()=>document.documentElement.dataset.palette??'')
  await expect(page.locator('[data-palettes]')).toHaveCount(1)
- await expect(page.locator('[data-palettes] .sc-palette')).toHaveCount(22)
+ await expect(page.locator('[data-palettes] input[type=radio]')).toHaveCount(paletteCount)
  const base=await accent()
  const pick=page.getByRole('combobox',{name:'配色主题',exact:true});await expect(pick).toHaveText('墨金')
  await pick.click();await page.getByRole('option',{name:'信号',exact:true}).click();expect(await palette()).toBe('signal');await expect(pick).toHaveText('信号')
  const signal=await accent();expect(signal).not.toBe(base)
  await page.evaluate(t => { document.documentElement.dataset.theme = t }, 'dark');expect(await accent()).not.toBe(signal)
- await page.getByRole('button',{name:'应用配色 · 墨金'}).click();expect(await palette()).toBe('')
+ await page.getByRole('radio',{name:'墨金'}).click();expect(await palette()).toBe('')
  await expect(pick).toHaveText('墨金')
 })
 

@@ -35,7 +35,8 @@ export function PortalExample() {
   }
 
   return <main className="vx-portal" data-testid="portal-demo">
-    <PortalFeed />
+    <PortalFeed marks={0} />
+    <span className="vx-brand-panel vx-portal-brand-name">Vincent UX</span>
     <section className="vx-portal-panel">
       {signed ? <>
         <h1 className="vx-portal-title" ref={result} tabIndex={-1}>内容看板</h1>

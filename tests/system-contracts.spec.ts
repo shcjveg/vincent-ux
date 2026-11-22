@@ -89,7 +89,7 @@ test.describe('触控操作', () => {
     const browse = page.getByTestId('browser-demo')
     const controls = [browse.getByRole('button', { name: '下一页' }), browse.getByRole('button', { name: '列表', exact: true }),
       page.getByRole('form', { name: '表单示例' }).getByRole('button', { name: '保存设置', exact: true }),
-      page.getByRole('button', { name: '关闭明细', exact: true }).first(), page.locator('.sc-palette .vx-btn').first(),
+      page.getByRole('button', { name: '关闭明细', exact: true }).first(), page.locator('.vx-palette-option').first(), page.locator('#showcase-mode button'), page.locator('#palette-pick button'),
       page.locator('.vx-section-action:visible').first(), page.locator('.vx-section-chat:visible').first(), page.locator('.vx-fold-head:visible').first()]
     for (const control of controls) {
       const bounds = await control.boundingBox()

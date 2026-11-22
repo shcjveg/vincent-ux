@@ -1,4 +1,4 @@
-// vincent-ux v1.8.0 · components/react/useAppliedQuery.ts
+// vincent-ux v1.9.0 · components/react/useAppliedQuery.ts
 import { useEffect, useRef, useState } from 'react'
 
 /** A result and its submitted scope are published together. The caller owns edits and presentation. */

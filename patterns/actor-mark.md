@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.8.0 · patterns/actor-mark.md -->
+<!-- vincent-ux v1.9.0 · patterns/actor-mark.md -->
 
 # 执行者标识
 

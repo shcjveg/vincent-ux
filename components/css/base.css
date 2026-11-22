@@ -1,4 +1,4 @@
-/* vincent-ux v1.8.0 · components/css/base.css */
+/* vincent-ux v1.9.0 · components/css/base.css */
 /* 基础重置与全局排版。依赖 tokens/dist/tokens.css。 */
 
 *,
@@ -21,6 +21,7 @@ body {
 }
 
 /* 整页绘制画布。局部主题由内容自己选择承载面。 */
+:where(.vx-theme) { color: var(--vx-text-primary); }
 html > body { background: var(--vx-surface-canvas); }
 
 h1,
@@ -86,6 +87,10 @@ a {
   line-height: var(--vx-font-leading-normal);
   color: var(--vx-text-tertiary);
 }
+
+/* 产品标识区的文字和背景须成对使用，区域内的独立控件继续使用自身的颜色。 */
+.vx-brand-panel, .vx-nav-brand, .vx-palette-identity { background: var(--vx-brand-field); color: var(--vx-brand-on-field); }
+.vx-brand-panel :focus-visible { outline-color: var(--vx-brand-on-field); }
 
 /* 只改颜色、不改字号 */
 .vx-text-2 {

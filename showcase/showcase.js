@@ -1,7 +1,6 @@
 // 展示页的交互：纯 CSS 外观示例（明暗由目录中的 ThemeToggle 切换）。色板、间距、图标从生成产物读取，保证和源数据一致
 import iconCatalog from '../icons/icons.json'
 import principles from '../principles/README.md?raw'
-import catalog from '../tokens/dist/palettes.json'
 import packageMetadata from '../package.json'
 document.querySelector('[data-version]').textContent = `v${packageMetadata.version} · 展示与验收`
 const spriteUrl = new URL('../icons/dist/sprite.svg', import.meta.url).href
@@ -80,15 +79,17 @@ function requestChapterUpdate() {
 }
 window.addEventListener('scroll', requestChapterUpdate, { passive: true })
 window.addEventListener('resize', requestChapterUpdate)
+// 直达锚点后，挂载主题卡与示例也会移动章节边界。
+new ResizeObserver(requestChapterUpdate).observe($('.sc-main'))
 markChapter()
 
 // 从演示查规则时，保留示例位置和正在核对的配色。
-const guideLinks = $$('main a[href*="handbook.html?doc="]')
+const guideLinks = $$('main a[href*="handbook.html?doc="], main a[href^="../examples/"]')
 function linkToGuides() {
   for (const link of guideLinks) {
     const url = new URL(link.href)
     const origin = link.closest('.sc-sec').id
-    if (origin !== 'handbook') url.searchParams.set('from', origin)
+    if (origin !== 'handbook' && url.searchParams.has('doc')) url.searchParams.set('from', origin)
     if (root.dataset.palette) url.searchParams.set('palette', root.dataset.palette)
     else url.searchParams.delete('palette')
     link.href = url
@@ -97,14 +98,8 @@ function linkToGuides() {
 
 // 色板与配色主题：名称与数值跟随当前明暗与配色
 {
-  const palettes = Object.fromEntries(catalog.map(p => [p.id, p]))
-  const box = $('[data-swatches]'), grid = $('[data-palettes]')
+  const box = $('[data-swatches]')
   const media = matchMedia('(prefers-color-scheme: dark)')
-  const current = () => root.dataset.palette || catalog.find(p => p.default).id
-  // 切换只改根元素属性；导航里的配色选择器（React Select）、目录的明暗切换与这里都监听根元素属性
-  const apply = (id) => { if (palettes[id]?.default) delete root.dataset.palette; else root.dataset.palette = id }
-  const requested = new URL(location.href).searchParams.get('palette')
-  if (requested && Object.hasOwn(palettes, requested)) apply(requested)
   linkToGuides()
   new MutationObserver(changes => {
     if (changes.some(change => change.attributeName === 'data-palette')) {
@@ -117,35 +112,12 @@ function linkToGuides() {
     renderSwatches()
   }).observe(root, { attributes: true, attributeFilter: ['data-palette', 'data-theme'] })
   media.addEventListener('change', () => renderSwatches())
-  // 色卡就是该主题的一小块界面。与门户共用按钮 CSS，切换明暗时就地更新。
-  grid.innerHTML = Object.entries(palettes).map(([id, p]) => `
-    <article class="sc-palette vx-theme" data-palette="${id}">
-      <h4>${p.name}</h4>
-      <dl class="sc-palette-roles" data-vx-swatch>
-        <div><dt>页面</dt><dd class="sc-palette-paper"></dd></div>
-        <div><dt>正文</dt><dd class="sc-palette-ink"></dd></div>
-        <div><dt>操作</dt><dd class="sc-palette-action"></dd></div>
-      </dl>
-      <button type="button" class="vx-btn vx-btn--sm vx-btn--primary" data-palette-id="${id}" aria-label="应用配色 · ${p.name}">
-        应用配色
-      </button>
-    </article>`).join('')
-  grid.addEventListener('click', event => {
-    const button = event.target.closest('button[data-palette-id]')
-    if (button) apply(button.dataset.paletteId)
-  })
   box.innerHTML = box.dataset.swatches.split(' ').map(name =>
     `<div class="sc-swatch"><i style="background:var(--vx-${name})"></i><b>${name}</b><code></code></div>`).join('')
   function renderSwatches() {
     for (const sample of $$('.sc-swatch', box)) {
-      $('code', sample).textContent = getComputedStyle($('i', sample)).backgroundColor
-    }
-    for (const button of $$('[data-palette-id]', grid)) {
-      const id = button.dataset.paletteId, card = button.closest('article')
-      const selected = id === current()
-      card.toggleAttribute('data-current', selected)
-      button.setAttribute('aria-pressed', String(selected))
-      button.textContent = selected ? '✓ 应用配色' : '应用配色'
+      const paint = getComputedStyle($('i', sample))
+      $('code', sample).textContent = paint.backgroundImage === 'none' ? paint.backgroundColor : paint.backgroundImage
     }
   }
   renderSwatches()

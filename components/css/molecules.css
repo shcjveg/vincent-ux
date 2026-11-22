@@ -1,4 +1,4 @@
-/* vincent-ux v1.8.0 · components/css/molecules.css */
+/* vincent-ux v1.9.0 · components/css/molecules.css */
 /* 分子：由原子组成、单一用途的小件。依赖 tokens.css、base.css、atoms.css。 */
 
 /* ---------- 内容收纳：Fold 的分组与对象行，行内步骤和对话过程见各自语义结构 ---------- */
@@ -566,8 +566,9 @@ button.vx-row {
 }
 
 .vx-trigger svg {
-  width: 13px;
-  height: 13px;
+  width: var(--vx-size-icon-sm);
+  height: var(--vx-size-icon-sm);
+  flex: none;
   opacity: 0.6;
 }
 
@@ -1237,22 +1238,22 @@ button.vx-chip[aria-pressed='true'] {
   .vx-selection-bar-actions { flex-wrap: wrap; width: 100%; }
 }
 
-/* ---------- 明暗切换：左下角半透明小圆钮，悬停或聚焦才清晰，不占布局 ---------- */
+/* ---------- 明暗切换：控件随字号增长，触屏保留最小命中区 ---------- */
 .vx-theme-toggle {
   position: fixed;
   left: var(--vx-space-4);
   bottom: var(--vx-space-4);
   z-index: var(--vx-z-float);
-  width: var(--vx-size-control-sm);
-  height: var(--vx-size-control-sm);
+  width: max(2em, var(--vx-size-control-sm));
+  height: max(2em, var(--vx-size-control-sm));
   border-radius: var(--vx-radius-full);
   background: var(--vx-surface-overlay);
   -webkit-backdrop-filter: var(--vx-blur-overlay);
   backdrop-filter: var(--vx-blur-overlay);
   box-shadow: var(--vx-shadow-card);
   color: var(--vx-text-secondary);
-  opacity: 0.6;
-  transition: opacity var(--vx-motion-duration-fast), color var(--vx-motion-duration-fast);
+  flex: none;
+  transition: background-color var(--vx-motion-duration-fast), color var(--vx-motion-duration-fast);
 }
 
 .vx-theme-toggle:hover,
@@ -1264,9 +1265,63 @@ button.vx-chip[aria-pressed='true'] {
 /* 行内形态：普通小按钮，不浮动、不半透明，写出当前模式 */
 .vx-theme-toggle--inline {
   position: static;
-  width: auto;
+  background: var(--vx-surface-card);
+  width: max-content;
   height: auto;
+  min-height: var(--vx-size-control-sm);
+  white-space: nowrap;
+  overflow-wrap: normal;
   opacity: 1;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
+
+/* 选中轮廓与焦点属于当前页面，卡内所有颜色来自候选主题。 */
+.vx-palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+  gap: var(--vx-space-3);
+}
+.vx-palette-option {
+  position: relative; display: grid; min-width: 0; overflow: hidden;
+  border-radius: var(--vx-radius-lg); cursor: pointer;
+  background: var(--vx-surface-card); color: var(--vx-text-primary);
+  box-shadow: 0 0 0 1px var(--vx-line-faint);
+}
+.vx-palette-option input {
+  position: absolute; inset-block-start: var(--vx-space-2); inset-inline-end: var(--vx-space-3);
+  z-index: 1; margin: 0; width: 1.25em; height: 1.25em; opacity: 0; cursor: pointer;
+}
+.vx-palette-heading { display: flex; justify-content: space-between; align-items: center; gap: var(--vx-space-2); color: var(--vx-text-primary); font-weight: var(--vx-font-weight-semibold); }
+.vx-palette-option:hover { box-shadow: 0 0 0 1px var(--vx-line-control); }
+.vx-palette-option:has(:checked) { box-shadow: 0 0 0 2px var(--vx-brand-accent); }
+.vx-palette-option:has(:focus-visible) { outline: 2px solid var(--vx-focus-ring); outline-offset: 3px; }
+.vx-palette-check { display: inline-flex; flex: none; color: var(--vx-brand-accent); visibility: hidden; }
+.vx-palette-option:has(:checked) .vx-palette-check { visibility: visible; }
+.vx-palette-sample, .vx-palette-band { display: grid; grid-template-columns: 1fr 4fr; }
+.vx-palette-rail { background: var(--vx-surface-shell); }
+.vx-palette-identity { display: block; height: 1.55em; }
+.vx-palette-nav-lines { display: grid; gap: var(--vx-space-1); padding: var(--vx-space-2) var(--vx-space-1-5); }
+.vx-palette-nav-lines i { height: 0.18em; background: var(--vx-text-tertiary); border-radius: var(--vx-radius-full); }
+.vx-palette-nav-lines i:first-child { background: var(--vx-selection-fill); }
+.vx-palette-nav-lines i:last-child { width: 66%; }
+.vx-palette-page { display: grid; gap: var(--vx-space-2); align-content: center; padding: var(--vx-space-3); background: var(--vx-surface-canvas); }
+.vx-palette-content {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+  gap: var(--vx-space-2); padding: var(--vx-space-2);
+  background: var(--vx-surface-card); box-shadow: var(--vx-shadow-card); border-radius: var(--vx-radius-md);
+}
+.vx-palette-reading { color: var(--vx-text-secondary); }
+.vx-palette-action {
+  border-radius: var(--vx-radius-sm); padding: var(--vx-space-1) var(--vx-space-2);
+  font-size: var(--vx-font-size-sm); font-weight: var(--vx-font-weight-medium);
+}
+.vx-palette-band { grid-template-columns: 1fr 2fr; border-radius: var(--vx-radius-sm); overflow: hidden; }
+.vx-palette-band .vx-palette-identity { height: 100%; }
+.vx-palette-band .vx-palette-page { display: flex; justify-content: flex-end; padding: 0; }
+.vx-palette-band .vx-palette-content { display: contents; }
+.vx-palette-band .vx-palette-action { width: 50%; padding: 0; border-radius: 0; box-shadow: none; }
+.vx-palette-label { display: inline-flex; align-items: center; gap: var(--vx-space-2); min-width: 0; max-width: 100%; }
+.vx-palette-label .vx-palette-band { width: 2.25em; height: 1em; flex: none; }
+.vx-palette-label > span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.vx-palette-trigger { max-width: 100%; min-width: 0; min-height: var(--vx-size-control-sm); }

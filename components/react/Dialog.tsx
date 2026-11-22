@@ -1,4 +1,4 @@
-// vincent-ux v1.8.0 · components/react/Dialog.tsx
+// vincent-ux v1.9.0 · components/react/Dialog.tsx
 import { useThemeContainer } from './ThemeScope'
 import { Dialog as D } from '@base-ui/react/dialog'
 import type { ReactElement, ReactNode } from 'react'

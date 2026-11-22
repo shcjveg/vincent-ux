@@ -5,16 +5,67 @@
     "default": true
   },
   {
+    "id": "royal-lime",
+    "name": "宝蓝酸橙",
+    "swatches": [
+      "#0131CD",
+      "#FFFFFF",
+      "#B9FC01"
+    ]
+  },
+  {
     "id": "sapphire-jade",
-    "name": "宝蓝荧绿"
+    "name": "宝蓝荧绿",
+    "swatches": [
+      "#0042AC",
+      "#00D3FB",
+      "#83FD80"
+    ]
   },
   {
     "id": "navy-fuchsia",
-    "name": "藏青亮粉"
+    "name": "藏青亮粉",
+    "swatches": [
+      "#0F1B3D",
+      "#FFFFFF",
+      "#FF3D8B"
+    ]
+  },
+  {
+    "id": "emerald-vermilion",
+    "name": "翠绿朱红",
+    "swatches": [
+      "#018D3E",
+      "#FDF7E6",
+      "#E71506"
+    ]
   },
   {
     "id": "cobalt-bubblegum",
-    "name": "钴蓝泡泡糖"
+    "name": "钴蓝泡泡糖",
+    "swatches": [
+      "#09318D",
+      "#FFFFFF",
+      "#FD91CC"
+    ]
+  },
+  {
+    "id": "navy-cream-coral",
+    "name": "海军蓝珊瑚",
+    "swatches": [
+      "#14213D",
+      "#F4EDE0",
+      "#FF6B5B"
+    ]
+  },
+  {
+    "id": "rose-royal",
+    "name": "玫红宝蓝",
+    "swatches": [
+      "#FC3B7F",
+      "#FEF1CF",
+      "#0032A8"
+    ]
   },
   {
     "id": "aubergine",
@@ -22,7 +73,12 @@
   },
   {
     "id": "cream-ember",
-    "name": "奶油焦橙"
+    "name": "奶油焦橙",
+    "swatches": [
+      "#F3EEE3",
+      "#111111",
+      "#D9541E"
+    ]
   },
   {
     "id": "pop",
@@ -30,7 +86,12 @@
   },
   {
     "id": "navy-coral",
-    "name": "浅蓝珊瑚"
+    "name": "浅蓝珊瑚",
+    "swatches": [
+      "#B6DFED",
+      "#002941",
+      "#FD6E6E"
+    ]
   },
   {
     "id": "mist",
@@ -39,6 +100,15 @@
   {
     "id": "blush",
     "name": "柔雾"
+  },
+  {
+    "id": "forest-violet",
+    "name": "森林电紫",
+    "swatches": [
+      "#1F3D2B",
+      "#E8DCC4",
+      "#8B5CF6"
+    ]
   },
   {
     "id": "spark",
@@ -54,7 +124,12 @@
   },
   {
     "id": "burgundy-butter",
-    "name": "松木酒红"
+    "name": "松木酒红",
+    "swatches": [
+      "#FDEFD6",
+      "#731328",
+      "#FFC40B"
+    ]
   },
   {
     "id": "mono",
@@ -62,19 +137,48 @@
   },
   {
     "id": "charcoal-cobalt",
-    "name": "炭沙电蓝"
+    "name": "炭沙电蓝",
+    "swatches": [
+      "#1E1E1C",
+      "#D8CBB3",
+      "#2F6BFF"
+    ]
   },
   {
     "id": "sky-ember",
-    "name": "天蓝琥珀红"
+    "name": "天蓝琥珀红",
+    "swatches": [
+      "#0099FF",
+      "#FDFDFE",
+      "#FF2205"
+    ]
   },
   {
     "id": "sky-berry",
-    "name": "天蓝莓粉"
+    "name": "天蓝莓粉",
+    "swatches": [
+      "#0593C6",
+      "#FCFFFF",
+      "#D83995"
+    ]
   },
   {
     "id": "midnight-melon",
-    "name": "午夜蜜橙"
+    "name": "午夜蜜橙",
+    "swatches": [
+      "#02070A",
+      "#0297DE",
+      "#FC734D"
+    ]
+  },
+  {
+    "id": "midnight-lime",
+    "name": "午夜酸橙",
+    "swatches": [
+      "#0B0B0C",
+      "#FFFFFF",
+      "#C6F432"
+    ]
   },
   {
     "id": "signal",
@@ -82,10 +186,20 @@
   },
   {
     "id": "raven-poppy",
-    "name": "鸦黑罂粟"
+    "name": "鸦黑罂粟",
+    "swatches": [
+      "#090303",
+      "#B7E0F6",
+      "#E31E23"
+    ]
   },
   {
     "id": "vermilion-lime",
-    "name": "朱橙荧黄"
+    "name": "朱橙荧黄",
+    "swatches": [
+      "#F42902",
+      "#FDFDFF",
+      "#C6FA00"
+    ]
   }
 ]

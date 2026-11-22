@@ -1,4 +1,4 @@
-// vincent-ux v1.8.0 · components/react/Segmented.tsx
+// vincent-ux v1.9.0 · components/react/Segmented.tsx
 // 分段控件：页内视图切换、三级设置。外观见 .vx-seg
 import type { CSSProperties } from 'react'
 

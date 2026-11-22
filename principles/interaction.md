@@ -1,4 +1,4 @@
-<!-- vincent-ux v1.8.0 · principles/interaction.md -->
+<!-- vincent-ux v1.9.0 · principles/interaction.md -->
 
 # 交互原则
 

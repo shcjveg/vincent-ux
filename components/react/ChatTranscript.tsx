@@ -1,4 +1,4 @@
-// vincent-ux v1.8.0 · components/react/ChatTranscript.tsx
+// vincent-ux v1.9.0 · components/react/ChatTranscript.tsx
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { Button } from './Button'
 

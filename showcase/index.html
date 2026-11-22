@@ -1,9 +1,10 @@
 <!doctype html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>设计系统预览 · Vincent UX</title>
+    <script src="%BASE_URL%vx-page-theme.js"></script>
     <link rel="stylesheet" href="../styles.css" />
     <link rel="stylesheet" href="showcase.css" />
   <style>body { padding-bottom: var(--vx-guide-space, 0px); }</style>
@@ -12,8 +13,7 @@
     <a class="sc-skip" href="#handbook">跳到项目使用指南</a>
     <div class="sc">
       <header class="sc-toc">
-        <div class="sc-brand"><h1>Vincent UX</h1><div id="showcase-mode"></div></div>
-        <span class="vx-text-3" data-version>展示与验收</span>
+        <div class="sc-brand vx-brand-panel"><h1>Vincent UX</h1><div id="showcase-mode"></div><span data-version>展示与验收</span></div>
         <a class="sc-index-jump" href="#demo-index">浏览规范示例目录</a>
         <div class="sc-palette-pick"><span aria-hidden="true">配色</span><div id="palette-pick"></div></div>
         <nav class="sc-catalog vx-index" id="demo-index" aria-labelledby="demo-index-title" tabindex="-1">
@@ -88,13 +88,20 @@
 
         <section class="sc-sec" data-catalog="视觉基础" id="color">
           <h2>颜色</h2>
-          <p class="sc-lead">中性色组织页面层次，动作色标出推荐操作，状态色传达需要关注的程度。为每种底色配套选择文字、图标和边界颜色。</p>
-          <div data-vx-swatch class="sc-swatches" data-swatches="text-primary text-secondary text-tertiary text-link text-disabled ink-base brand-accent brand-accent-bright brand-accent-soft brand-critical brand-critical-soft fill-hover fill-selected line-faint"></div>
+          <p class="sc-lead">60／30／10 是品牌首屏的用色起点。阅读页把最大的连续色面留给正文，品牌原色集中在产品标头。本页按以下方式分配颜色。</p>
+          <dl class="sc-color-roles">
+            <div><dt>主色 · 阅读面</dt><dd>画布与正文留白</dd></div>
+            <div><dt>副色 · 辅助面</dt><dd>目录与示例容器</dd></div>
+            <div><dt>点缀色 · 视觉重点</dt><dd>示例中当前任务的主操作</dd></div>
+            <div><dt>常规与语义色</dt><dd>文字、边界、选中、焦点与反馈</dd></div>
+          </dl>
+          <nav class="sc-reference vx-nav-links" aria-label="页面用色指南"><a href="./handbook.html?doc=principles/visual.md#按页面任务分配颜色">按页面任务分配颜色</a> <a href="./handbook.html?doc=docs/usage.md#从三种品牌色接入">接入品牌配色</a> <a href="#color-roles">查询当前变量</a></nav>
           <span id="leo-palettes"></span>
           <h3 class="sc-sub" id="palettes">配色主题</h3>
-          <p class="sc-lead">每张卡都使用该主题的页面底色、文字和主按钮。应用后，可在<a href="#text-colors">正文</a>和<a href="#portal">登录表单</a>中查看效果。</p>
-          <p class="sc-reference vx-nav-links"><a href="./handbook.html?doc=docs/usage.md#从三种品牌色接入"><svg class="vx-icon" aria-hidden="true"><use href="../icons/dist/sprite.svg#note"/></svg>查看按钮底色、配文和边界的搭配规则</a></p>
+          <p class="sc-lead">点选色卡即可应用到整页。可在<a href="#text-colors">正文示例</a>核对阅读层级，在<a href="#portal">登录表单</a>对照品牌面与主操作。</p>
           <div class="sc-palettes" data-palettes></div>
+          <h3 class="sc-sub" id="color-roles">当前主题的颜色变量</h3>
+          <div data-vx-swatch class="sc-swatches" data-swatches="surface-canvas surface-shell surface-card brand-field brand-on-field action-fill action-text selection-fill focus-ring text-primary text-secondary text-tertiary text-link text-disabled ink-base brand-accent brand-accent-bright brand-accent-soft brand-critical brand-critical-soft fill-hover fill-selected line-faint"></div>
         </section>
 
         <section class="sc-sec" data-catalog="视觉基础" id="type">
@@ -241,7 +248,7 @@
 
         <section class="sc-sec" data-catalog="页面交互模式" id="task-workspace"><h2>方案选择与执行授权</h2><p class="sc-lead">选择方案后仍可改选。用待办示例核对确认前后的对象状态，并从处理记录查看执行结果。</p><div class="sc-board" id="task-card-demo"></div></section>
 
-        <section class="sc-sec" data-catalog="页面交互模式" id="portal"><h2>响应式入口布局</h2><p class="sc-lead">可用空间变窄时，优先给输入、反馈与主操作留出空间。门户登录示例随容器重排，并响应减少动态效果的偏好。</p><div class="sc-board sc-portal" id="portal-demo"></div></section>
+        <section class="sc-sec" data-catalog="页面交互模式" id="portal"><h2>响应式入口布局</h2><p class="sc-lead">宽容器左侧约六成用于品牌识别，右侧承载说明与表单，登录按钮使用点缀色。窄容器保留顶部品牌色带，输入与反馈占据主要空间。</p><div class="sc-board sc-portal" id="portal-demo"></div></section>
       </main>
     </div>
     <script src="showcase.js" type="module"></script>

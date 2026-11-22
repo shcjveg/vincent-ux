@@ -1,4 +1,4 @@
-// vincent-ux v1.8.0 · scripts/audit.js
+// vincent-ux v1.9.0 · scripts/audit.js
 // 规则检查（在浏览器里跑）：把视觉与交互原则里能机器判断的部分变成断言，截图评审只看机器判断不了的。
 // 用法：页面里注入本文件后调用 window.vxAudit()，返回 [{ rule, text, where }]；空数组表示已覆盖规则无发现，不等于完整可访问性认证。
 // Playwright：await page.addScriptTag({ path }); const r = await page.evaluate(() => vxAudit())
@@ -19,6 +19,8 @@
   ]
   const ACCENT_OK = [
     'a[href]', 'button.vx-link', '.vx-stat-delta--up', '.vx-money--accent', '.vx-tag--accent', '.vx-money', '.vx-stat-value--accent', '.vx-bar', '.vx-spark', '.vx-callout--accent', '.vx-dot--accent',
+    '.vx-brand-panel', '.vx-nav-brand', '.vx-btn--primary', '.vx-action', '.vx-composer-send', '.vx-ask',
+    '.vx-check:checked', '.vx-check:indeterminate', '.vx-nav-item[aria-current]', '.vx-portal-feed',
     '.vx-choice', '.vx-guide-progress', '.vx-text-accent', '[data-tone="accent"]', '[aria-pressed="true"]', '[aria-selected="true"]',
   ]
   const ENTRY = '.vx-nav-item, .vx-tab, .vx-todo-group-head, [data-entry]'
