@@ -3,7 +3,7 @@ export default defineConfig({
   build: {
     outDir: '.showcase-dist',
     rolldownOptions: {
-      input: ['showcase/index.html', 'examples/basic.html', 'examples/embedded/index.html'],
+      input: ['showcase/index.html', 'showcase/handbook.html', 'examples/basic.html', 'examples/embedded/index.html', 'examples/batch/index.html'],
       onwarn(warning, warn) {
         // 展示页是纯客户端应用，依赖中的 RSC 指令无需保留。
         if (warning.code === 'MODULE_LEVEL_DIRECTIVE' && warning.message.includes('use client')) return

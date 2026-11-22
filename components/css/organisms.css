@@ -1,4 +1,4 @@
-/* vincent-ux v1.7.0 · components/css/organisms.css */
+/* vincent-ux v1.8.0 · components/css/organisms.css */
 /* 组织：完成一块完整内容的组件。依赖 tokens.css、base.css、atoms.css、molecules.css。 */
 
 /* ---------- 页头：一个标题 + 一句结论 + 页面级动作 ---------- */
@@ -549,6 +549,7 @@ button.vx-stat:hover {
   transition: background var(--vx-motion-duration-fast);
 }
 
+.vx-dropzone:has(input:focus-visible) { outline: 2px solid var(--vx-focus-ring); outline-offset: 2px; }
 .vx-dropzone[data-over='true'] {
   background: var(--vx-brand-accent-soft);
   color: var(--vx-brand-accent);
@@ -754,6 +755,7 @@ button.vx-stat:hover {
 /* 执行步骤：AI 助理做事的过程，默认安静；完成后收起成一行 */
 .vx-steps-toggle {
   display: flex;
+  min-height: var(--vx-size-hit);
   align-items: center;
   gap: var(--vx-space-1-5);
   width: 100%;
@@ -762,17 +764,19 @@ button.vx-stat:hover {
   color: var(--vx-text-secondary);
 }
 
+.vx-steps-toggle:is(:hover, :focus-visible) .vx-msg-block-title { text-decoration: underline; text-underline-offset: 0.18em; }
+
 /* 过程标题与完成数量同一行；无需使用方再以行内样式清掉标题底部留白。 */
 .vx-steps-toggle > .vx-msg-block-title { margin: 0; }
 
-.vx-steps-toggle svg {
+.vx-steps-toggle svg:not(.vx-disclosure-indicator) {
   width: var(--vx-size-icon-sm);
   height: var(--vx-size-icon-sm);
   color: var(--vx-text-tertiary);
   transition: transform var(--vx-motion-duration-base);
 }
 
-.vx-steps-toggle[aria-expanded='true'] svg {
+.vx-steps-toggle[aria-expanded='true'] svg:not(.vx-disclosure-indicator) {
   transform: rotate(180deg);
 }
 
@@ -939,8 +943,13 @@ body:has(.vx-guide) .vx-dialog, body:has(.vx-guide) .vx-drawer { z-index: calc(v
 }
 
 /* 结果浏览：列表和卡片网格共享内容，切换视图不改变筛选或选择。 */
-.vx-results-head { display:flex;align-items:center;justify-content:space-between;gap:var(--vx-space-3); }
+.vx-results-head { display:flex; flex-wrap:wrap; align-items:center; gap:var(--vx-space-2) var(--vx-space-3); }
+.vx-results-head > :nth-child(2) { margin-inline-start: auto; }
 .vx-collection { display: flex; flex-direction: column; gap: var(--vx-space-3); }
+.vx-collection > :is(.vx-rows, .vx-browse-list, .vx-browse-grid) {
+  animation: vx-results-in var(--vx-motion-duration-base) var(--vx-motion-ease-standard);
+}
+@keyframes vx-results-in { from { opacity: 0; } }
 .vx-browse-list, .vx-browse-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--vx-space-3); }
 .vx-browse-grid { gap: var(--vx-space-4); grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); }
 .vx-browse-item { min-width: 0; padding: var(--vx-space-4); border-radius: var(--vx-radius-lg); background: var(--vx-surface-card); }
@@ -1162,7 +1171,7 @@ body:has(.vx-guide--banner) [data-tour] { scroll-margin-bottom: calc(var(--vx-gu
 .vx-section-heading { flex: 1 1 auto; }
 .vx-card-extra { margin-left: auto; }
 .vx-section-chat { flex-shrink: 0; width: var(--vx-size-hit); height: var(--vx-size-hit); color: var(--vx-text-secondary); }
-.vx-section-action { min-width: var(--vx-size-hit); min-height: var(--vx-size-hit); display: inline-flex; align-items: center; justify-content: center; padding: var(--vx-space-1-5) var(--vx-space-2-5); gap: var(--vx-space-2); border-radius: var(--vx-radius-md); background: var(--vx-fill-quiet); color: var(--vx-text-secondary); font-size: var(--vx-font-size-sm); font-weight: var(--vx-font-weight-regular); line-height: var(--vx-font-leading-normal); white-space: nowrap; transition: background var(--vx-motion-duration-fast), color var(--vx-motion-duration-fast); }
+.vx-section-action { text-decoration: none; min-width: var(--vx-size-hit); min-height: var(--vx-size-hit); display: inline-flex; align-items: center; justify-content: center; padding: var(--vx-space-1-5) var(--vx-space-2-5); gap: var(--vx-space-2); border-radius: var(--vx-radius-md); background: var(--vx-fill-quiet); color: var(--vx-text-secondary); font-size: var(--vx-font-size-sm); font-weight: var(--vx-font-weight-regular); line-height: var(--vx-font-leading-normal); white-space: nowrap; transition: background var(--vx-motion-duration-fast), color var(--vx-motion-duration-fast); }
 .vx-section-action:hover { background: var(--vx-fill-hover); color: var(--vx-text-primary); }
 .vx-section-action:disabled { color: var(--vx-text-disabled); cursor: default; }
 .vx-section-columns { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--vx-space-6); align-items: start; }
@@ -1191,8 +1200,8 @@ body:has(.vx-guide--banner) [data-tour] { scroll-margin-bottom: calc(var(--vx-gu
 .vx-attention-label { min-width: 0; }
 .vx-attention-count { align-self: center; flex-shrink: 0; font-weight: var(--vx-font-weight-medium); }
 .vx-menu-positioner { z-index: var(--vx-z-popover); }
-.vx-menu { min-width: 200px; max-width: calc(100vw - 24px); padding: var(--vx-space-1); border-radius: var(--vx-radius-lg); background: var(--vx-surface-card); box-shadow: var(--vx-shadow-overlay); outline: none; }
-.vx-menu-item { display: flex; align-items: center; gap: var(--vx-space-2); min-height: 40px; padding: var(--vx-space-2) var(--vx-space-3); border-radius: var(--vx-radius-sm); color: var(--vx-text-primary); font-size: var(--vx-font-size-md); cursor: pointer; outline: none; }
+.vx-menu { max-height: var(--available-height, 100dvh); overflow-y: auto; overscroll-behavior: contain; min-width: 200px; max-width: calc(100vw - 24px); padding: var(--vx-space-1); border-radius: var(--vx-radius-lg); background: var(--vx-surface-card); box-shadow: var(--vx-shadow-overlay); outline: none; }
+.vx-menu-item { display: flex; align-items: center; gap: var(--vx-space-2); min-height: 40px; padding: var(--vx-space-2) var(--vx-space-3); border-radius: calc(var(--vx-radius-lg) - var(--vx-space-1)); color: var(--vx-text-primary); font-size: var(--vx-font-size-md); cursor: pointer; outline: none; }
 .vx-menu-item[data-highlighted] { background: var(--vx-fill-hover); }
 @media (pointer: coarse) { .vx-menu-item { min-height: var(--vx-size-hit-touch); } }
 
@@ -1312,13 +1321,14 @@ body:has(.vx-guide--banner) [data-tour] { scroll-margin-bottom: calc(var(--vx-gu
 .vx-drawer-section:last-child { padding-bottom: 0; }
 .vx-drawer-section + .vx-drawer-section { box-shadow: inset 0 1px 0 var(--vx-line-faint); }
 .vx-drawer-section-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--vx-space-2); min-height: 28px; }
-.vx-drawer-section-heading { margin: 0; min-width: 0; font: inherit; }
+.vx-drawer-section-heading { display: flex; align-items: baseline; gap: var(--vx-space-2); flex-wrap: wrap; margin: 0; min-width: 0; font: inherit; }
 /* 标题行即开关：不画按钮外观，箭头低调，悬停时箭头亮一档 */
 .vx-drawer-section-toggle { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--vx-space-2); min-height: var(--vx-size-hit); padding: 0; border: 0; border-radius: var(--vx-radius-sm); background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
 .vx-drawer-section-title { font-size: var(--vx-font-size-md); font-weight: var(--vx-font-weight-semibold); color: var(--vx-text-primary); }
 .vx-drawer-section-chevron { width: 14px; height: 14px; color: var(--vx-text-muted); transform: rotate(-90deg); transition: transform var(--vx-motion-duration-fast), color var(--vx-motion-duration-fast); }
 .vx-drawer-section[data-open='true'] .vx-drawer-section-chevron { transform: none; }
 .vx-drawer-section-toggle:hover .vx-drawer-section-chevron { color: var(--vx-text-secondary); }
+.vx-drawer-section-toggle:is(:hover, :focus-visible) .vx-drawer-section-title { text-decoration: underline; text-underline-offset: 0.18em; }
 .vx-drawer-section-actions { display: inline-flex; gap: var(--vx-space-2); margin-left: auto; }
 .vx-drawer-section-body { display: flex; flex-direction: column; gap: var(--vx-space-4); }
 .vx-drawer-section-body[hidden] { display: none; }
@@ -1377,7 +1387,7 @@ body:has(.vx-guide--banner) [data-tour] { scroll-margin-bottom: calc(var(--vx-gu
 
 /* The scroll container stays in place when the return action appears. */
 .vx-transcript { position: relative; display: flex; flex-direction: column; flex: 1; min-height: 0; }
-.vx-transcript > .vx-chat-body { display: block; min-height: 0; overflow-anchor: none; }
+.vx-transcript > .vx-chat-body { display: block; font-size: var(--vx-font-size-md); line-height: var(--vx-font-leading-relaxed); min-height: 0; overflow-anchor: none; }
 .vx-transcript-content { display: flex; flex-direction: column; gap: var(--vx-space-4); }
 .vx-transcript-jump { position: absolute; inset-inline-end: var(--vx-space-4); bottom: var(--vx-space-2); box-shadow: var(--vx-shadow-card); }
 

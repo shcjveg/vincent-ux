@@ -3,10 +3,11 @@ import { downloadJson } from './download'
 import { PortalExample } from './PortalExample'
 import { ReportExample } from './ReportExample'
 import { SettingsExample } from './SettingsExample'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { WorkspaceDemo, ComponentStatesDemo } from './WorkspaceDemo'
 import { BreadcrumbExamples } from './NavigationExamples'
 import { DisclosureExamples, ControlsExamples, OrganismsExamples } from './ComponentExamples'
+import { createPortal } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import { DataTime, EmptyState, Button, Checkbox, Collection, DecisionCard, Dialog, Field, FilterBar, Fold, Guide, Icon,
   Breadcrumbs, ThemeToggle, UserMenu, DateFilter, SortMenu, TaskStatus, TaskCard, ActionMenu, AttentionMark, AttentionTitle, ActionSummary, DetailDrawer, DrawerSection, Property, Metric, ObjectPreview, SectionCard, SectionAction, SectionHeader, Pagination, RadioGroup, SearchField, Segmented, Select, SelectionBar, TableScroll, Tabs, Tip, TipProvider, type GuideStep } from '../components/react'
@@ -118,12 +119,12 @@ function BrowserDemo() {
         requestAnimationFrame(() => document.getElementById('browse-batch-receipt')?.focus())
       }}>撤销归档</Button>}
     </div>
-    <details className="sc-test-tools"><summary>体验导览与不同状态</summary><div className="vx-cluster">
+    <div className="vx-cluster" role="group" aria-label="浏览示例的验收操作">
       <Button size="sm" onClick={() => setGuide(tour)}>开始浏览导览</Button>
       <Button size="sm" onClick={reload}>演示加载</Button>
       <Button size="sm" onClick={() => setError('暂时无法更新内容，请重试。')}>演示请求失败</Button>
       <Button size="sm" onClick={() => setGuide([{ target: 'missing-target', title: '不可用目标', text: '目标缺失时自动退出。' }])}>验证缺失目标</Button>
-    </div></details>
+    </div>
     {detail && <ItemDrawer item={detail} onClose={() => setDetail(null)} onSave={next => { setContent(content.map(x => x.id === next.id ? next : x)); setDetail(next) }} />}
     {guide && <Guide name="浏览内容" steps={guide} onExit={() => setGuide(null)} />}
   </div>
@@ -144,18 +145,22 @@ function ItemDrawer({ item, onClose, onSave }: { item: Item; onClose: () => void
   const date = (iso: string) => iso.slice(0, 16).replace('T', ' ')
   return <TipProvider><DetailDrawer title={item.title} onClose={onClose} editable editing={editing} dirty={dirty}
     onEdit={() => { setDraft(item); setEditing(true) }} onCancel={() => { setDraft(item); setError(undefined); setEditing(false) }} onSave={save}>
-    <DrawerSection title="基本信息">
+    <DrawerSection title="基本信息" collapsible={false}>
       <div className="vx-props">
-        <Property label="标题" tip="列表与搜索使用的名称" editing={editing} value={item.title}>{p => <input {...p} className="vx-input" value={draft.title} onChange={e => setDraft({ ...draft, title: e.target.value })} />}</Property>
+        <Property label="标题" editing={editing} value={item.title}>{p => <input {...p} className="vx-input" value={draft.title} onChange={e => setDraft({ ...draft, title: e.target.value })} />}</Property>
         <Property label="类型" tip="报告、模板或笔记，可以在下拉里新增类型" editing={editing} value={item.type}>{p => <Select label={p['aria-label']} creatable value={draft.type} onChange={v => setDraft({ ...draft, type: v })} options={[...new Set(['报告', '模板', '笔记', draft.type])].map(t => ({ value: t, label: t }))} />}</Property>
         <Property label="所在文件夹" value={item.folder ?? '未分类'} />
         <Property label="更新时间" tip="最近一次保存的时间，系统记录" editing={editing} value={date(item.updatedAt)} />
       </div>
     </DrawerSection>
-    <DrawerSection title="内容" status={<span className="vx-tag">{itemStatus(item)}</span>} attention={pending}>
+    <DrawerSection title="内容" collapsible={false} status={<span className="vx-tag">{itemStatus(item)}</span>} attention={pending}>
       <div className="vx-props">
-        <Property label="摘要" tip="写满 12 个字后，草稿自动转为已完成" wide required editing={editing} error={error} value={item.summary}>{p => <textarea {...p} className="vx-textarea" rows={3} value={draft.summary} onChange={e => setDraft({ ...draft, summary: e.target.value })} />}</Property>
-        <Property label="字数" tip="摘要的字数，随填写实时计算" editing={editing} value={<span className="vx-num">{(editing ? draft : item).summary.trim().length}</span>} />
+        <Property label="摘要" wide required editing={editing} error={error} value={item.summary}>{p => <>
+          <textarea {...p} aria-describedby={[`${p.id}-hint`, p['aria-describedby']].filter(Boolean).join(' ')} className="vx-textarea" rows={3}
+            value={draft.summary} onChange={e => setDraft({ ...draft, summary: e.target.value })} />
+          <span className="vx-meta" id={`${p.id}-hint`}>保存时摘要满 12 个字，草稿会转为已完成。</span>
+        </>}</Property>
+        <Property label="字数" editing={editing} value={<span className="vx-num">{(editing ? draft : item).summary.trim().length}</span>} />
       </div>
     </DrawerSection>
     <DrawerSection title="历史" defaultOpen={false}>
@@ -218,7 +223,6 @@ function InteractionDemo() {
         </table>
       </TableScroll>
     </section>
-    <Fold summary="更多说明"><p className="vx-body">普通说明可以没有计数；内容折叠后仍保留表单状态。</p></Fold>
   </div></TipProvider>
 }
 
@@ -323,18 +327,6 @@ function PalettePick() {
   return <Select label="配色主题" value={current || fallback} options={palettes.map(({ id, name }) => ({ value: id, label: name }))}
     onChange={id => { if (id === fallback) delete root.dataset.palette; else root.dataset.palette = id }} />
 }
-createRoot(document.getElementById('palette-pick')!).render(<PalettePick />)
-// 左下角明暗切换：展示页唯一的明暗入口，改根元素的 data-theme
-const toggleHost = document.body.appendChild(document.createElement('div'))
-createRoot(toggleHost).render(<ThemeToggle />)
-createRoot(document.getElementById('browse-demo')!).render(<BrowserDemo />)
-createRoot(document.getElementById('interaction-demo')!).render(<InteractionDemo />)
-
-createRoot(document.getElementById('guide-demo')!).render(<GuideDemo />)
-createRoot(document.getElementById('portal-demo')!).render(<PortalExample />)
-
-createRoot(document.getElementById('molecules-demo')!).render(<MoleculesDemo />)
-
 
 function TaskCardDemo(){
  const [handled,setHandled]=useState(''),[history,setHistory]=useState(false),[revision,setRevision]=useState(1)
@@ -363,18 +355,34 @@ function TaskCardDemo(){
    onContinue={choice=>submit(choice,'continue')} onTakeover={choice=>submit(choice,'takeover')} onDiscuss={()=>{if(!history)setRevision(n=>n+1)}}
    completedChoice={completedChoice} completedAction={completedAction}
    pending={pending} error={error} done={history}/>:<EmptyState message={history?'还没有处理记录':'当前没有待办事项'}/>}
-  <details className="sc-test-tools"><summary>体验提交状态</summary><div className="vx-cluster"><Checkbox label="下次提交失败" checked={failNext} disabled={!!pending||!!handled} onChange={e=>setFailNext(e.target.checked)}/><span className="vx-meta">提交尝试：{attempts}</span></div></details>
+  <div className="vx-cluster"><Checkbox label="下次提交失败" checked={failNext} disabled={!!pending||!!handled} onChange={e=>setFailNext(e.target.checked)}/><span className="vx-meta">提交尝试：{attempts}</span></div>
  </div>
 }
-createRoot(document.getElementById('task-card-demo')!).render(<TaskCardDemo />)
 
-createRoot(document.getElementById('session-workspace-demo')!).render(<WorkspaceDemo />)
-createRoot(document.getElementById('component-states-demo')!).render(<ComponentStatesDemo />)
-
-createRoot(document.getElementById('disclosure-demo')!).render(<DisclosureExamples />)
-createRoot(document.getElementById('controls-demo')!).render(<ControlsExamples />)
-createRoot(document.getElementById('organisms-demo')!).render(<OrganismsExamples />)
-
-createRoot(document.getElementById('breadcrumbs-demo')!).render(<BreadcrumbExamples />)
-
-createRoot(document.getElementById('report-demo')!).render(<ReportExample />)
+// 所有示例一起进入页面，再把来自指南的章节链接定位到最终排版的位置。
+function Showcase() {
+  useLayoutEffect(() => {
+    const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined
+    if (location.hash && navigation?.type === 'navigate') {
+      document.getElementById(location.hash.slice(1))?.scrollIntoView()
+    }
+  }, [])
+  return <>
+    <ThemeToggle variant="inline" />
+    {createPortal(<PalettePick />, document.getElementById('palette-pick')!)}
+    {createPortal(<BrowserDemo />, document.getElementById('browse-demo')!)}
+    {createPortal(<InteractionDemo />, document.getElementById('interaction-demo')!)}
+    {createPortal(<GuideDemo />, document.getElementById('guide-demo')!)}
+    {createPortal(<PortalExample />, document.getElementById('portal-demo')!)}
+    {createPortal(<MoleculesDemo />, document.getElementById('molecules-demo')!)}
+    {createPortal(<TaskCardDemo />, document.getElementById('task-card-demo')!)}
+    {createPortal(<WorkspaceDemo />, document.getElementById('session-workspace-demo')!)}
+    {createPortal(<ComponentStatesDemo />, document.getElementById('component-states-demo')!)}
+    {createPortal(<DisclosureExamples />, document.getElementById('disclosure-demo')!)}
+    {createPortal(<ControlsExamples />, document.getElementById('controls-demo')!)}
+    {createPortal(<OrganismsExamples />, document.getElementById('organisms-demo')!)}
+    {createPortal(<BreadcrumbExamples />, document.getElementById('breadcrumbs-demo')!)}
+    {createPortal(<ReportExample />, document.getElementById('report-demo')!)}
+  </>
+}
+createRoot(document.getElementById('showcase-mode')!).render(<Showcase />)

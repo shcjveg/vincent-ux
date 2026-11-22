@@ -1,4 +1,4 @@
-// vincent-ux v1.7.0 · components/react/useWorkspaceLayout.ts
+// vincent-ux v1.8.0 · components/react/useWorkspaceLayout.ts
 import { useLayoutEffect, useRef, useState } from 'react'
 
 /** Measure the host. A collapsed rail leaves more room for an inline conversation. */

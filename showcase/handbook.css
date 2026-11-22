@@ -1,0 +1,42 @@
+.hb-header, .hb-main {
+  width: min(100%, 64rem);
+  margin-inline: auto;
+  padding-inline: clamp(var(--vx-space-4), 4vw, var(--vx-space-8));
+}
+.hb-header, .hb-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--vx-space-5);
+}
+.hb-header { justify-content: space-between; padding-block: var(--vx-space-5); }
+.hb-main article { margin: var(--vx-space-8) 0; overflow-wrap: anywhere; }
+.hb-main article > * + * { margin-block-start: var(--vx-space-4); }
+.hb-main article > p, .hb-main li { max-inline-size: 76ch; }
+.hb-main article h1 { font-size: var(--vx-font-size-3xl); line-height: 1.25; }
+.hb-main article h2 { margin-block-start: var(--vx-space-8); font-size: var(--vx-font-size-xl); }
+.hb-main article h3 { font-size: var(--vx-font-size-lg); }
+.hb-main :is(h1, h2, h3, h4) { scroll-margin-top: var(--vx-space-4); }
+.hb-sections { padding: var(--vx-space-4); border-radius: var(--vx-radius-md); background: var(--vx-surface-shell); }
+.hb-main :is(pre, code) { font-family: var(--vx-font-family-mono); font-size: var(--vx-font-size-sm); }
+.hb-main pre, .hb-table { max-width: 100%; overflow: auto; background: var(--vx-surface-shell); border-radius: var(--vx-radius-md); }
+.hb-main pre { padding: var(--vx-space-4); }
+.hb-main table { width: 100%; border-collapse: collapse; }
+.hb-main th, .hb-main td { padding: var(--vx-space-3); text-align: start; vertical-align: top; border-bottom: 1px solid var(--vx-line-faint); }
+.hb-main th { color: var(--vx-text-secondary); }
+.hb-main td { min-width: min(9rem, 45vw); }
+.hb-tasks { display: grid; gap: var(--vx-space-4); }
+.hb-tasks section { padding: var(--vx-space-4); background: var(--vx-surface-shell); border-radius: var(--vx-radius-md); }
+.hb-tasks section h2 { margin: 0 0 var(--vx-space-3); font-size: var(--vx-font-size-lg); }
+.hb-tasks dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--vx-space-2) var(--vx-space-4); margin: 0; }
+.hb-tasks dt { color: var(--vx-text-secondary); }
+.hb-tasks dt:has(+ .vx-nav-links) { align-self: center; }
+.hb-tasks dd { margin: 0; }
+@media (max-width: 38rem) {
+  .hb-tasks dl { display: block; }
+  .hb-tasks dd + dt { margin-block-start: var(--vx-space-3); }
+}
+
+.hb-header a, .hb-nav a {
+  display: inline-flex; align-items: center; min-height: var(--vx-size-hit); min-width: var(--vx-size-hit);
+}

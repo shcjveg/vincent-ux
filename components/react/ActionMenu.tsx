@@ -1,4 +1,4 @@
-// vincent-ux v1.7.0 · components/react/ActionMenu.tsx
+// vincent-ux v1.8.0 · components/react/ActionMenu.tsx
 import { useThemeContainer } from './ThemeScope'
 import type { ReactNode } from 'react'
 import { Menu } from '@base-ui/react/menu'

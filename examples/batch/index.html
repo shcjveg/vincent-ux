@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>批量改交期 · 采购示例</title>
+  <link rel="stylesheet" href="../../styles.css" />
+</head>
+<body>
+  <main class="vx-page vx-page--narrow">
+    <header class="vx-pagehead"><h1>批量改交期</h1></header>
+    <form class="vx-card vx-card--padded vx-stack">
+      <label class="vx-field"><span class="vx-field-label">新交期</span>
+        <input type="date" class="vx-input" name="delivery" required value="2026-12-15" />
+      </label>
+      <div class="vx-table-wrap" role="region" aria-label="订单交期" tabindex="0">
+        <table class="vx-table"><caption class="vx-sr-only">选择要修改的订单并核对当前交期</caption>
+          <thead><tr><th scope="col">订单</th><th scope="col">当前交期</th><th scope="col">处理结果</th></tr></thead>
+          <tbody>
+            <tr data-order="PO-101"><td><input id="select-PO-101" type="checkbox" class="vx-check" checked /> <label class="vx-control-label" for="select-PO-101">PO-101</label></td><td><time>2026-12-01</time></td><td data-result>待提交</td></tr>
+            <tr data-order="PO-102"><td><input id="select-PO-102" type="checkbox" class="vx-check" checked /> <label class="vx-control-label" for="select-PO-102">PO-102</label></td><td><time>2026-12-03</time></td><td data-result>待提交</td></tr>
+            <tr data-order="PO-103"><td><input id="select-PO-103" type="checkbox" class="vx-check" /> <label class="vx-control-label" for="select-PO-103">PO-103</label></td><td><time>2026-12-06</time></td><td data-result>待选择</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p role="status" class="vx-body" tabindex="-1"></p>
+      <div class="vx-cluster">
+        <button type="submit" class="vx-btn vx-btn--primary">确认修改</button>
+        <button type="button" class="vx-btn" id="restart" hidden>开始下一批</button>
+      </div>
+    </form>
+  </main>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

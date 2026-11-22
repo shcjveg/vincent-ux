@@ -1,4 +1,4 @@
-// vincent-ux v1.7.0 · components/react/UserMenu.tsx
+// vincent-ux v1.8.0 · components/react/UserMenu.tsx
 // 右上角的当前用户入口：只放一个头像，点开是极简菜单——名字与身份一行说明，下面是账户动作。
 // 外壳已有用户卡片的产品（例如侧栏底部）不再重复放；嵌入宿主的应用页只在宿主不显示身份时使用。
 import { useThemeContainer } from './ThemeScope'

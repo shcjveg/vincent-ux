@@ -14,7 +14,7 @@ test('即时偏好、未提交草稿和已保存设置各自在刷新后呈现�
   const theme = page.getByRole('group', { name: '浏览偏好' }).getByRole('button')
   await checkbox.uncheck()
   await theme.click()
-  await expect(page.locator('.vx-theme-toggle').first()).toHaveAccessibleName('切换到浅色')
+  await expect(page.locator('.vx-theme-toggle').first()).toHaveAccessibleName('暗色，切换到浅色')
   await page.reload()
   await expect(theme).toHaveText('暗色')
   await expect(checkbox).toBeChecked()
@@ -104,13 +104,43 @@ test('长短和缺省摘要保留可比较的对象、状态和时间', async ({
   expect(await fields()).toEqual(original)
 })
 
+for (const width of [1280, 320]) test(`${width}px 下查询对齐选项，切城市时查询与导出留在原位`, async ({ page }) => {
+  await page.setViewportSize({ width, height: 820 })
+  const report = page.getByRole('region', { name: '明细查询' })
+  const submit = report.getByRole('button', { name: '查询', exact: true })
+  await submit.click()
+  const cities = report.getByRole('group', { name: '查看城市明细' })
+  await expect(cities).toBeVisible()
+  const bounds = () => report.evaluate(region => {
+    const rect = (selector: string) => region.querySelector(selector)!.getBoundingClientRect()
+    const origin = region.getBoundingClientRect()
+    const query = rect('button[type="submit"]'), option = rect('label'), download = rect('.vx-results-head button')
+    return { centerOffset: (query.top + query.height / 2) - (option.top + option.height / 2),
+      query: [query.x - origin.x, query.y - origin.y], export: [download.x - origin.x, download.y - origin.y] }
+  })
+  const before = await bounds()
+  expect(Math.abs(before.centerOffset)).toBeLessThanOrEqual(1)
+  await cities.getByRole('button', { name: '上海' }).press('Enter')
+  await expect(cities.getByRole('button', { name: '上海' })).toHaveAttribute('aria-pressed', 'true')
+  expect(await bounds()).toEqual(before)
+  const indicatorOffset = () => cities.evaluate(el => {
+    const selected = el.querySelector<HTMLButtonElement>('[aria-pressed="true"]')!
+    const first = el.querySelector<HTMLButtonElement>('button')!
+    const indicator = new DOMMatrix(getComputedStyle(el, '::before').transform)
+    return Math.abs(indicator.m41 - (selected.offsetLeft - first.offsetLeft))
+  })
+  await expect.poll(indicatorOffset).toBeLessThanOrEqual(1)
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await cities.getByRole('button', { name: '全部城市' }).press('Enter')
+  await expect.poll(indicatorOffset).toBeLessThanOrEqual(1)
+})
+
 test('待查询条件、失败请求、下钻和明细导出共享最后成功的范围', async ({ page }) => {
   const report = page.getByRole('region', { name: '明细查询' })
   await report.getByRole('button', { name: '查询', exact: true }).click()
   await report.getByRole('button', { name: '上海', exact: true }).click()
   await expect(report.getByRole('listitem')).toHaveCount(2)
-  await report.getByRole('combobox').click()
-  await page.getByRole('option', { name: '华南' }).click()
+  await report.getByRole('radio', { name: '华南' }).check()
   await page.route('**/report-data.json*', route => route.fulfill({ status: 503 }), { times: 1 })
   await report.getByRole('button', { name: '查询', exact: true }).click()
   await expect(report.getByRole('alert')).toContainText('尚未更新')
@@ -140,8 +170,7 @@ test('新查询先完成时，晚到的旧响应无法改写结果', async ({ pa
   const query = report.getByRole('button', { name: '查询', exact: true })
   await query.click()
   await expect(query).toBeDisabled()
-  await report.getByRole('combobox').click()
-  await page.getByRole('option', { name: '华南' }).click()
+  await report.getByRole('radio', { name: '华南' }).check()
   await query.click()
   await expect(report.getByRole('heading')).toHaveText('华南明细')
   await page.evaluate(async () => {
@@ -207,10 +236,12 @@ test('色卡、实际按钮和模式切换共用配色，选中反馈与键盘�
   await butter.hover()
   await expect.poll(async () => (await colors(butter))[0]).not.toBe(normal[0])
   expect((await colors(butter))[1]).toBe(normal[1])
-  await page.locator('.vx-theme-toggle:not(.vx-theme-toggle--inline)').click()
+  await page.locator('#showcase-mode button').click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
   await expect.poll(async () => (await colors(login))[0]).not.toBe(normal[0])
-  await expect.poll(() => colors(butter)).toEqual(await colors(login))
+  await expect(async () => {
+    expect(await colors(butter)).toEqual(await colors(login))
+  }).toPass({ timeout: 5000 })
   await picker.click()
   await page.getByRole('option', { name: '墨金', exact: true }).click()
   await expect(login).toHaveCSS('background-image', /linear-gradient/)
@@ -255,7 +286,6 @@ test('22 套主题的阅读卡、门户与行内链接使用对应的文字色�
 
 test('可操作的导览跳过文字与正文链接一致，支持键盘退出', async ({ page }) => {
   const browse = page.getByTestId('browser-demo')
-  await browse.locator('summary').filter({ hasText: '体验导览与不同状态' }).click()
   await browse.getByRole('button', { name: '开始浏览导览' }).click()
   const skip = page.getByRole('button', { name: '跳过导览' })
   const anchor = page.locator('#text-colors a')
@@ -307,4 +337,57 @@ test('各主题的局部色卡和整页主按钮在两种明暗下使用同一�
     return differences
   })
   expect(mismatches).toEqual([])
+})
+
+test('轻微回读立即停止跟随，返回入口按实际行高显示', async ({ page }) => {
+  const demo = page.getByTestId('session-workspace')
+  await demo.getByRole('button', { name: '关闭示例页面' }).click()
+  const pane = demo.getByRole('region', { name: '对话记录' })
+  const input = demo.getByRole('textbox', { name: '示例对话输入' })
+  const jump = demo.getByRole('button', { name: '跳至最新' })
+  await page.evaluate(() => { document.documentElement.style.fontSize = '24px' })
+  await input.fill(Array.from({ length: 40 }, (_, i) => '核对记录 ' + i).join('\n'))
+  await input.press('Enter')
+  await expect(pane.getByText('确认后保存方案，再查看本次变更的处理记录。')).toBeAttached()
+  const scrollToGap = (lines: number) => pane.evaluate(async (el, lines) => {
+    const scrolled = new Promise(resolve => el.addEventListener('scroll', resolve, { once: true }))
+    el.scrollTop = el.scrollHeight - el.clientHeight - lines * parseFloat(getComputedStyle(el).lineHeight)
+    await scrolled
+    return el.scrollTop
+  }, lines)
+  const top = await scrollToGap(0.5)
+  await expect(jump).toHaveCount(0)
+  await demo.getByRole('button', { name: '资料核对', exact: true }).click()
+  await demo.getByRole('button', { name: '方案讨论', exact: true }).click()
+  await expect.poll(() => pane.evaluate(el => el.scrollTop)).toBe(top)
+  // Additional content grows while the reader stays still.
+  const append = () => pane.locator('.vx-msg--ai').evaluate(el => {
+    const p = document.createElement('p')
+    p.innerText = '新增记录\n'.repeat(5)
+    el.append(p)
+  })
+  await append()
+  await expect(jump).toBeVisible()
+  expect(await pane.evaluate(el => el.scrollTop)).toBe(top)
+  await scrollToGap(2)
+  await expect(jump).toHaveCount(0)
+  await scrollToGap(0.5)
+  await append()
+  await expect.poll(() => pane.evaluate(el => el.scrollHeight - el.clientHeight - el.scrollTop)).toBeLessThan(2)
+})
+
+test('短视口中的长选择列表保留搜索框，末项可选', async ({ page }) => {
+  await page.setViewportSize({width: 850, height: 290})
+  const trigger = page.getByRole('combobox', {name: '配色主题', exact: true})
+  await trigger.click()
+  const popup = page.locator('.vx-select-popup')
+  const search = popup.getByRole('combobox')
+  const last = popup.getByRole('option').last()
+  const label = await last.innerText()
+  await last.scrollIntoViewIfNeeded()
+  await expect(search).toBeInViewport({ratio: 1})
+  await expect(last).toBeInViewport({ratio: 1})
+  expect(await popup.evaluate(el => el.getBoundingClientRect().height)).toBeLessThanOrEqual(264)
+  await last.click()
+  await expect(trigger).toHaveText(label)
 })

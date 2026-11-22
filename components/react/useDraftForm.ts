@@ -1,4 +1,4 @@
-// vincent-ux v1.7.0 · components/react/useDraftForm.ts
+// vincent-ux v1.8.0 · components/react/useDraftForm.ts
 import { useRef, useState, type SetStateAction } from 'react'
 
 /** 按提交时的快照保存。晚到的回执只更新已保存值，保留之后的输入。 */

@@ -1,63 +1,59 @@
-// 首次复制；已有差异先报告，显式 --overwrite 才覆盖。没有隐藏的同步状态。
-import { mkdirSync, readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs'
-import { dirname, join, resolve } from 'node:path'
+// Synchronize the destination against its recorded upstream version.
+import { readFileSync, mkdirSync, lstatSync, writeFileSync, unlinkSync } from 'node:fs'
+import { join, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
-const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
-const [dest, ...flags] = process.argv.slice(2)
-if (!dest || dest.startsWith('--') || flags.some(f => !['--no-react', '--overwrite', '--dry-run'].includes(f))) {
-  console.error('用法：node scripts/sync.mjs <目录> [--no-react] [--dry-run] [--overwrite]')
-  process.exit(2)
-}
-const out = resolve(dest)
-const pkg = JSON.parse(readFileSync(join(ROOT, 'package.json'), 'utf8'))
-const plan = [
-  ['scripts/consumer-readme.md', 'README.md'],
-  ['LICENSE', 'LICENSE'],
-  ['THIRD_PARTY_NOTICES.md', 'THIRD_PARTY_NOTICES.md'],
-  ['licenses/lucide.txt', 'licenses/lucide.txt'],
-  ['tokens/dist/tokens.css', 'tokens.css'],
-  ['tokens/dist/palettes.json', 'palettes.json'],
-  ['tokens/dist/embedded.css', 'embedded.css'],
-  ...readdirSync(join(ROOT, 'components/css')).filter(f => f.endsWith('.css')).map(f => [`components/css/${f}`, `css/${f}`]),
-  ['templates/css/templates.css', 'css/templates.css'],
-  ['icons/dist/sprite.svg', 'icons/sprite.svg'],
-  ['scripts/audit.js', 'audit.js'],
-  ['styles.css', 'styles.css'],
-  ['examples/basic.html', 'example.html'],
-  ...(flags.includes('--no-react') ? [] : [['examples/embedded/index.html', 'example-react/index.html'], ['examples/embedded/main.tsx', 'example-react/main.tsx']]),
-  ...(flags.includes('--no-react') ? [] : readdirSync(join(ROOT, 'components/react')).filter(f => /\.(tsx?|jsx?)$/.test(f)).map(f => [`components/react/${f}`, `react/${f}`])),
-].map(([from, to]) => {
-  let content = readFileSync(join(ROOT, from), 'utf8')
-  if (to === 'README.md') {
-    const dependencies = Object.entries(pkg.dependencies).map(([name, version]) => name + '@' + version)
-    content = content.replace('{{version}}', pkg.version).replace('{{dependencies}}', dependencies.join(' '))
+import { parseArgs } from 'node:util'
+import { distribution } from './distribution.mjs'
+import { applyUpdate, fingerprint, baselineFromCopy, planUpdate, readManifest } from './sync-state.mjs'
+
+const root = fileURLToPath(new URL('..', import.meta.url))
+const usage = 'node scripts/sync.mjs <目标目录> [--dry-run] [--base 旧版干净副本目录] [--react | --no-react] [--keep-local 相对路径] [--overwrite]'
+function sync() {
+  const { positionals, values } = parseArgs({ allowPositionals: true, options: {
+    'dry-run': { type: 'boolean' }, overwrite: { type: 'boolean' }, react: { type: 'boolean' }, 'no-react': { type: 'boolean' },
+    base: { type: 'string' }, 'keep-local': { type: 'string', multiple: true }, help: { type: 'boolean' },
+  } })
+  if (values.help) { console.log(usage); return 0 }
+  if (positionals.length !== 1 || (values.react && values['no-react']))
+    throw new Error(usage)
+  const out = resolve(positionals[0])
+  if (out === resolve(root)) throw new Error('请选择独立的使用方目录。')
+  const dest = lstatSync(out, { throwIfNoEntry: false })
+  if (dest && !dest.isDirectory()) throw new Error('目标必须是目录。')
+  const busy = join(out, '.vincent-ux-syncing')
+  if (!values['dry-run']) {
+    mkdirSync(out, { recursive: true })
+    try { writeFileSync(busy, process.pid + '\n', { flag: 'wx' }) }
+    catch (err) { if (err.code === 'EEXIST') throw new Error('另一个同步占用 ' + busy); throw err }
   }
-  if (from === 'styles.css') content = content.replace('./tokens/dist/tokens.css', './tokens.css').replaceAll('./components/css/', './css/').replace('./templates/css/', './css/')
-  if (from === 'examples/embedded/index.html') content = content.replace('../../tokens/dist/embedded.css', '../embedded.css')
-  if (from === 'examples/embedded/main.tsx') content = content.replace('../../components/react', '../react')
-  if (from === 'examples/basic.html') content = content.replace('../styles.css', './styles.css').replaceAll('../icons/dist/sprite.svg', './icons/sprite.svg')
-  const path = join(out, to)
-  const previous = existsSync(path) ? readFileSync(path, 'utf8') : undefined
-  return { path, to, content, changed: previous !== content, conflict: previous !== undefined && previous !== content }
-})
-const changed = plan.filter(f => f.changed)
-const conflicts = changed.filter(f => f.conflict)
-const overwrite = flags.includes('--overwrite')
-if (flags.includes('--dry-run')) {
-  for (const file of changed) {
-    const action = file.conflict ? (overwrite ? '覆盖' : '冲突') : '新增'
-    console.log(`${action} ${file.to}`)
-  }
-  if (!changed.length) console.log('无需更新')
-  process.exit(conflicts.length && !overwrite ? 1 : 0)
+  try {
+    const recorded = readManifest(out)
+    if (values.base && recorded) throw new Error('目标已有升级清单，可直接同步。')
+    const baseDir = values.base && resolve(values.base)
+    if (baseDir && (baseDir === out || baseDir.startsWith(out + sep) || out.startsWith(baseDir + sep)))
+      throw new Error('旧版干净副本和目标目录应分别存放。')
+    const baseline = recorded ?? (baseDir && baselineFromCopy(baseDir, out))
+    const react = values['no-react'] ? false : values.react || (baseline?.react ?? true)
+    const pkg = JSON.parse(readFileSync(join(root, 'package.json')))
+    const next = distribution(root, pkg, react)
+    const changes = planUpdate(out, baseline?.files ?? {}, next, { keep: new Set(values['keep-local']), overwrite: values.overwrite })
+    console.log(`Vincent UX ${baseline ? 'v' + baseline.version : '首次接入'} → v${pkg.version}（${react ? 'React + HTML' : 'HTML'}）`)
+    const conflict = changes.some(item => item.action === '冲突')
+    if (values['dry-run'] || conflict)
+      for (const { action, name } of changes) console.log(action + ' ' + name)
+    if (conflict) {
+      if (!baseline) console.error('首次升级旧项目时，用 --base 指定原版本的干净同步副本。')
+      console.error('两边均有改动或目标文件已存在。比较内容后可用 --keep-local <路径> 采纳本地合并结果；--overwrite 选择整批上游版本。')
+      return 1
+    }
+    if (!values['dry-run']) {
+      const files = Object.fromEntries([...next].map(([name, content]) => [name, fingerprint(content)]))
+      applyUpdate(out, changes, { format: 1, version: pkg.version, react, files })
+    }
+    const retained = changes.filter(item => item.action === '保留').length
+    console.log(`${values['dry-run'] ? '预览' : '完成'}：更新 ${changes.length - retained} 个，保留定制 ${retained} 个。接入说明见 README.md`)
+    return 0
+  } finally { if (!values['dry-run']) unlinkSync(busy) }
 }
-if (conflicts.length && !overwrite) {
-  console.error('已有文件与来源不同，未写入任何文件：\n' + conflicts.map(f => `  ${f.to}`).join('\n'))
-  console.error('比较并保留本地修改后，使用 --overwrite 显式覆盖；--dry-run 可预览。')
-  process.exit(1)
-}
-for (const file of changed) {
-  mkdirSync(dirname(file.path), { recursive: true })
-  writeFileSync(file.path, file.content)
-}
-console.log(`vincent-ux → ${out}：${plan.length} 个文件，更新 ${changed.length} 个；接入说明见 README.md`)
+
+try { process.exitCode = sync() } catch (err) { console.error(err.message); process.exitCode = 2 }

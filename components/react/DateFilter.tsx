@@ -1,4 +1,4 @@
-// vincent-ux v1.7.0 · components/react/DateFilter.tsx
+// vincent-ux v1.8.0 · components/react/DateFilter.tsx
 import { useThemeContainer } from './ThemeScope'
 import { useState } from 'react'
 import { Popover } from '@base-ui/react/popover'
@@ -27,7 +27,8 @@ export function DateFilter({value,field,fields,onChange,allowComparison=false}:{
  const [open,setOpen]=useState(false),[draft,setDraft]=useState(value),[draftField,setDraftField]=useState(field),[active,setActive]=useState<'from'|'to'>('from'),[single,setSingle]=useState(false),[today,setToday]=useState(()=>localDay(new Date())),[anchor,setAnchor]=useState(()=>value.from||localDay(new Date())),[compare,setCompare]=useState(!!value.comparison)
  const fieldLabel=fields.find(f=>f.id===field)?.label??'时间'
  // 字段名为空：页面只有一个时间口径，触发器只显示范围，浮层不出字段下拉。
- const range=value.preset||(value.from===value.to?value.from:`${value.from||'不限'}—${value.to||'不限'}`)
+ const dates=value.from===value.to?value.from:`${value.from||'不限'}—${value.to||'不限'}`
+ const range=value.preset?`${value.preset}（${dates}）`:dates
  const label=value.from||value.to?(fieldLabel?`${fieldLabel} · ${range}`:range):'时间范围'
  const invalid=!draft.from||!draft.to||draft.from>draft.to
  const selectDate=(day:string)=>{if(single){setDraft({from:day,to:day});return}if(active==='from'){setDraft({from:day,to:''});setActive('to')}else{setDraft({from:draft.from&&draft.from<day?draft.from:day,to:draft.from&&draft.from>day?draft.from:day});setActive('from')}}

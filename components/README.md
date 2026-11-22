@@ -1,7 +1,7 @@
-<!-- vincent-ux v1.7.0 · components/README.md -->
+<!-- vincent-ux v1.8.0 · components/README.md -->
 # 组件选用指南
 
-按「要做的事」分八组，一个组件只出现在一组里。每组先说什么情况用哪个，再说常见的误用。长什么样看 `showcase/index.html`；多个组件怎么配合看 `patterns/`；颜色语义看 `principles/visual.md`。带「React」的有交互组件，其余直接用类名。
+按组件职责选型。需要规定多个组件如何配合时查[交互模式](../patterns/README.md)。需要自定义组件时先确定[设计要求与验收方法](../docs/tasks.md)。
 
 ## 组件规范与展示入口
 
@@ -30,9 +30,9 @@
 | 情况 | 用 |
 |---|---|
 | 标题、正文、辅助说明 | `.vx-title` / `.vx-body` / `.vx-meta`（只改字色时 `.vx-text-2` / `.vx-text-3`），区域内通常三档 |
-| 一句话里要你看的钱，或亏损、阻断 | `.vx-text-accent` / `.vx-text-critical` |
+| 需要突出的关键值，或需要立即处理的严重状态 | `.vx-text-accent` / `.vx-text-critical` |
 | 只给读屏的文字 | `.vx-sr-only` |
-| 金额、百分比、件数 | `.vx-num`；金额用 `.vx-money`（负数 `--neg`，要你看的钱 `--accent`） |
+| 金额、百分比、件数 | `.vx-num`；金额用 `.vx-money`（负数 `--neg`，重点金额 `--accent`） |
 | 对象的识别图（商品、渠道、人） | `.vx-thumb`（`--sm` / `--lg`）、`.vx-avatar` |
 | 表达一个功能 | `Icon`（React）/ `.vx-icon`，按 `icons/icons.json` 的含义选 |
 
@@ -42,7 +42,7 @@
 
 | 情况 | 用 |
 |---|---|
-| 这一块推荐的下一步 | `Button variant="primary"` / `.vx-btn--primary`，一个任务区域最多一个 |
+| 当前任务区域的主操作 | `Button variant="primary"` / `.vx-btn--primary`，一个任务区域最多一个 |
 | 其他可选的动作 | `.vx-btn`（次按钮） |
 | 轻的动作：查看、再问问、收起 | `.vx-btn--ghost` |
 | 不可撤回的危险动作 | `Button variant="danger"` / `.vx-btn--danger`，按后果确认 |
@@ -51,24 +51,26 @@
 | 当前用户入口（外壳没有用户卡片时） | `UserMenu`（React）：右上角一个头像，点开是名字、身份和账户动作的极简菜单 |
 | 明暗切换 | `ThemeToggle`（React）：左下角最底一个半透明小圆钮，点一下在浅色与暗色之间切换，记住选择；没选过时用根元素上的默认明暗（嵌入浅色宿主时写 `data-theme="light"`），再没有就跟随系统。左下角的其它浮钮让到它上方。设置页这类表单行用 `variant="inline"`，写成普通小按钮 |
 
-误用：用强调色做按钮；用箭头表示「去对话」（箭头只表示去另一页）。
+行内提交用 `.vx-form-row` 将按钮对齐输入控件。字段带帮助或错误时，把输入框和提交按钮放在 `Field` 的同一行，说明由字段排在行下。结果级操作用 `.vx-results-head` 排在标题行末端。忙碌时用 `Button loading` 保留标签宽度。用真实控件走一遍等待、切换和重试，核对作用范围与位置。[按钮布局与状态](../principles/interaction.md#按作用范围放置按钮)
 
 ## 3. 输入与选择
 
 | 情况 | 用 |
 |---|---|
 | 填文字 | `.vx-input` / `.vx-textarea`，外面套 `Field`（React，关联标签、说明、错误）或 `.vx-field` |
-| 从有限选项中选一个 | `Select`（React，可搜索，无选中对号占位）；纯 HTML 用 `.vx-select` |
-| 两到四个互斥视图之间切换 | `Segmented`（React）/ `.vx-seg` |
+| 在较长的选项列表中查找并选择 | `Select`（React，可搜索，无选中对号占位）；纯 HTML 用 `.vx-select` |
+| 两到四个互斥视图之间切换 | `Segmented`（React），按内容收宽，选中底面连续移动，减少动态效果时立即就位。纯 HTML 可使用 `.vx-seg` 的静态选中态 |
 | 立即生效的开关 | `Switch`（React）/ `.vx-switch` 用于当场生效的单项设置。统一保存或应用的二元字段使用 `Checkbox`；[按生效时点选型](../principles/interaction.md#操作何时生效) |
 | 行尾切换一个属性，状态要写出来（置顶 / 已置顶） | `.vx-toggle` |
 | 表单里的勾选 | `Checkbox`（React，含半选）/ `.vx-check` |
-| 少量互斥选项 | `RadioGroup`（React，原生 radio） |
+| 少量互斥字段值同时可见，选后等待提交 | `RadioGroup`（React，原生 radio） |
 | 可由用户扩充取值的枚举 | `Select creatable`：下拉里搜索不到时直接新增，不另设选项维护页 |
 | 在少量对象之间切换，或已应用的筛选条件 | `button.vx-chip[aria-pressed]`，放在 `.vx-filterbar` |
 | 引导或设置里的一次性选择，每项要一句说明 | `.vx-choice`（大卡，单选）、`--row`（行式清单）、`--tile`（带标识的一组对象，可多选；还不能用的照常列出并 `disabled`，说明写原因） |
 | 传文件（文档、素材包） | `.vx-dropzone` |
 | 传图片，可多张，传完能看到缩略图 | `.vx-images`（缩略图 + 末尾添加格；可附一排示例图让用户直接点选） |
+
+报表中「华东／华南」用单选直接比较，点击查询才应用。两个短选项通常可以平铺，三四项先看实际宽度。十余项或更多时给搜索，所有 `Select` 均支持按名称查找。长列表面板在默认字号下最高 264px（16.5rem），遇到视口边缘先收缩，搜索框保留，选项单独滚动。已知且能直接输入的值，例如出生年份，可用对应输入框。[查询示例](../showcase/index.html#report)
 
 误用：页内频繁切换用选择卡（用分段）；把大量条件同时铺开（常用条件前置，复杂条件按需展开）。
 
@@ -96,7 +98,8 @@
 | 一组内容不需要卡片包裹 | `.vx-section-title` 加留白 |
 | 一串同类对象 | `.vx-rows` > `.vx-row`；长列表要分隔时 `--ruled` |
 | 要点或步骤说明 | `.vx-list` |
-| 次要信息（已做完的、依据、明细） | `Fold`（React）/ `.vx-fold`；按实际用途设置摘要与默认状态，见[收起与展开](disclosure.md) |
+| 按分组浏览一组目的地或文档章节 | [分组目录](../patterns/nav-overflow.md#分组目录)（HTML）：组名、链接列表和当前项，以容器宽度重排 |
+| 摘要已足够决定下一步，部分人还要核对依据或明细 | `Fold`（React）/ `.vx-fold`；按实际用途设置摘要与默认状态，见[收起与展开](disclosure.md) |
 | 列表里每行能展开看详情 | `Fold variant="row" summary="标题" description="必要说明"`，展开后保留对象身份 |
 | 自己做的展开按钮要一个朝向提示 | `.vx-chev`，展开时自动翻转 |
 | 少量「名称：值」 | `.vx-kv`（窄处 `--stack`） |
@@ -148,7 +151,7 @@
 | 情况 | 用 |
 |---|---|
 | 按关键词查找 | `SearchField`：名称、清空、Esc、Enter 提交，保留中文输入组合行为 |
-| 时间筛选与排序 | `DateFilter`：快捷侧栏、起止输入、连续月历、取消／应用，可选上一时段对比；`SortMenu`：方向图标与字段名称组成的单按钮，点击切换方向，筛选独立于排序 |
+| 时间筛选与排序 | `DateFilter`：快捷范围与实际起止日期一同显示，支持连续月历、取消／应用和上一时段对比；`SortMenu`：方向图标与字段名称组成的单按钮，点击切换方向，筛选独立于排序 |
 | 组合条件与撤销条件 | `FilterBar`：容纳 `Select` 等控件，已选条件可逐个移除或清除全部；搜索框这类不参与换行的控件放进 `side` 一列 |
 | 一串内容或卡片网格 | `Collection layout="list | grid"`：共用结果、总数、加载、空、失败与重试 |
 | 列表／网格切换 | `Segmented`，保持排序、筛选和选择 |
@@ -176,7 +179,7 @@
 - `Select` 支持空值 `null`、禁用项、`name`、`required`、字段 id 和 ARIA 关联；弹层内置本地搜索，匹配名称与提示，空结果可恢复；远程搜索的数据请求、分页和竞态由产品管理。
 - `SearchField` 只控制输入；`onChange` 适合本地即时筛选，`onSearch` 适合 Enter 提交。网络防抖、竞态取消由产品负责。
 - `Collection` 接收 `items/getKey/renderItem`；稳定 id 保持选择。它不擅自改变业务数据、排序和分页，卡片内部的查看和勾选用独立控件，避免嵌套按钮。
-- `Dialog` 的 dialog / drawer / stage 都是模态；stage 用于实机内的全屏路线选择：与 Guide 共用蒙层，选项直接置于蒙层中，底部横向反差说明条承载标题、说明和动作，不加中央弹窗外壳；`dismissible=false` 仅禁止点遮罩关闭，Esc 与关闭按钮仍可退出。入口会消失时提供 `finalFocus`。
+- `Dialog` 的 dialog / drawer / stage 都是模态；stage 用于实机内的全屏路线选择：与 Guide 共用蒙层，选项直接置于蒙层中，底部横向反差说明条承载标题、说明和动作，不加中央弹窗外壳；`dismissible=false` 仅禁止点遮罩关闭，Esc 与关闭按钮仍可退出。编辑中已有未保存输入时，应关闭点遮罩退出，在明确关闭或放弃时处理草稿。入口会消失时提供 `finalFocus`。
 - `Tabs` 的 `variant="workspace"` 让内容面板填满外壳，`leading` 放移动导航入口，`actions` 放工作区操作，`indicator` 放入口提醒；操作位于 tablist 外，避免交互嵌套。
 - 工作区页签按文案确定宽度，关闭区域贴近标题；未激活页签复用悬停的浅色底面，当前项使用卡片底面，不叠分隔线。关闭按钮保留独立命中区域，悬停不改变页签宽度；触屏始终显示关闭入口。
 - `Tabs` 受控，`onClose` 由使用方移除条目；关闭当前页签后优先选择右邻，否则左邻。最后一页关闭后的空态由使用方处理。

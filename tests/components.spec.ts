@@ -54,7 +54,6 @@ test('空结果提供恢复动作；加载和失败可以重试', async ({ page 
   await expect(demo.getByText('没有匹配的内容', { exact: true })).toBeVisible()
   await demo.getByRole('button', { name: '清除筛选', exact: true }).click()
   await expect(demo.locator('.vx-browse-item')).toHaveCount(6)
-  await demo.locator('summary').click()
   await demo.getByRole('button', { name: '演示请求失败' }).click()
   await expect(demo.getByRole('alert')).toHaveText('暂时无法更新内容，请重试。')
   await demo.getByRole('button', { name: '重试', exact: true }).click()
@@ -145,7 +144,6 @@ test('真实工作区侧栏折叠仍有名称，关闭聊天恢复页签焦点',
 
 test('导览不会抢输入方向键，目标缺失可自动结束', async ({ page }) => {
   const demo = browse(page)
-  await demo.locator('summary').click()
   const trigger = demo.getByRole('button', { name: '开始浏览导览' })
   await trigger.click()
   const guide = page.getByRole('dialog', { name: '浏览内容' })
@@ -667,7 +665,6 @@ test('待办提交期间锁定选择与动作，失败保留输入并可重试',
  const demo=page.getByTestId('task-card-demo'),card=demo.locator('.vx-task-card')
  await demo.getByRole('radio',{name:'自定义',exact:true}).check()
  await demo.getByRole('textbox',{name:'处理要求'}).fill('先核对来源，再继续准备')
- await demo.getByText('体验提交状态',{exact:true}).click()
  await demo.getByRole('checkbox',{name:'下次提交失败'}).check()
  const submit=demo.getByRole('button',{name:'交给 AI 继续',exact:true})
  await submit.click();await expect(card).toHaveAttribute('aria-busy','true')
@@ -714,7 +711,12 @@ test('选择器支持搜索无结果、键盘选择且无对号占位', async ({
 
 test('日期浮层保留草稿边界，排序按钮切换图标且不改变日期范围', async({page})=>{
  const demo=page.getByTestId('task-card-demo'),date=demo.getByRole('button',{name:/^时间范围/}),sort=demo.locator('.vx-sort-toggle')
- await date.click();await page.getByRole('button',{name:'最近 7 天',exact:true}).click();await page.getByRole('button',{name:'应用',exact:true}).click();await expect(date).toContainText('更新时间 · 最近 7 天')
+ await date.click()
+ await page.getByRole('button',{name:'最近 7 天',exact:true}).click()
+ const from=await page.getByLabel('起始日期',{exact:true}).inputValue()
+ const to=await page.getByLabel('截止日期',{exact:true}).inputValue()
+ await page.getByRole('button',{name:'应用',exact:true}).click()
+ await expect(date).toContainText(`更新时间 · 最近 7 天（${from}—${to}）`)
  await expect(sort).toHaveText('更新时间');await expect(sort.locator('[data-icon=sort-desc]')).toHaveCount(1);await sort.click();await expect(sort.locator('[data-icon=sort-asc]')).toHaveCount(1);await expect(sort).toBeFocused();await sort.press('Enter');await expect(sort.locator('[data-icon=sort-desc]')).toHaveCount(1);await expect(demo.getByRole('combobox',{name:'排序依据'})).toHaveCount(0);await expect(date).toContainText('更新时间 · 最近 7 天')
  await date.click();await page.getByRole('button',{name:'自定义',exact:true}).click();await page.getByLabel('起始日期',{exact:true}).fill('2099-03-02');await page.getByLabel('截止日期',{exact:true}).fill('2099-03-01');await expect(page.getByRole('button',{name:'应用',exact:true})).toBeDisabled();await page.keyboard.press('Escape');await expect(page.locator('.vx-date-popup')).toBeHidden();await expect(date).toContainText('最近 7 天')
  await date.click();await page.getByRole('button',{name:'具体日期',exact:true}).click();const day=page.getByLabel('具体日期',{exact:true});await day.fill('2099-03-02');await day.blur();await expect(day).toHaveValue('2099-03-02');const apply=page.getByRole('button',{name:'应用',exact:true});await expect(apply).toBeEnabled();await apply.click();await expect(page.locator('.vx-date-popup')).toBeHidden();await expect(date).toContainText('2099-03-02')
@@ -725,7 +727,7 @@ test('单一时间口径：触发器只显示范围，浮层不出字段下拉',
  const date=page.getByTestId('date-single-demo').locator('.vx-date-trigger')
  await date.click();const popup=page.locator('.vx-date-popup');await expect(popup.getByRole('combobox',{name:'筛选时间字段'})).toHaveCount(0)
  await popup.getByRole('button',{name:'最近 30 天',exact:true}).click();await popup.getByRole('button',{name:'应用',exact:true}).click()
- await expect(date).toHaveText('最近 30 天');await expect(date).toHaveAccessibleName('时间范围：最近 30 天')
+ await expect(date).toHaveText('最近 30 天（2026-09-27—2026-10-26）');await expect(date).toHaveAccessibleName('时间范围：最近 30 天（2026-09-27—2026-10-26）')
 })
 
 test('连续月历跨月选择、键盘跨年、单日与对比范围可应用', async({page})=>{
@@ -804,6 +806,7 @@ test('浏览排序复用更新时间按钮，先排序再分页并保留筛选�
 test('批量操作条：选中出现、筛选外数量、Esc 取消并恢复焦点；勾选不改变复选框位置',async({page})=>{
  const demo=browse(page),box=demo.getByRole('checkbox',{name:'选择本周运营回顾',exact:true})
  await expect(demo.getByRole('toolbar',{name:'批量操作'})).toHaveCount(0)
+ await box.scrollIntoViewIfNeeded()
  const before=await box.boundingBox()
  await box.check()
  const after=await box.boundingBox()
@@ -836,13 +839,16 @@ test('抽屉详情：待办进入即编辑态，计算字段只读且实时重�
  await demo.getByRole('button',{name:'内容发布检查表',exact:true}).click()
  const drawer=page.getByRole('dialog',{name:'内容发布检查表'})
  const section=drawer.getByRole('region',{name:'内容'})
+ await expect(section.getByRole('heading',{level:3})).toContainText('内容')
+ await expect(section.locator('button[aria-expanded][aria-controls].vx-drawer-section-toggle')).toHaveCount(0)
  await expect(section.locator('.vx-drawer-section-title .vx-dot')).toHaveCount(1)
  await expect(section.locator('.vx-drawer-section-head .vx-tag')).toHaveText('草稿')
  const summary=drawer.getByRole('textbox',{name:'摘要'})
  await expect(summary).toBeVisible()
  await expect(drawer.getByRole('textbox',{name:'更新时间'})).toHaveCount(0)
  await expect(drawer.locator('.vx-overlay-foot .vx-btn--primary')).toHaveCount(1)
- await expect(drawer.locator('.vx-prop-label .vx-tip-label')).toHaveCount(6)
+ await expect(drawer.getByRole('button',{name:'类型说明'})).toBeVisible()
+ await expect(drawer.getByRole('button',{name:'标题说明'})).toHaveCount(0)
  // 极简收起：第三个分区默认收起，只留标题与箭头；点开后显示记录
  const history=drawer.getByRole('region',{name:'历史'})
  await expect(history.getByRole('button',{name:/历史/})).toHaveAttribute('aria-expanded','false')
@@ -904,16 +910,16 @@ test('配色主题：切换后语义变量随之改变，明暗仍然生效，�
 test('明暗切换：点一下切换并记住选择，名称说明下一步', async({page})=>{
  await page.evaluate(()=>{localStorage.removeItem('vx-theme');document.documentElement.dataset.theme='light'})
  await page.reload()
- const toggle=page.locator('.vx-theme-toggle:not(.vx-theme-toggle--inline)')
- await expect(toggle).toHaveAttribute('aria-label','切换到暗色')
+ const toggle=page.locator('#showcase-mode button')
+ await expect(toggle).toHaveAttribute('aria-label','浅色，切换到暗色')
  await toggle.click()
  expect(await page.evaluate(()=>document.documentElement.dataset.theme)).toBe('dark')
- await expect(toggle).toHaveAttribute('aria-label','切换到浅色')
+ await expect(toggle).toHaveAttribute('aria-label','暗色，切换到浅色')
  expect(await page.evaluate(()=>localStorage.getItem('vx-theme'))).toBe('dark')
  // 上次的选择优先于页面写在根元素上的默认明暗
  await page.reload()
  expect(await page.evaluate(()=>document.documentElement.dataset.theme)).toBe('dark')
- await expect(toggle).toHaveAttribute('aria-label','切换到浅色')
+ await expect(toggle).toHaveAttribute('aria-label','暗色，切换到浅色')
  await page.evaluate(()=>localStorage.removeItem('vx-theme'))
 })
 
@@ -922,7 +928,7 @@ test('设置页的内联明暗切换写成普通小按钮，点击切换并记�
  await page.reload()
  const inline=page.locator('#interaction-demo').locator('.vx-theme-toggle--inline')
  await expect(inline).toHaveText('浅色')
- await expect(inline).toHaveAttribute('aria-label','切换到暗色')
+ await expect(inline).toHaveAttribute('aria-label','浅色，切换到暗色')
  await inline.click()
  await expect(inline).toHaveText('暗色')
  expect(await page.evaluate(()=>document.documentElement.dataset.theme)).toBe('dark')

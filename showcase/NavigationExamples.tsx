@@ -14,6 +14,6 @@ export function BreadcrumbExamples() {
     background={<p>保留本次确认时的资料范围、建议与所选动作，供后续回看。</p>} options={[{id:'scope',label:'按当前资料范围继续',recommended:true}]} completedChoice={{id:'scope',text:'按当前资料范围继续'}} completedAction="continue" done onContinue={()=>{}} onTakeover={()=>{}} onDiscuss={()=>setMessage('已定位到这条记录对应的对话示例')}/>:<EmptyState message={history?'还没有处理记录':'当前没有待办事项'}/>}
    {message&&<p className="vx-meta" role="status">{message}</p>}
   </div>
-  <details className="sc-test-tools"><summary>体验历史空状态</summary><Checkbox label="显示历史记录" checked={hasRecords} onChange={e=>{setHasRecords(e.target.checked);setMessage('')}}/></details>
+  <Checkbox label="显示历史记录" checked={hasRecords} onChange={e=>{setHasRecords(e.target.checked);setMessage('')}}/>
  </div>
 }

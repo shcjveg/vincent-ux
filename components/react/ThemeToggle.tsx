@@ -1,4 +1,4 @@
-// vincent-ux v1.7.0 · components/react/ThemeToggle.tsx
+// vincent-ux v1.8.0 · components/react/ThemeToggle.tsx
 // 左下角的明暗切换：一个半透明小圆钮，点一下在浅色与暗色之间切换，记住上次选择。
 // 优先用上次的选择；没有选择时用页面写在根元素上的默认明暗（例如嵌入浅色宿主时写
 // data-theme="light"），都没有时跟随系统。存不了选择的环境（沙箱 iframe）只在本次生效。
@@ -41,7 +41,7 @@ export function ThemeToggle({ variant = 'floating' }: { variant?: 'floating' | '
     document.documentElement.dataset.theme = next
     try { localStorage.setItem(KEY, next) } catch { /* Storage may be unavailable in an embedded host. */ }
   }
-  if (variant === 'inline') return <button type="button" disabled={scope && !scope.changeMode} className="vx-btn vx-btn--sm vx-theme-toggle vx-theme-toggle--inline" aria-label={mode === 'dark' ? '切换到浅色' : '切换到暗色'} onClick={toggle}>
+  if (variant === 'inline') return <button type="button" disabled={scope && !scope.changeMode} className="vx-btn vx-btn--sm vx-theme-toggle vx-theme-toggle--inline" aria-label={mode === 'dark' ? '暗色，切换到浅色' : '浅色，切换到暗色'} onClick={toggle}>
     <Icon name="theme" size="sm" />{mode === 'dark' ? '暗色' : '浅色'}
   </button>
   return <button type="button" disabled={scope && !scope.changeMode} className="vx-icon-btn vx-theme-toggle" aria-label={mode === 'dark' ? '切换到浅色' : '切换到暗色'} title={mode === 'dark' ? '浅色' : '暗色'} onClick={toggle}>

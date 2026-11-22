@@ -1,4 +1,4 @@
-/* vincent-ux v1.7.0 · components/css/atoms.css */
+/* vincent-ux v1.8.0 · components/css/atoms.css */
 /* 原子：按钮、图标、标签、红点、缩略图与头像、输入框、开关、复选框、数字、骨架、转圈。依赖 tokens.css、base.css。 */
 
 /* ---------- 按钮：主（主题动作色）· 次（凹面）· 文字 ---------- */
@@ -165,6 +165,17 @@
 [aria-expanded='true'] > .vx-chev {
   transform: rotate(180deg);
 }
+
+/* 放在标题起始处的披露标记：向右可展开，向下显示当前内容。 */
+.vx-disclosure-indicator {
+  flex: none;
+  width: var(--vx-size-icon-sm);
+  height: var(--vx-size-icon-sm);
+  color: var(--vx-text-secondary);
+  transform: rotate(-90deg);
+  transition: transform var(--vx-motion-duration-base);
+}
+[aria-expanded='true'] > .vx-disclosure-indicator { transform: none; }
 
 /* ---------- 开关按钮：行尾切换一个属性（置顶、关注），图标 + 状态文字，开着时一档填充 ---------- */
 .vx-toggle {

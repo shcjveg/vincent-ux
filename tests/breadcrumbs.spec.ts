@@ -24,7 +24,7 @@ test('键盘通过一级标题返回原范围，再进入历史保留共同条�
 
 test('无历史记录只保留路径与空态，不出现筛选或零计数',async({page})=>{
  const demo=page.getByTestId('breadcrumb-examples')
- await demo.getByText('体验历史空状态',{exact:true}).click();await demo.getByRole('checkbox',{name:'显示历史记录'}).uncheck()
+ await demo.getByRole('checkbox',{name:'显示历史记录'}).uncheck()
  await expect(demo.getByRole('navigation',{name:'页面路径'})).toBeVisible();await expect(demo.getByText('还没有处理记录',{exact:true})).toBeVisible()
  await expect(demo.getByRole('combobox')).toHaveCount(0);await expect(demo.locator('.vx-task-card')).toHaveCount(0);await expect(demo.locator('.vx-count,.vx-results-head')).toHaveCount(0)
 })

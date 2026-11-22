@@ -1,4 +1,4 @@
-// vincent-ux v1.7.0 · components/react/ObjectPreview.tsx
+// vincent-ux v1.8.0 · components/react/ObjectPreview.tsx
 import { useThemeContainer } from './ThemeScope'
 import { PreviewCard } from '@base-ui/react/preview-card'
 import { useState, type ReactNode, type RefCallback } from 'react'

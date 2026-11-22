@@ -1,4 +1,4 @@
-/* vincent-ux v1.7.0 · components/css/molecules.css */
+/* vincent-ux v1.8.0 · components/css/molecules.css */
 /* 分子：由原子组成、单一用途的小件。依赖 tokens.css、base.css、atoms.css。 */
 
 /* ---------- 内容收纳：Fold 的分组与对象行，行内步骤和对话过程见各自语义结构 ---------- */
@@ -10,7 +10,7 @@
   min-height: max(40px, var(--vx-size-hit));
   padding: var(--vx-space-2) 0;
   border-radius: var(--vx-radius-sm);
-  text-align: left;
+  text-align: start;
   font-size: var(--vx-font-size-md);
   color: var(--vx-text-secondary);
 }
@@ -23,8 +23,31 @@
   gap: var(--vx-space-1);
 }
 
-/* 行组件只用标题与说明两层，不拼接标题／辅助字／徽标的多套排版。 */
+/* 箭头始终跟着标题的第一行；是否能展开在点按前即可辨认。 */
+.vx-fold-head:has(> .vx-disclosure-indicator) {
+  display: grid;
+  grid-template-columns: var(--vx-size-icon-sm) minmax(0, 1fr);
+  grid-auto-flow: column;
+  grid-auto-columns: fit-content(40%);
+  align-content: center;
+  align-items: start;
+}
+.vx-fold-head > .vx-disclosure-indicator {
+  margin-block-start: calc((1lh - var(--vx-size-icon-sm)) / 2);
+}
+
+.vx-fold-label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--vx-space-2);
+}
 .vx-fold-title {
+  font-weight: var(--vx-font-weight-medium);
+  color: var(--vx-text-primary);
+  overflow-wrap: anywhere;
+}
+.vx-fold--row > .vx-fold-head .vx-fold-title {
   font-size: var(--vx-font-size-lg);
   font-weight: var(--vx-font-weight-semibold);
   color: var(--vx-text-primary);
@@ -41,7 +64,8 @@
   display: flex;
   align-items: center;
   gap: var(--vx-space-2);
-  flex-shrink: 0;
+  align-self: center;
+  overflow-wrap: anywhere;
   color: var(--vx-text-secondary);
 }
 
@@ -54,7 +78,7 @@
   color: var(--vx-text-secondary);
 }
 
-.vx-fold-act .vx-count, .vx-todo-group-act .vx-count {
+.vx-fold-label > .vx-count, .vx-fold-act .vx-count, .vx-todo-group-act .vx-count {
   font: inherit;
   color: inherit;
   font-variant-numeric: tabular-nums;
@@ -66,12 +90,13 @@
   transition: transform var(--vx-motion-duration-base);
 }
 
-.vx-fold[data-open='true'] .vx-fold-act svg {
+.vx-fold-head[aria-expanded='true'] > .vx-fold-act svg {
   transform: rotate(180deg);
 }
 
-.vx-fold-head:hover .vx-fold-act {
-  color: var(--vx-text-primary);
+.vx-fold-head:is(:hover, :focus-visible) .vx-fold-title {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
 
 /* 收起区：grid 行高从 1fr 到 0fr 做高度过渡；内边距放在内层，收起时不留白 */
@@ -109,18 +134,74 @@
   padding-inline: var(--vx-space-5);
 }
 
-/* 行式：行头是对象本身（标题 + 一行说明），只留箭头 */
-.vx-fold--row > .vx-fold-head {
-  align-items: center;
-  gap: var(--vx-space-3);
-  padding: var(--vx-space-2) 0;
-  color: inherit;
+/* 新结构的正文接在标题文字下，旧版纯 HTML 的行尾箭头仍沿用原排版。 */
+.vx-fold:has(> .vx-fold-head > .vx-disclosure-indicator) > .vx-fold-body {
+  padding-inline-start: calc(var(--vx-size-icon-sm) + var(--vx-space-2));
 }
 
 .vx-fold--row > .vx-fold-head .vx-fold-side,
 .vx-fold--row > .vx-fold-head .vx-fold-act {
   min-height: 22px;
 }
+
+/* ---------- 文档与任务目录：组名定位置，同级目的地共用一条起线 ---------- */
+.vx-index { container: vx-index / inline-size; }
+.vx-index-group + .vx-index-group { margin-block-start: var(--vx-space-5); }
+.vx-index-label {
+  margin: 0 0 var(--vx-space-1);
+  font-size: var(--vx-font-size-lg);
+  font-weight: var(--vx-font-weight-semibold);
+  color: var(--vx-text-primary);
+}
+.vx-index-group > ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 8.25rem), 1fr));
+  column-gap: var(--vx-space-4);
+  margin: 0;
+  padding: 0;
+  padding-inline-start: var(--vx-space-3);
+  border-inline-start: 1px solid var(--vx-line-faint);
+  list-style: none;
+}
+.vx-index-group li { min-width: 0; }
+.vx-index-group a {
+  display: flex;
+  align-items: center;
+  min-height: var(--vx-size-hit);
+  min-inline-size: min(100%, var(--vx-size-hit));
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+@container vx-index (min-width: 36rem) {
+  .vx-index-group {
+    display: grid;
+    grid-template-columns: 8rem minmax(0, 1fr);
+    align-items: baseline;
+    column-gap: var(--vx-space-4);
+  }
+  .vx-index-group > ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--vx-space-5);
+    padding: 0;
+    border: 0;
+  }
+}
+
+/* 同一区域的目录项用位置与整行命中区标识；段落中的链接沿用正文规则。 */
+:is(.vx-index, .vx-nav-links) a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--vx-size-hit);
+  padding-inline: var(--vx-space-2);
+  border-radius: var(--vx-radius-sm);
+  color: var(--vx-text-secondary);
+  text-decoration: none;
+}
+:is(.vx-index, .vx-nav-links) a:is(:hover, :focus-visible) {
+  color: var(--vx-text-primary);
+  background: var(--vx-fill-hover);
+}
+.vx-index .vx-index-group a { display: flex; width: 100%; }
 
 /* ---------- 分段控件 / 页内切换：凹槽 + 凸起滑块 ---------- */
 .vx-seg {
@@ -151,6 +232,46 @@
   color: var(--vx-text-primary);
   font-weight: var(--vx-font-weight-medium);
   box-shadow: var(--vx-shadow-card);
+}
+
+/* 少量互斥选项共用一块选中底面。等宽轨道稳定文字位置，也能按容器换行。 */
+.vx-seg--switch {
+  position: relative;
+  isolation: isolate;
+  --vx-segment-offset: var(--vx-segment);
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(var(--vx-size-hit), 1fr);
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.vx-seg--switch > button {
+  height: auto;
+  min-height: var(--vx-size-control-sm);
+  padding: var(--vx-space-1) var(--vx-space-3);
+  overflow-wrap: anywhere;
+  font-weight: var(--vx-font-weight-medium);
+}
+.vx-seg--switch > button:focus-visible { outline-offset: -2px; }
+.vx-seg--switch > button[aria-pressed='true'] { background: transparent; box-shadow: none; }
+.vx-seg--switch[data-selected]::before {
+  content: '';
+  position: absolute;
+  grid-area: 1 / 1 / 2 / 2;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: var(--vx-radius-sm);
+  background: var(--vx-surface-card);
+  box-shadow: var(--vx-shadow-card);
+  transform: translateX(calc(var(--vx-segment-offset) * (100% + var(--vx-space-0-5))));
+  transition: transform var(--vx-motion-duration-base) var(--vx-motion-ease-standard);
+}
+.vx-seg--switch:dir(rtl) { --vx-segment-offset: calc(-1 * var(--vx-segment)); }
+
+@media (forced-colors: active) {
+  .vx-seg--switch > button[aria-pressed='true'] { box-shadow: none; border: 1px solid ButtonText; }
 }
 
 /* ---------- 列表行：间距分组，悬停一档填充，不画行线 ---------- */
@@ -354,7 +475,7 @@ button.vx-row {
   margin-inline: calc(-1 * var(--vx-space-2));
   padding-inline: var(--vx-space-2);
 }
-.vx-todo-group > .vx-fold-head .vx-fold-summary {
+.vx-todo-group > .vx-fold-head .vx-fold-title {
   font-size: var(--vx-font-size-lg);
   font-weight: var(--vx-font-weight-semibold);
   color: var(--vx-text-primary);
@@ -987,12 +1108,12 @@ button.vx-chip[aria-pressed='true'] {
 .vx-tip-label:hover, .vx-tip-label[aria-expanded='true'] { text-decoration-color: currentColor; color: var(--vx-text-primary); }
 
 /* Searchable selection: text aligned, selection without a reserved icon column. */
-.vx-select-popup { min-width:var(--anchor-width);width:max-content;max-width:min(360px,calc(100vw - 24px));overflow:hidden; }
-.vx-select-search { display:flex;gap:var(--vx-space-2);align-items:center;padding:var(--vx-space-2);border-bottom:1px solid var(--vx-line-faint);margin-bottom:var(--vx-space-1); }
+.vx-select-popup { padding-block-end:0;display:flex;flex-direction:column;max-height:min(16.5rem,var(--available-height,100dvh));min-width:var(--anchor-width);width:max-content;max-width:min(360px,calc(100vw - 24px));overflow:hidden; }
+.vx-select-search { flex:none;display:flex;gap:var(--vx-space-2);align-items:center;padding:var(--vx-space-2);border-bottom:1px solid var(--vx-line-faint);margin-bottom:var(--vx-space-1); }
 .vx-select-search input { min-width:0;width:100%;border:0;outline:none;color:var(--vx-text-primary);background:transparent;font:inherit; }
 .vx-select-search:focus-within { box-shadow:inset 0 -1px var(--vx-text-muted); }
-.vx-select-list { max-height:min(280px,var(--available-height));overflow:auto;overscroll-behavior:contain; }
-.vx-select-popup .vx-option { min-width:0;overflow-wrap:anywhere; }
+.vx-select-list { padding-block-end:var(--vx-space-1-5);min-height:0;overflow:auto;overscroll-behavior:contain; }
+.vx-select-popup .vx-option { border-radius:calc(var(--vx-radius-md) - var(--vx-space-1-5));min-width:0;overflow-wrap:anywhere; }
 .vx-select-empty { padding:var(--vx-space-3);color:var(--vx-text-secondary);font-size:var(--vx-font-size-sm); }
 .vx-control-positioner { z-index:var(--vx-z-popover);max-width:calc(100vw - 24px); }
 .vx-sort-popup { width:200px; }
@@ -1001,7 +1122,7 @@ button.vx-chip[aria-pressed='true'] {
 .vx-choice-row { position:relative;display:block;width:100%;border:0;border-radius:var(--vx-radius-xs);padding:var(--vx-space-2) var(--vx-space-2-5);font:inherit;text-align:left;background:transparent;color:var(--vx-text-primary);cursor:pointer; }
 .vx-choice-row:hover,.vx-choice-row:has(input:checked) { background:var(--vx-fill-hover); }
 .vx-choice-row:has(input:checked) { font-weight:600; }
-.vx-date-trigger span { max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+.vx-date-trigger span { min-width:0;white-space:normal;overflow-wrap:anywhere;text-align:start; }
 .vx-date-trigger[data-active] { background:var(--vx-fill-hover); }
 /* Range picker: preset sidebar, date inputs, continuous calendar and fixed footer. */
 .vx-date-popup { display:flex;flex-direction:column;width:620px;max-width:calc(100vw - 24px);max-height:min(740px,var(--available-height));overflow:hidden;padding:0; }

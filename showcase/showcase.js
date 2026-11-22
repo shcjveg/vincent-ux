@@ -1,4 +1,6 @@
-// 展示页的交互：纯 CSS 外观示例（明暗由左下角 ThemeToggle 切换）。色板、间距、图标从生成产物读取，保证和源数据一致
+// 展示页的交互：纯 CSS 外观示例（明暗由目录中的 ThemeToggle 切换）。色板、间距、图标从生成产物读取，保证和源数据一致
+import iconCatalog from '../icons/icons.json'
+import principles from '../principles/README.md?raw'
 import catalog from '../tokens/dist/palettes.json'
 import packageMetadata from '../package.json'
 document.querySelector('[data-version]').textContent = `v${packageMetadata.version} · 展示与验收`
@@ -7,22 +9,110 @@ const root = document.documentElement
 const $ = (s, el = document) => el.querySelector(s)
 const $$ = (s, el = document) => [...el.querySelectorAll(s)]
 
+// 首页的评审问题直接读取正式原则表。
+const principleTable = principles.split('\n\n').find(block => block.startsWith('| 原则 |'))
+for (const row of principleTable.split('\n').slice(2)) {
+  const [, name, , question] = row.split('|')
+  const pair = document.createElement('div')
+  for (const [tag, text] of [['dt', name], ['dd', question]]) {
+    const field = document.createElement(tag)
+    field.textContent = text.trim()
+    pair.append(field)
+  }
+  $('[data-principles]').append(pair)
+}
+
+// 正文章节给出名称和所属组，目录与阅读顺序自然一致。
+const sections = $$('.sc-main > section[id]')
+const chapters = $('[data-chapters]')
+let previousCategory
+let chapterList
+for (const section of sections) {
+  const category = section.dataset.catalog
+  const anchor = document.createElement('a')
+  section.tabIndex = -1
+  anchor.href = '#' + section.id
+  anchor.textContent = $('h2', section).textContent
+  if (!category) {
+    chapters.append(anchor)
+    continue
+  }
+  if (category !== previousCategory) {
+    const group = document.createElement('div')
+    group.className = 'vx-index-group'
+    const heading = document.createElement('h3')
+    heading.className = 'vx-index-label'
+    heading.textContent = category
+    chapterList = document.createElement('ul')
+    group.append(heading, chapterList)
+    chapters.append(group)
+    previousCategory = category
+  }
+  chapterList.appendChild(document.createElement('li')).append(anchor)
+}
+
+// 共用一份目录。窄屏先读项目指南，页首链接可直接跳到正文里的目录。
+const catalogNav = $('#demo-index')
+const side = $('.sc-toc')
+const guide = $('#handbook')
+const narrow = matchMedia('(max-width: 740px)')
+function placeCatalog() {
+  if (narrow.matches) guide.after(catalogNav)
+  else side.append(catalogNav)
+}
+placeCatalog()
+narrow.addEventListener('change', placeCatalog)
+const chapterLinks = $$('.sc-catalog a[href^="#"]')
+function markChapter() {
+  const readingLine = innerHeight * 0.2
+  const index = catalogNav.getBoundingClientRect()
+  const inCatalog = narrow.matches && index.top <= readingLine && index.bottom > readingLine
+  const chapter = sections.findLast(el => el.getBoundingClientRect().top <= readingLine) || sections[0]
+  for (const link of chapterLinks) {
+    if (!inCatalog && link.hash === '#' + chapter.id) link.setAttribute('aria-current', 'location')
+    else link.removeAttribute('aria-current')
+  }
+}
+let pendingFrame
+function requestChapterUpdate() {
+  if (pendingFrame) return
+  pendingFrame = requestAnimationFrame(() => { pendingFrame = undefined; markChapter() })
+}
+window.addEventListener('scroll', requestChapterUpdate, { passive: true })
+window.addEventListener('resize', requestChapterUpdate)
+markChapter()
+
+// 从演示查规则时，保留示例位置和正在核对的配色。
+const guideLinks = $$('main a[href*="handbook.html?doc="]')
+function linkToGuides() {
+  for (const link of guideLinks) {
+    const url = new URL(link.href)
+    const origin = link.closest('.sc-sec').id
+    if (origin !== 'handbook') url.searchParams.set('from', origin)
+    if (root.dataset.palette) url.searchParams.set('palette', root.dataset.palette)
+    else url.searchParams.delete('palette')
+    link.href = url
+  }
+}
+
 // 色板与配色主题：名称与数值跟随当前明暗与配色
 {
   const palettes = Object.fromEntries(catalog.map(p => [p.id, p]))
   const box = $('[data-swatches]'), grid = $('[data-palettes]')
   const media = matchMedia('(prefers-color-scheme: dark)')
   const current = () => root.dataset.palette || catalog.find(p => p.default).id
-  // 切换只改根元素属性；导航里的配色选择器（React Select）、左下角明暗切换与这里都监听根元素属性
+  // 切换只改根元素属性；导航里的配色选择器（React Select）、目录的明暗切换与这里都监听根元素属性
   const apply = (id) => { if (palettes[id]?.default) delete root.dataset.palette; else root.dataset.palette = id }
   const requested = new URL(location.href).searchParams.get('palette')
   if (requested && Object.hasOwn(palettes, requested)) apply(requested)
+  linkToGuides()
   new MutationObserver(changes => {
     if (changes.some(change => change.attributeName === 'data-palette')) {
       const url = new URL(location.href)
       if (root.dataset.palette) url.searchParams.set('palette', root.dataset.palette)
       else url.searchParams.delete('palette')
       history.replaceState(history.state, '', url)
+      linkToGuides()
     }
     renderSwatches()
   }).observe(root, { attributes: true, attributeFilter: ['data-palette', 'data-theme'] })
@@ -61,15 +151,10 @@ const $$ = (s, el = document) => [...el.querySelectorAll(s)]
   renderSwatches()
 }
 
-// 图标：从 sprite 里列出全部含义
-fetch(spriteUrl)
-  .then((r) => r.text())
-  .then((svg) => {
-    const ids = [...svg.matchAll(/<symbol id="([^"]+)"/g)].map((m) => m[1])
-    $('[data-icons]').innerHTML = ids
-      .map((id) => `<div class="sc-icon"><svg class="vx-icon"><use href="${spriteUrl}#${id}"/></svg>${id}</div>`)
-      .join('')
-  })
+// 直接按图标含义目录铺开，深链接首次定位时图标区已有完整高度。
+const iconNames = Object.values(iconCatalog.meanings).flatMap(group => Object.keys(group).filter(name => !name.startsWith('$')))
+$('[data-icons]').innerHTML = iconNames.map(id =>
+  `<div class="sc-icon"><svg class="vx-icon"><use href="${spriteUrl}#${id}"/></svg>${id}</div>`).join('')
 
 // 间距与圆角：直接用变量画出来
 const spaces = $('[data-spaces]')
@@ -87,14 +172,20 @@ if (radii)
 
 // 外观示例中的轻交互；完整交互与状态由 react.tsx 的实际组件展示。
 for (const svg of $$('svg:not([aria-label])')) svg.setAttribute('aria-hidden', 'true')
-for (const button of $$('.vx-nav-item')) button.title = $('.vx-nav-item-label', button)?.textContent || ''
-for (const button of $$('button.vx-switch')) button.addEventListener('click', () => button.setAttribute('aria-checked', String(button.getAttribute('aria-checked') !== 'true')))
-for (const seg of $$('.vx-seg')) for (const button of $$('button', seg)) button.addEventListener('click', () => {
-  for (const item of $$('button', seg)) item.setAttribute('aria-pressed', String(item === button))
-})
 
 for (const choice of $$('.vx-choice')) choice.addEventListener('click', () => {
   const group = choice.closest('[data-choice-group="single"]')
   if (group) for (const item of $$('.vx-choice', group)) item.setAttribute('aria-pressed', String(item === choice))
   else choice.setAttribute('aria-pressed', String(choice.getAttribute('aria-pressed') !== 'true'))
+})
+
+const pin = $('[data-pin]')
+pin.addEventListener('click', () => {
+  const pressed = pin.getAttribute('aria-pressed') !== 'true'
+  pin.setAttribute('aria-pressed', String(pressed))
+  $('span', pin).textContent = pressed ? '已置顶' : '置顶'
+})
+const fileInput = $('.vx-dropzone input[type=file]')
+fileInput.addEventListener('change', () => {
+  $('span', fileInput.parentElement).textContent = fileInput.files[0]?.name || '选择本地素材包'
 })
