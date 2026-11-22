@@ -229,7 +229,8 @@ test('点色卡即改变画布、导航与主操作，两个选择入口和链�
   await expect.poll(() => background(canvas)).not.toBe(before[0])
   await expect.poll(() => background(nav)).not.toBe(before[1])
   await expect(login).toHaveCSS('background-color', 'rgb(139, 92, 246)')
-  await expect(preview.getByRole('link')).toHaveCSS('background-color', 'rgb(139, 92, 246)')
+  await expect(preview.locator('.vx-btn--primary')).toHaveCount(0)
+  await expect(page.getByRole('link', { name: '登录表单', exact: true })).not.toHaveClass(/vx-btn--primary/)
   await expect(page).toHaveURL(/palette=forest-violet/)
   await page.reload()
   await expect(forest).toBeChecked()
@@ -247,7 +248,7 @@ test('首次跟随系统明暗，手动选择随页面与指南保留，放大�
   await page.emulateMedia({ colorScheme: 'dark' })
   await page.goto('/showcase/?palette=forest-violet')
   const toggle = page.locator('#showcase-mode button')
-  const live = page.locator('.sc-palette-preview a')
+  const live = page.getByTestId('portal-demo').getByRole('button', { name: '登录', exact: true })
   await expect(toggle).toHaveText('暗色')
   const darkCanvas = await page.locator('body').evaluate(el => getComputedStyle(el).backgroundColor)
   await expect(live).toHaveCSS('background-color', 'rgb(139, 92, 246)')
@@ -278,7 +279,7 @@ test('产品从根切换主题，选择器、指南和独立整页示例同步',
   await expect(page.locator('#palette-pick button')).toHaveText('松林')
   await expect(page.getByRole('radio', { name: '松林' })).toBeChecked()
   await page.locator('#showcase-mode button').click()
-  const button = page.locator('.sc-palette-preview .vx-btn--primary')
+  const button = page.getByTestId('portal-demo').getByRole('button', { name: '登录', exact: true })
   const fill = await page.locator('#palette-grove .vx-palette-action').evaluate(el => getComputedStyle(el).backgroundColor)
   await expect(button).toHaveCSS('background-color', fill)
   const scheme = await page.locator('html').getAttribute('data-theme')
@@ -367,13 +368,15 @@ test('两种明暗下逐张核对候选色卡与真正应用到页面的颜色',
       ['.vx-palette-identity', '.sc-brand', 'background-color'],
       ['.vx-palette-identity', '.vx-nav-brand', 'color'],
       ['.vx-palette-identity', '.vx-portal-feed', 'background-color'],
+      ['.vx-palette-identity', '.vx-portal-brand-name', 'color'],
       ['.vx-palette-rail', '.sc-toc', 'background-color'],
       ['.vx-palette-page', 'body', 'background-color'],
       ['.vx-palette-heading', '#text-colors h3', 'color'],
       ['.vx-palette-content', '#text-colors', 'background-color'],
       ['.vx-palette-nav-lines i', '.vx-check:checked', 'background-color'],
       ['.vx-palette-reading', '#text-colors .vx-body', 'color'],
-      ...['.sc-palette-preview a', '#portal .vx-btn--primary'].flatMap(selector =>
+      ['.vx-palette-rail', '.vx-portal-panel', 'background-color'],
+      ...['#portal .vx-btn--primary', '#report .vx-btn--primary'].flatMap(selector =>
         ['background-color', 'background-image', 'color', 'box-shadow'].map(key => ['.vx-palette-action', selector, key])),
     ]
     const differences: string[] = []
@@ -411,7 +414,7 @@ test('暗色选择翠绿朱红后，品牌区与可操作的朱红按钮保留�
   await expect(option.locator('.vx-palette-identity')).toHaveCSS('background-color', 'rgb(1, 141, 62)')
   await expect(option.locator('.vx-palette-action')).toHaveCSS('background-color', 'rgb(231, 21, 6)')
   await option.click()
-  const cta = page.locator('.sc-palette-preview a')
+  const cta = page.getByTestId('portal-demo').getByRole('button', { name: '登录', exact: true })
   for (const mode of ['dark', 'light']) {
     await expect(page.locator('.sc-brand')).toHaveCSS('background-color', 'rgb(1, 141, 62)')
     await expect(cta).toHaveCSS('background-color', 'rgb(231, 21, 6)')

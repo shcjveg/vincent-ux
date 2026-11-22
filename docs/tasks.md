@@ -4,6 +4,7 @@
 
 | 设计主题 | 设计要求 | 验收方法 | 规范原文 | 应用示例 | 回归用例 |
 |---|---|---|---|---|---|
+| 页面用色分工 | 先按任务分配连续主导面、辅助面和视觉重点。正文、焦点、状态与数据沿用各自的语义色。 | 在宽窄与明暗两种条件下先找主要内容，再找下一步。核对装饰和次要入口是否抢眼，错误是否仍可定位。 | [按页面任务分配颜色](../principles/visual.md#按页面任务分配颜色) | [规范阅读页](../showcase/index.html#color) · [品牌入口](../showcase/index.html#portal) · [查询与结果](../showcase/index.html#report) | [主题与入口布局](../tests/design-principles.spec.ts) |
 | 控件配色与文字对比 | 为每种动作底色配套指定文字、图标与边界颜色。选中和焦点还需有形状或轮廓提示。 | 在明暗主题中逐一悬停、聚焦、选中，检查文字可读、焦点可辨。 | [颜色语义](../principles/visual.md#颜色只表达意义) · [动作色的搭配](usage.md#从三种品牌色接入) | [主题色卡与主按钮](../showcase/index.html#palettes) | [主题与控件对比](../tests/design-principles.spec.ts) |
 | 对象比较与字段对齐 | 供人逐项比较的字段保持相同的次序和位置，内容长短与缺省值都应在布局中有位置。 | 并排放入长标题、短标题和缺摘要的对象，在同一位置找到要比较的字段。 | [强调与比较](../principles/visual.md#强调与比较) · [阅读顺序](../patterns/page-composition.md#一个阅读顺序) | [内容库列表与网格](../showcase/index.html#browse) | [长短与缺省内容](../tests/design-principles.spec.ts) |
 | 导航分组与入口识别 | 同级入口按同一种依据分组，组名说明分类，入口名称说明去向。读者第一次看到目录就能辨认两者。 | 不悬停先指出入口及其分组，再用键盘打开一项，核对到达的标题和当前位置。 | [分组目录](../patterns/nav-overflow.md#分组目录) | [展示页目录](../showcase/index.html#demo-index) | [目录与键盘定位](../tests/handbook.spec.ts) |

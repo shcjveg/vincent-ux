@@ -28,13 +28,11 @@ export function PaletteControls() {
     {createPortal(<>
       <div className="sc-palette-preview">
         <div><span className="vx-meta">当前配色</span><strong aria-live="polite">{current.name}</strong></div>
-        <div className="vx-cluster">
-          <ThemeToggle variant="inline" />
-          <a className="vx-btn vx-btn--primary" href="#text-colors">查看正文</a>
-        </div>
+        <ThemeToggle variant="inline" />
       </div>
       {current.swatches && <div className="sc-palette-source" aria-label="原案色号">
-        <span>原案色号</span>{current.swatches.map((color, index) => <code key={index}>{color}</code>)}
+        <span>原案色号</span>{current.swatches.map((color, index) =>
+          <span key={index}>{['主色', '副色', '点缀色'][index]} <code>{color}</code></span>)}
       </div>}
       <PalettePicker id="palette" options={palettes} value={value} onChange={applyPalette} />
     </>, document.querySelector('[data-palettes]')!)}

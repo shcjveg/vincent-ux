@@ -65,6 +65,9 @@
   background: var(--vx-surface-card); box-shadow: var(--vx-shadow-card);
 }
 .sc-palette-preview strong { display: block; font-size: var(--vx-font-size-lg); }
+.sc-color-roles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: var(--vx-space-4); margin: var(--vx-space-5) 0; }
+.sc-color-roles dt { color: var(--vx-text-primary); font-weight: var(--vx-font-weight-semibold); }
+.sc-color-roles dd { margin: var(--vx-space-1) 0 0; color: var(--vx-text-secondary); }
 .sc-palette-source {
   display: flex; align-items: center; flex-wrap: wrap; gap: var(--vx-space-2);
   margin-block: var(--vx-space-3); color: var(--vx-text-secondary); font-size: var(--vx-font-size-sm);
