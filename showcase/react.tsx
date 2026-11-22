@@ -3,10 +3,11 @@ import { downloadJson } from './download'
 import { PortalExample } from './PortalExample'
 import { ReportExample } from './ReportExample'
 import { SettingsExample } from './SettingsExample'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { WorkspaceDemo, ComponentStatesDemo } from './WorkspaceDemo'
 import { BreadcrumbExamples } from './NavigationExamples'
 import { DisclosureExamples, ControlsExamples, OrganismsExamples } from './ComponentExamples'
+import { createPortal } from 'react-dom'
 import { createRoot } from 'react-dom/client'
 import { DataTime, EmptyState, Button, Checkbox, Collection, DecisionCard, Dialog, Field, FilterBar, Fold, Guide, Icon,
   Breadcrumbs, ThemeToggle, UserMenu, DateFilter, SortMenu, TaskStatus, TaskCard, ActionMenu, AttentionMark, AttentionTitle, ActionSummary, DetailDrawer, DrawerSection, Property, Metric, ObjectPreview, SectionCard, SectionAction, SectionHeader, Pagination, RadioGroup, SearchField, Segmented, Select, SelectionBar, TableScroll, Tabs, Tip, TipProvider, type GuideStep } from '../components/react'
@@ -323,18 +324,6 @@ function PalettePick() {
   return <Select label="配色主题" value={current || fallback} options={palettes.map(({ id, name }) => ({ value: id, label: name }))}
     onChange={id => { if (id === fallback) delete root.dataset.palette; else root.dataset.palette = id }} />
 }
-createRoot(document.getElementById('palette-pick')!).render(<PalettePick />)
-// 左下角明暗切换：展示页唯一的明暗入口，改根元素的 data-theme
-const toggleHost = document.body.appendChild(document.createElement('div'))
-createRoot(toggleHost).render(<ThemeToggle />)
-createRoot(document.getElementById('browse-demo')!).render(<BrowserDemo />)
-createRoot(document.getElementById('interaction-demo')!).render(<InteractionDemo />)
-
-createRoot(document.getElementById('guide-demo')!).render(<GuideDemo />)
-createRoot(document.getElementById('portal-demo')!).render(<PortalExample />)
-
-createRoot(document.getElementById('molecules-demo')!).render(<MoleculesDemo />)
-
 
 function TaskCardDemo(){
  const [handled,setHandled]=useState(''),[history,setHistory]=useState(false),[revision,setRevision]=useState(1)
@@ -366,15 +355,31 @@ function TaskCardDemo(){
   <details className="sc-test-tools"><summary>体验提交状态</summary><div className="vx-cluster"><Checkbox label="下次提交失败" checked={failNext} disabled={!!pending||!!handled} onChange={e=>setFailNext(e.target.checked)}/><span className="vx-meta">提交尝试：{attempts}</span></div></details>
  </div>
 }
-createRoot(document.getElementById('task-card-demo')!).render(<TaskCardDemo />)
 
-createRoot(document.getElementById('session-workspace-demo')!).render(<WorkspaceDemo />)
-createRoot(document.getElementById('component-states-demo')!).render(<ComponentStatesDemo />)
-
-createRoot(document.getElementById('disclosure-demo')!).render(<DisclosureExamples />)
-createRoot(document.getElementById('controls-demo')!).render(<ControlsExamples />)
-createRoot(document.getElementById('organisms-demo')!).render(<OrganismsExamples />)
-
-createRoot(document.getElementById('breadcrumbs-demo')!).render(<BreadcrumbExamples />)
-
-createRoot(document.getElementById('report-demo')!).render(<ReportExample />)
+// 所有示例一起进入页面，再把来自指南的章节链接定位到最终排版的位置。
+function Showcase() {
+  useLayoutEffect(() => {
+    const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined
+    if (location.hash && navigation?.type === 'navigate') {
+      document.getElementById(location.hash.slice(1))?.scrollIntoView()
+    }
+  }, [])
+  return <>
+    <ThemeToggle variant="inline" />
+    {createPortal(<PalettePick />, document.getElementById('palette-pick')!)}
+    {createPortal(<BrowserDemo />, document.getElementById('browse-demo')!)}
+    {createPortal(<InteractionDemo />, document.getElementById('interaction-demo')!)}
+    {createPortal(<GuideDemo />, document.getElementById('guide-demo')!)}
+    {createPortal(<PortalExample />, document.getElementById('portal-demo')!)}
+    {createPortal(<MoleculesDemo />, document.getElementById('molecules-demo')!)}
+    {createPortal(<TaskCardDemo />, document.getElementById('task-card-demo')!)}
+    {createPortal(<WorkspaceDemo />, document.getElementById('session-workspace-demo')!)}
+    {createPortal(<ComponentStatesDemo />, document.getElementById('component-states-demo')!)}
+    {createPortal(<DisclosureExamples />, document.getElementById('disclosure-demo')!)}
+    {createPortal(<ControlsExamples />, document.getElementById('controls-demo')!)}
+    {createPortal(<OrganismsExamples />, document.getElementById('organisms-demo')!)}
+    {createPortal(<BreadcrumbExamples />, document.getElementById('breadcrumbs-demo')!)}
+    {createPortal(<ReportExample />, document.getElementById('report-demo')!)}
+  </>
+}
+createRoot(document.getElementById('showcase-mode')!).render(<Showcase />)

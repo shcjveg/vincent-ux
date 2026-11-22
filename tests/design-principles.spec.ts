@@ -205,7 +205,7 @@ test('色卡、实际按钮和模式切换共用配色，选中反馈与键盘�
   await butter.hover()
   await expect.poll(async () => (await colors(butter))[0]).not.toBe(normal[0])
   expect((await colors(butter))[1]).toBe(normal[1])
-  await page.locator('.vx-theme-toggle:not(.vx-theme-toggle--inline)').click()
+  await page.locator('#showcase-mode button').click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
   await expect.poll(async () => (await colors(login))[0]).not.toBe(normal[0])
   await expect(async () => {

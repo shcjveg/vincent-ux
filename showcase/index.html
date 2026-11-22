@@ -9,116 +9,86 @@
   <style>body { padding-bottom: var(--vx-guide-space, 0px); }</style>
 </head>
   <body>
+    <a class="sc-skip" href="#handbook">跳到项目使用指南</a>
     <div class="sc">
       <nav class="sc-toc" aria-label="目录">
-        <h1>vincent-ux</h1>
+        <div class="sc-brand"><h1>Vincent UX</h1><div id="showcase-mode"></div></div>
         <span class="vx-text-3" data-version>展示与验收</span>
-        <a href="#browse">浏览与筛选</a>
-        <a href="#report">明细查询</a>
-        <a href="#interactive">交互与状态</a>
-        <a href="#disclosure">收起与展开</a>
-        <a href="#breadcrumbs">面包屑与二级页</a>
-        <a href="#session-workspace">会话与页面状态</a>
-        <a href="#component-states">空状态与数据时间</a>
-        <a href="#task-workspace">待办与历史</a>
-        <a href="#guide">选择卡与功能导览</a>
-        <a href="#portal">对客门户</a>
-        <a href="#surfaces">面分层</a>
-        <a href="#color">颜色</a>
-        <a href="#type">文字</a>
-        <a href="#space">间距与圆角</a>
-        <a href="#icons">图标</a>
-        <a href="#atoms">原子</a>
-        <a href="#molecules">分子</a>
-        <a href="#organisms">组织</a>
-        <a href="#templates">模板</a>
-        <div class="sc-palette-pick"><span aria-hidden="true">配色</span><div id="palette-pick"></div></div>
+        <details class="sc-catalog" open>
+          <summary>演示目录</summary>
+          <div class="sc-catalog-body">
+            <div data-chapters></div>
+            <div class="sc-palette-pick"><span aria-hidden="true">配色</span><div id="palette-pick"></div></div>
+          </div>
+        </details>
       </nav>
       <main class="sc-main">
-        <section class="sc-sec" id="browse">
+        <section class="sc-sec" id="handbook" tabindex="-1" aria-labelledby="handbook-title">
+          <h2 id="handbook-title">项目使用指南</h2>
+          <div class="sc-directory">
+            <section><h3>设计界面</h3>
+              <a href="#design-principles">查看设计原则与取舍</a>
+              <a href="./handbook.html?doc=docs/tasks.md">按任务找设计案例</a>
+              <details><summary>选组件与组合方式</summary><div>
+                <a href="./handbook.html?doc=components/README.md">选择组件</a>
+                <a href="./handbook.html?doc=patterns/README.md">组合交互模式</a>
+                <a href="./handbook.html?doc=templates/README.md">选择页面模板</a>
+                <a href="./handbook.html?doc=docs/tasks.md#找不到相近任务时">没有现成组件时怎么做</a>
+                <a href="./handbook.html?doc=SKILL.md">让 AI 按规范写界面</a>
+              </div></details>
+            </section>
+            <section><h3>接入项目</h3>
+              <a href="./handbook.html?doc=docs/usage.md#复制到项目">首次接入项目</a>
+              <a href="./handbook.html?doc=docs/usage.md#升级已有副本">升级已有副本</a>
+              <a href="./handbook.html?doc=docs/usage.md#从三种品牌色接入">接入品牌配色</a>
+              <a href="./handbook.html?doc=CHANGELOG.md">查看版本变更</a>
+            </section>
+            <section><h3>验收产品界面</h3>
+              <a href="./handbook.html?doc=docs/tasks.md#将原则放进产品验收">用产品数据验收关键任务</a>
+              <a href="./handbook.html?doc=docs/coverage.md">查看系统已验证的范围</a>
+            </section>
+            <section><h3>改进设计系统</h3>
+              <a href="./handbook.html?doc=CONTRIBUTING.md#从一个案例改进系统">贡献复用案例或修订原则</a>
+            </section>
+          </div>
+          <div class="sc-principles">
+            <h3 id="design-principles" tabindex="-1"><a href="./handbook.html?doc=principles/README.md">设计原则</a></h3>
+            <dl data-principles></dl>
+            <nav aria-label="原则与评审" class="sc-row">
+              <a href="./handbook.html?doc=principles/visual.md">视觉</a>
+              <a href="./handbook.html?doc=principles/interaction.md">交互</a>
+              <a href="./handbook.html?doc=principles/content.md">文案</a>
+              <a href="./handbook.html?doc=principles/accessibility.md">无障碍</a>
+              <a href="./handbook.html?doc=principles/README.md#冲突时如何决策">原则冲突时如何取舍</a>
+            </nav>
+          </div>
+        </section>
+
+        <section class="sc-sec" data-catalog="整页任务" id="browse">
           <h2>浏览与筛选</h2><p class="sc-lead">搜索、类型与状态筛选、列表与卡片、分页、选择和详情。下面使用实际 React 组件，所有条件可以组合。</p>
+          <p class="sc-reference"><a href="./handbook.html?doc=patterns/browse.md">内容浏览的选择与批量范围</a></p>
           <div class="sc-board" id="browse-demo"></div>
           <a href="../examples/batch/index.html">批量修改与失败重试示例</a>
         </section>
-        <section class="sc-sec" id="report"><h2>按范围查询与导出</h2><div class="sc-board" id="report-demo"></div></section>
-        <section class="sc-sec" id="interactive">
-          <h2>交互与状态</h2><p class="sc-lead">试试键盘操作、输入错误、加载与重试，以及关闭弹层后的焦点恢复。决定卡第一次提交会演示失败，再次提交成功。</p>
-          <div class="sc-board" id="interaction-demo"></div>
-        </section>
-        <section class="sc-sec" id="session-workspace"><h2>会话与页面状态</h2><p class="sc-lead">在两个会话中分别填写草稿、浏览资料，试着切换页签或关闭整个右侧，再回到原来的进度。</p><div id="session-workspace-demo"></div></section>
-        <section class="sc-sec" id="component-states"><h2>空状态与数据时间</h2><p class="sc-lead">同类空状态使用相同表达。只有来源提供可靠时间时才展示更新信息；表格保留完整操作并局部滚动。</p><div id="component-states-demo"></div></section>
-        <section class="sc-sec" id="breadcrumbs"><h2>面包屑与二级页</h2><p class="sc-lead">历史页的路径直接承担页面标题。点击一级标题返回原待办范围，再从页头进入历史；无记录时只保留路径和空状态。</p><div id="breadcrumbs-demo"></div></section>
-        <section class="sc-sec" id="disclosure"><h2>收起与展开</h2><p class="sc-lead">复用原型里的分组摘要、对象详情、编辑区、行内步骤和对话执行过程。操作下面的示例，查看收起与展开前后的内容与状态。</p><div id="disclosure-demo"></div></section>
-        <section class="sc-sec" id="guide">
-          <h2>选择卡与功能导览</h2><p class="sc-lead">选择卡用淡底和细边界表达选中。导览会逐步介绍下面页面中的真实功能：极简蒙层圈定当前位置，说明卡尽量停靠，遮挡目标时自动避让。</p>
-          <div class="sc-board" id="guide-demo"></div>
-        </section>
-        <section class="sc-sec" id="portal"><h2>对客门户</h2><p class="sc-lead">外部用户的登录页：左侧抽象的内容瀑布流缓慢漂移，右侧标题、表单与演示账号快捷登录。减少动态效果时瀑布流停住。</p><div class="sc-board sc-portal" id="portal-demo"></div></section>
-        <section class="sc-sec" id="surfaces">
-          <h2>面分层</h2>
-          <p class="sc-lead">层级靠明度差，不靠线。四级面每升一级亮一档；输入类控件是比所在面深一档的凹面。</p>
-          <div class="sc-surfaces">
-            <div class="sc-surface" style="background: var(--vx-surface-canvas)"><b>画布</b><code>surface-canvas</code></div>
-            <div class="sc-surface" style="background: var(--vx-surface-shell)"><b>承载区</b><code>surface-shell</code></div>
-            <div class="sc-surface" style="background: var(--vx-surface-card); box-shadow: var(--vx-shadow-card)"><b>卡片</b><code>surface-card</code></div>
-            <div class="sc-surface" style="background: var(--vx-surface-inset); box-shadow: var(--vx-shadow-inset)"><b>凹面</b><code>surface-inset</code></div>
-            <div class="sc-surface" style="background: var(--vx-surface-overlay); box-shadow: var(--vx-shadow-overlay)"><b>浮层</b><code>surface-overlay</code></div>
-          </div>
-        </section>
 
-        <section class="sc-sec" id="color">
-          <h2>颜色</h2>
-          <p class="sc-lead">中性层承担结构。强调色标出关键金额和选中项，警示色提示需要留意的延误，危急色用于阻断等需要及时处理的情况。主按钮的底色与字色随所选配色生效。</p>
-          <div data-vx-swatch class="sc-swatches" data-swatches="text-primary text-secondary text-tertiary text-link text-disabled ink-base brand-accent brand-accent-bright brand-accent-soft brand-critical brand-critical-soft fill-hover fill-selected line-faint"></div>
-          <span id="leo-palettes"></span>
-          <h3 class="sc-sub" id="palettes">配色主题</h3>
-          <p class="sc-lead">每张卡都使用该主题的页面底色、文字和主按钮。应用后，可在<a href="#text-colors">正文</a>和<a href="#portal">登录表单</a>中查看效果。</p>
-          <div class="sc-palettes" data-palettes></div>
-        </section>
+        <section class="sc-sec" data-catalog="整页任务" id="report"><h2>按范围查询与导出</h2><p class="sc-reference"><a href="./handbook.html?doc=patterns/browse.md#已应用的查询范围">验收查询与导出的范围</a></p><div class="sc-board" id="report-demo"></div></section>
 
-        <section class="sc-sec" id="type">
-          <h2>文字</h2>
-          <p class="sc-lead">同一区域用标题、正文和辅助文字组织阅读。指标和页标题可使用独立字号，数值采用等宽数字。</p>
-          <article class="vx-card vx-card--padded vx-stack sc-reading-sample" id="text-colors" aria-labelledby="reading-title">
-            <h3 class="vx-title" id="reading-title">按地区核对明细</h3>
-            <p class="vx-body">先选择地区，再展开城市，核对这次要交接的记录。<a href="#report">打开明细查询</a></p>
-            <p class="vx-meta">导出范围以上一次成功查询为准。</p>
-          </article>
-          <div class="sc-type">
-            <div class="sc-type-row"><code>font-size-3xl</code><span style="font-size: var(--vx-font-size-3xl); font-weight: 650">今天有 4 件事等你</span></div>
-            <div class="sc-type-row"><code>font-size-2xl</code><span style="font-size: var(--vx-font-size-2xl); font-weight: 600">页面标题</span></div>
-            <div class="sc-type-row"><code>.vx-title</code><span class="vx-title">卡片标题、列表行标题</span></div>
-            <div class="sc-type-row"><code>.vx-body</code><span class="vx-body">正文：结论先行，具体胜过笼统</span></div>
-            <div class="sc-type-row"><code>.vx-meta</code><span class="vx-meta">辅助说明：时限、来源、计数</span></div>
-            <div class="sc-type-row"><code>font-family-num</code><span class="vx-num" style="font-size: var(--vx-font-size-3xl); font-weight: 700">$50,000 · 21.6%</span></div>
-          </div>
-        </section>
+        <section class="sc-sec" data-catalog="整页任务" id="session-workspace"><h2>会话与页面状态</h2><p class="sc-lead">在两个会话中分别填写草稿、浏览资料，试着切换页签或关闭整个右侧，再回到原来的进度。</p><p class="sc-reference" id="templates"><a href="./handbook.html?doc=templates/README.md">工作区模板指南</a> · <a href="./handbook.html?doc=patterns/page-chat-flow.md#持续输出与回读">验收持续输出与回读</a></p><div id="session-workspace-demo"></div></section>
 
-        <section class="sc-sec" id="space">
-          <h2>间距与圆角</h2>
-          <p class="sc-lead">4px 网格。组内用 space-2~3，组间用 space-5~8。圆角四档。</p>
-          <div class="sc-row" data-spaces="1 2 3 4 5 6 8 10"></div>
-          <div class="sc-row" style="margin-top: 16px" data-radii="xs sm md lg xl"></div>
-        </section>
+        <section class="sc-sec" data-catalog="整页任务" id="task-workspace"><h2>待办实例与历史</h2><div class="sc-board" id="task-card-demo"></div></section>
 
-        <section class="sc-sec" id="icons">
-          <h2>图标</h2>
-          <p class="sc-lead">按含义引用，名称即含义。禁用星星、魔法棒、闪光这类没有功能含义的装饰图标。</p>
-          <div class="sc-icons" data-icons></div>
-        </section>
+        <section class="sc-sec" data-catalog="整页任务" id="portal"><h2>对客门户</h2><p class="sc-lead">外部用户的登录页：左侧抽象的内容瀑布流缓慢漂移，右侧标题、表单与演示账号快捷登录。减少动态效果时瀑布流停住。</p><div class="sc-board sc-portal" id="portal-demo"></div></section>
 
-        <section class="sc-sec" id="atoms">
-          <h2>原子</h2>
-          <p class="sc-lead">每个区域最多一个主按钮。次按钮是凹面，文字按钮最轻。</p>
+        <section class="sc-sec" data-catalog="组件用法" id="atoms">
+          <h2>按钮与标记</h2>
+          <p class="sc-lead">使用按钮打开对应示例，观察提交、等待和禁用状态。</p>
           <div class="sc-board" data-vx-region>
             <div class="sc-row">
-              <button class="vx-btn vx-btn--primary">批准提交</button>
-              <button class="vx-btn">稍后再说</button>
-              <button class="vx-btn vx-btn--ghost">查看依据</button>
-              <button class="vx-btn vx-btn--danger">停售</button>
+              <a class="vx-btn vx-btn--primary" href="#interactive">试用提交与重试</a>
+              <a class="vx-btn" href="#task-workspace">操作交办与接管</a>
+              <a class="vx-btn vx-btn--ghost" href="./handbook.html?doc=components/README.md#2-触发操作">查看按钮选型</a>
               <button class="vx-btn" disabled>不可用</button>
               <button class="vx-btn" data-loading="true" disabled aria-busy="true">提交中</button>
-              <button class="vx-icon-btn" aria-label="收起侧栏"><svg class="vx-icon"><use href="../icons/dist/sprite.svg#collapse-sidebar"/></svg></button>
             </div>
             <div class="sc-row" data-vx-swatch>
               <span class="vx-tag">中性</span>
@@ -131,11 +101,6 @@
               <span class="vx-dot vx-dot--accent"></span>
               <span class="vx-count">12</span>
             </div>
-            <div class="sc-row" style="max-width: 640px">
-              <input class="vx-input" aria-label="搜索商品或订单" placeholder="搜索商品或订单" />
-              <button class="vx-switch" role="switch" aria-checked="true" aria-label="自动规则"></button>
-              <label class="vx-control-label"><input type="checkbox" class="vx-check" checked />全选</label>
-            </div>
             <div class="sc-row">
               <span class="vx-thumb vx-thumb--sm">🧺</span>
               <span class="vx-thumb">🛁</span>
@@ -146,26 +111,42 @@
             <div class="sc-row">
               <span class="vx-num" style="font-size: 26px; font-weight: 700">$5,000</span>
               <span class="vx-money vx-money--neg">-$412.60</span>
-              <span class="vx-spinner" aria-label="加载中"></span>
+              <span class="vx-spinner" role="img" aria-label="加载中"></span>
               <span class="vx-skeleton" style="width: 180px; height: 14px"></span>
             </div>
             <div class="sc-row">
-              <button class="vx-toggle" aria-pressed="false"><svg class="vx-icon"><use href="../icons/dist/sprite.svg#pin"/></svg>置顶</button>
-              <button class="vx-toggle" aria-pressed="true"><svg class="vx-icon"><use href="../icons/dist/sprite.svg#pin"/></svg>已置顶</button>
-              <span class="vx-toggle" data-state="fixed"><svg class="vx-icon"><use href="../icons/dist/sprite.svg#pin"/></svg>固定在左栏</span>
+              <span class="vx-body">示例文档</span>
+              <button class="vx-toggle" data-pin aria-label="置顶示例文档" aria-pressed="false"><svg class="vx-icon"><use href="../icons/dist/sprite.svg#pin"/></svg><span>置顶</span></button>
             </div>
           </div>
         </section>
 
-        <section class="sc-sec" id="molecules">
-          <h2>分子</h2>
+        <section class="sc-sec" data-catalog="组件用法" id="interactive">
+          <h2>交互与状态</h2><p class="sc-lead">试试键盘操作、输入错误、加载与重试，以及关闭弹层后的焦点恢复。决定卡第一次提交会演示失败，再次提交成功。</p>
+          <p class="sc-reference"><a href="./handbook.html?doc=principles/interaction.md#根据任务确定参数">怎样确定交互参数</a></p>
+          <div class="sc-board" id="interaction-demo"></div>
+        </section>
+
+        <section class="sc-sec" data-catalog="组件用法" id="disclosure"><h2>收起与展开</h2><p class="sc-lead">复用原型里的分组摘要、对象详情、编辑区、行内步骤和对话执行过程。操作下面的示例，查看收起与展开前后的内容与状态。</p><div id="disclosure-demo"></div></section>
+
+        <section class="sc-sec" data-catalog="组件用法" id="breadcrumbs"><h2>面包屑与二级页</h2><p class="sc-lead">历史页的路径直接承担页面标题。点击一级标题返回原待办范围，再从页头进入历史；无记录时只保留路径和空状态。</p><div id="breadcrumbs-demo"></div></section>
+
+        <section class="sc-sec" data-catalog="组件用法" id="component-states"><h2>空状态与数据时间</h2><p class="sc-lead">同类空状态使用相同表达。只有来源提供可靠时间时才展示更新信息；表格保留完整操作并局部滚动。</p><div id="component-states-demo"></div></section>
+
+        <section class="sc-sec" data-catalog="组件用法" id="guide">
+          <h2>选择卡与功能导览</h2><p class="sc-lead">选择卡用淡底和细边界表达选中。导览会逐步介绍下面页面中的真实功能：极简蒙层圈定当前位置，说明卡尽量停靠，遮挡目标时自动避让。</p>
+          <div class="sc-board" id="guide-demo"></div>
+        </section>
+
+        <section class="sc-sec" data-catalog="组件用法" id="molecules">
+          <h2>字段与组合控件</h2>
           <p class="sc-lead">每行只保留一个重点、一句必要说明和一个操作。详细信息按需展开。</p>
           <div id="molecules-demo"></div>
           <div id="controls-demo" class="sc-demo-separated"></div>
         </section>
 
-        <section class="sc-sec" id="organisms">
-          <h2>组织</h2>
+        <section class="sc-sec" data-catalog="组件用法" id="organisms">
+          <h2>数据与业务板块</h2>
           <p class="sc-lead">板块、指标和表格使用真实组件；AI 反馈与确认流程见“待办与历史”。</p>
           <div id="organisms-demo"></div>
           <div class="sc-board sc-demo-separated" data-vx-region>
@@ -184,20 +165,66 @@
             </div>
             <ol class="vx-flow" style="max-width: 720px">
               <li class="vx-flow-step" data-state="done"><div class="vx-flow-head"><span class="vx-flow-no">1</span><h4>在对话里说要怎么改</h4><span class="vx-flow-meta">已改出 1 个版本</span></div></li>
-              <li class="vx-flow-step" data-state="current"><div class="vx-flow-head"><span class="vx-flow-no">2</span><h4>存成版本</h4><span class="vx-flow-meta">2 处改动待存</span></div><div class="vx-flow-body"><button class="vx-btn vx-btn--primary vx-btn--sm">存成版本 v0.2</button></div></li>
+              <li class="vx-flow-step" data-state="current"><div class="vx-flow-head"><span class="vx-flow-no">2</span><h4>存成版本</h4><span class="vx-flow-meta">2 处改动待存</span></div><div class="vx-flow-body"><a href="#disclosure">试用可展开的执行步骤</a></div></li>
               <li class="vx-flow-step" data-state="todo"><div class="vx-flow-head"><span class="vx-flow-no">3</span><h4>本地发版，直接用</h4><span class="vx-flow-meta">发版后出现在应用中心</span></div></li>
             </ol>
-            <label class="vx-dropzone" tabindex="0"><input class="vx-sr-only" type="file" aria-label="上传素材包" /><svg class="vx-icon vx-icon--lg"><use href="../icons/dist/sprite.svg#upload"/></svg>选择素材包</label>
+            <label class="vx-dropzone"><input class="vx-sr-only" type="file" aria-label="选择本地素材包" /><svg class="vx-icon vx-icon--lg"><use href="../icons/dist/sprite.svg#upload"/></svg><span>选择本地素材包</span></label>
           </div>
         </section>
 
-        <section class="sc-sec" id="templates">
-          <h2>模板</h2>
-          <p class="sc-lead">导航、会话、工作页面与对话统一使用上方的真实 React 工作区，不再维护一套静态模拟。</p>
-          <a class="vx-btn" href="#session-workspace">操作工作区示例</a>
-          <p class="vx-body">桌面与窄屏、收起／恢复、会话草稿与页签状态均在同一个示例中验证。</p>
+        <section class="sc-sec" data-catalog="视觉要素" id="surfaces">
+          <h2>面分层</h2>
+          <p class="sc-lead">层级靠明度差，不靠线。四级面每升一级亮一档；输入类控件是比所在面深一档的凹面。</p>
+          <div class="sc-surfaces">
+            <div class="sc-surface" style="background: var(--vx-surface-canvas)"><b>画布</b><code>surface-canvas</code></div>
+            <div class="sc-surface" style="background: var(--vx-surface-shell)"><b>承载区</b><code>surface-shell</code></div>
+            <div class="sc-surface" style="background: var(--vx-surface-card); box-shadow: var(--vx-shadow-card)"><b>卡片</b><code>surface-card</code></div>
+            <div class="sc-surface" style="background: var(--vx-surface-inset); box-shadow: var(--vx-shadow-inset)"><b>凹面</b><code>surface-inset</code></div>
+            <div class="sc-surface" style="background: var(--vx-surface-overlay); box-shadow: var(--vx-shadow-overlay)"><b>浮层</b><code>surface-overlay</code></div>
+          </div>
         </section>
-        <section class="sc-sec" id="task-workspace"><h2>待办实例与历史</h2><div class="sc-board" id="task-card-demo"></div></section>
+
+        <section class="sc-sec" data-catalog="视觉要素" id="color">
+          <h2>颜色</h2>
+          <p class="sc-lead">中性层承担结构。强调色标出关键金额和选中项，警示色提示需要留意的延误，危急色用于阻断等需要及时处理的情况。主按钮的底色与字色随所选配色生效。</p>
+          <div data-vx-swatch class="sc-swatches" data-swatches="text-primary text-secondary text-tertiary text-link text-disabled ink-base brand-accent brand-accent-bright brand-accent-soft brand-critical brand-critical-soft fill-hover fill-selected line-faint"></div>
+          <span id="leo-palettes"></span>
+          <h3 class="sc-sub" id="palettes">配色主题</h3>
+          <p class="sc-lead">每张卡都使用该主题的页面底色、文字和主按钮。应用后，可在<a href="#text-colors">正文</a>和<a href="#portal">登录表单</a>中查看效果。</p>
+          <p class="sc-reference"><a href="./handbook.html?doc=docs/usage.md#从三种品牌色接入">查看按钮底色、配文和边界的搭配规则</a></p>
+          <div class="sc-palettes" data-palettes></div>
+        </section>
+
+        <section class="sc-sec" data-catalog="视觉要素" id="type">
+          <h2>文字</h2>
+          <p class="sc-lead">同一区域用标题、正文和辅助文字组织阅读。指标和页标题可使用独立字号，数值采用等宽数字。</p>
+          <article class="vx-card vx-card--padded vx-stack sc-reading-sample" id="text-colors" aria-labelledby="reading-title">
+            <h3 class="vx-title" id="reading-title">按地区核对明细</h3>
+            <p class="vx-body">先选择地区，再展开城市，核对这次要交接的记录。<a href="#report">打开明细查询</a></p>
+            <p class="vx-meta">导出范围以上一次成功查询为准。</p>
+          </article>
+          <div class="sc-type">
+            <div class="sc-type-row"><code>font-size-3xl</code><span style="font-size: var(--vx-font-size-3xl); font-weight: 650">今天有 4 件事等你</span></div>
+            <div class="sc-type-row"><code>font-size-2xl</code><span style="font-size: var(--vx-font-size-2xl); font-weight: 600">页面标题</span></div>
+            <div class="sc-type-row"><code>.vx-title</code><span class="vx-title">卡片标题、列表行标题</span></div>
+            <div class="sc-type-row"><code>.vx-body</code><span class="vx-body">正文：结论先行，具体胜过笼统</span></div>
+            <div class="sc-type-row"><code>.vx-meta</code><span class="vx-meta">辅助说明：时限、来源、计数</span></div>
+            <div class="sc-type-row"><code>font-family-num</code><span class="vx-num" style="font-size: var(--vx-font-size-3xl); font-weight: 700">$50,000 · 21.6%</span></div>
+          </div>
+        </section>
+
+        <section class="sc-sec" data-catalog="视觉要素" id="space">
+          <h2>间距与圆角</h2>
+          <p class="sc-lead">4px 网格。组内用 space-2~3，组间用 space-5~8。圆角四档。</p>
+          <div class="sc-row" data-spaces="1 2 3 4 5 6 8 10"></div>
+          <div class="sc-row" style="margin-top: 16px" data-radii="xs sm md lg xl"></div>
+        </section>
+
+        <section class="sc-sec" data-catalog="视觉要素" id="icons">
+          <h2>图标</h2>
+          <p class="sc-lead">按含义引用，名称即含义。禁用星星、魔法棒、闪光这类没有功能含义的装饰图标。</p>
+          <div class="sc-icons" data-icons></div>
+        </section>
       </main>
     </div>
     <script src="showcase.js" type="module"></script>

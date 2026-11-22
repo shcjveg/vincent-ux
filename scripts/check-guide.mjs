@@ -30,6 +30,15 @@ for (const path of [...guideFiles(root), 'README.md']) {
   }
 }
 
+// 展示页的指南链接也应随原文章节的改名一起更新。
+for (const page of ['showcase/index.html', 'showcase/handbook.html']) {
+  for (const [, href] of read(page).matchAll(/href="([^"]*\?doc=[^"]+)"/g)) {
+    const url = new URL(href, 'https://example.org/showcase/')
+    const issue = checkLink('README.md', url.searchParams.get('doc') + url.hash)
+    if (issue) errors.push(page + ' ' + issue)
+  }
+}
+
 const tasks = taskIndex(read('docs/tasks.md'))
 for (const { task, guidance, example, acceptance } of tasks) {
   if (!task || !guidance.length || !example || !acceptance)

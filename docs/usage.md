@@ -32,6 +32,8 @@ npm run sync -- ../my-app/src/vincent-ux
 
 副本根目录的 `README.md` 写明版本、依赖与样式入口。设计时从 `guide.html` 或[任务索引](tasks.md)选择要做的事。每项任务关联原则、可操作案例和验收动作。已有项目可以在自己的开发说明中链接这份索引，让设计师和 AI 使用同一版本。
 
+整页使用 `styles.css`。嵌入已有页面的模块使用 `embedded.css`，在[嵌入示例](../examples/embedded/index.html)里切换模块明暗，检查宿主页面仍保留自己的样式。
+
 首次接入默认包含 HTML 与 React。纯 HTML 项目在命令后加 `--no-react`，后续需要 React 时加 `--react`。把副本和其中的 `vincent-ux.lock.json` 一起提交，产品自己的页面与服务放在相邻目录。
 
 ## 升级已有副本

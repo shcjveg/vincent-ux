@@ -809,6 +809,7 @@ test('浏览排序复用更新时间按钮，先排序再分页并保留筛选�
 test('批量操作条：选中出现、筛选外数量、Esc 取消并恢复焦点；勾选不改变复选框位置',async({page})=>{
  const demo=browse(page),box=demo.getByRole('checkbox',{name:'选择本周运营回顾',exact:true})
  await expect(demo.getByRole('toolbar',{name:'批量操作'})).toHaveCount(0)
+ await box.scrollIntoViewIfNeeded()
  const before=await box.boundingBox()
  await box.check()
  const after=await box.boundingBox()
@@ -909,7 +910,7 @@ test('配色主题：切换后语义变量随之改变，明暗仍然生效，�
 test('明暗切换：点一下切换并记住选择，名称说明下一步', async({page})=>{
  await page.evaluate(()=>{localStorage.removeItem('vx-theme');document.documentElement.dataset.theme='light'})
  await page.reload()
- const toggle=page.locator('.vx-theme-toggle:not(.vx-theme-toggle--inline)')
+ const toggle=page.locator('#showcase-mode button')
  await expect(toggle).toHaveAttribute('aria-label','切换到暗色')
  await toggle.click()
  expect(await page.evaluate(()=>document.documentElement.dataset.theme)).toBe('dark')

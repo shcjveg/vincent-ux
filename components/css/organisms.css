@@ -549,6 +549,7 @@ button.vx-stat:hover {
   transition: background var(--vx-motion-duration-fast);
 }
 
+.vx-dropzone:has(input:focus-visible) { outline: 2px solid var(--vx-focus-ring); outline-offset: 2px; }
 .vx-dropzone[data-over='true'] {
   background: var(--vx-brand-accent-soft);
   color: var(--vx-brand-accent);
