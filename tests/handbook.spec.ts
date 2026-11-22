@@ -27,6 +27,8 @@ test('窄屏可用键盘查目录，版本、当前章节与进入指南前的�
   const nav = page.getByRole('navigation', { name: '演示目录', exact: true })
   await page.getByRole('link', { name: '浏览演示目录' }).press('Enter')
   await expect(nav).toBeFocused()
+  await expect(nav.getByRole('heading', { name: '整页任务' })).toBeVisible()
+  await expect(nav.getByRole('link', { name: '整页任务', exact: true })).toHaveCount(0)
   await nav.getByRole('link', { name: '按范围查询与导出' }).press('Enter')
   await expect(page.locator('#report')).toBeFocused()
   await expect(nav.locator('a[href="#report"]')).toHaveAttribute('aria-current', 'location')

@@ -35,23 +35,26 @@ export function DetailDrawer({ title, onClose, editable, editing, onEdit, onCanc
  * 行尾只放不属于字段的少量动作（例如重新采集）。分区之间只有一道极细线。
  * 极简收起：点标题行收起或展开；收起时只留红点、标题、状态与箭头。有待处理（attention）时自动展开。
  */
-export function DrawerSection({ title, status, attention = false, actions, defaultOpen = true, children }: {
+export function DrawerSection({ title, status, attention = false, actions, collapsible = true, defaultOpen = true, children }: {
   title: string; status?: ReactNode; attention?: boolean; actions?: ReactNode
-  /** 首次打开时是否展开；带红点的分区总是展开。 */
+  /** 关键字段常驻时传 false，标题按普通标题呈现。 */
+  collapsible?: boolean
+  /** 首次打开时是否展开；带红点的分区初始展开。 */
   defaultOpen?: boolean
   children: ReactNode
 }) {
-  const [open, setOpen] = useState(defaultOpen || attention)
+  const [expanded, setOpen] = useState(defaultOpen || attention)
+  const open = !collapsible || expanded
   useEffect(() => { if (attention) setOpen(true) }, [attention])
   const id = useId()
+  const heading = <><span className="vx-drawer-section-title"><AttentionMark on={attention}>{title}</AttentionMark></span>{status}</>
   return <section className="vx-drawer-section" aria-label={title} data-open={open} data-attention={attention ? 'endpoint' : undefined}>
     <header className="vx-drawer-section-head">
       <h3 className="vx-drawer-section-heading">
-        <button type="button" className="vx-drawer-section-toggle" aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}>
-          <span className="vx-drawer-section-title"><AttentionMark on={attention}>{title}</AttentionMark></span>
-          {status}
-          <Icon name="expand" size="sm" className="vx-drawer-section-chevron" />
-        </button>
+        {collapsible ? <button type="button" className="vx-drawer-section-toggle" aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)}>
+          <Icon name="expand" size="sm" className="vx-disclosure-indicator" />
+          {heading}
+        </button> : heading}
       </h3>
       {open && actions && <span className="vx-drawer-section-actions">{actions}</span>}
     </header>

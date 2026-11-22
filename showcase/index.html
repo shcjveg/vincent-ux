@@ -16,7 +16,7 @@
         <span class="vx-text-3" data-version>展示与验收</span>
         <a class="sc-index-jump" href="#demo-index">浏览演示目录</a>
         <div class="sc-palette-pick"><span aria-hidden="true">配色</span><div id="palette-pick"></div></div>
-        <nav class="sc-catalog" id="demo-index" aria-labelledby="demo-index-title" tabindex="-1">
+        <nav class="sc-catalog vx-index" id="demo-index" aria-labelledby="demo-index-title" tabindex="-1">
           <h2 id="demo-index-title">演示目录</h2>
           <div data-chapters></div>
         </nav>
@@ -24,36 +24,47 @@
       <main class="sc-main">
         <section class="sc-sec" id="handbook" tabindex="-1" aria-labelledby="handbook-title">
           <h2 id="handbook-title">项目使用指南</h2>
-          <div class="sc-directory">
-            <section><h3>设计界面</h3>
-              <a href="#design-principles">查看设计原则与取舍</a>
-              <a href="./handbook.html?doc=docs/tasks.md">按任务找设计案例</a>
-              <div class="sc-guide-links">
-                <a href="./handbook.html?doc=components/README.md">选择组件</a>
-                <a href="./handbook.html?doc=patterns/README.md">交互模式</a>
-                <a href="./handbook.html?doc=templates/README.md">页面模板</a>
-              </div>
-              <a href="./handbook.html?doc=docs/tasks.md#找不到相近任务时">没有现成组件时怎么做</a>
-              <a href="./handbook.html?doc=SKILL.md">让 AI 按规范写界面</a>
-            </section>
-            <section><h3>接入项目</h3>
-              <a href="./handbook.html?doc=docs/usage.md#复制到项目">首次接入项目</a>
-              <a href="./handbook.html?doc=docs/usage.md#升级已有副本">升级已有副本</a>
-              <a href="./handbook.html?doc=docs/usage.md#从三种品牌色接入">接入品牌配色</a>
-              <a href="./handbook.html?doc=CHANGELOG.md">查看版本变更</a>
-            </section>
-            <section><h3>验收产品界面</h3>
-              <a href="./handbook.html?doc=docs/tasks.md#将原则放进产品验收">用产品数据验收关键任务</a>
-              <a href="./handbook.html?doc=docs/coverage.md">查看系统已验证的范围</a>
-            </section>
-            <section><h3>改进设计系统</h3>
-              <a href="./handbook.html?doc=CONTRIBUTING.md#从一个案例改进系统">贡献复用案例或修订原则</a>
-            </section>
-          </div>
+          <nav class="sc-directory vx-index" aria-label="项目指南主题">
+            <div class="vx-index-group">
+              <h3 class="vx-index-label">设计界面</h3>
+              <ul>
+                <li><a href="#design-principles">查看设计原则与取舍</a></li>
+                <li><a href="./handbook.html?doc=docs/tasks.md">按任务找设计案例</a></li>
+                <li><a href="./handbook.html?doc=components/README.md">选择组件</a></li>
+                <li><a href="./handbook.html?doc=patterns/README.md">交互模式</a></li>
+                <li><a href="./handbook.html?doc=templates/README.md">页面模板</a></li>
+                <li><a href="./handbook.html?doc=docs/tasks.md#找不到相近任务时">没有现成组件时怎么做</a></li>
+                <li><a href="./handbook.html?doc=SKILL.md">让 AI 按规范写界面</a></li>
+              </ul>
+            </div>
+            <div class="vx-index-group">
+              <h3 class="vx-index-label">接入项目</h3>
+              <ul>
+                <li><a href="./handbook.html?doc=docs/usage.md#复制到项目">首次接入项目</a></li>
+                <li><a href="./handbook.html?doc=docs/usage.md#升级已有副本">升级已有副本</a></li>
+                <li><a href="./handbook.html?doc=docs/usage.md#从三种品牌色接入">接入品牌配色</a></li>
+                <li><a href="./handbook.html?doc=CHANGELOG.md">查看版本变更</a></li>
+              </ul>
+            </div>
+            <div class="vx-index-group">
+              <h3 class="vx-index-label">验收产品界面</h3>
+              <ul>
+                <li><a href="./handbook.html?doc=docs/tasks.md#将原则放进产品验收">用产品数据验收关键任务</a></li>
+                <li><a href="./handbook.html?doc=docs/coverage.md">查看系统已验证的范围</a></li>
+              </ul>
+            </div>
+            <div class="vx-index-group">
+              <h3 class="vx-index-label">改进设计系统</h3>
+              <ul>
+                <li><a href="./handbook.html?doc=CONTRIBUTING.md#从一个案例改进系统">贡献复用案例或修订原则</a></li>
+              </ul>
+            </div>
+          </nav>
           <div class="sc-principles">
-            <h3 id="design-principles" tabindex="-1"><a href="./handbook.html?doc=principles/README.md">设计原则</a></h3>
+            <h3 id="design-principles" tabindex="-1">设计原则</h3>
             <dl data-principles></dl>
             <nav aria-label="原则与评审" class="sc-row">
+              <a href="./handbook.html?doc=principles/README.md">阅读完整原则与案例</a>
               <a href="./handbook.html?doc=principles/visual.md">视觉</a>
               <a href="./handbook.html?doc=principles/interaction.md">交互</a>
               <a href="./handbook.html?doc=principles/content.md">文案</a>
@@ -126,7 +137,7 @@
           <div class="sc-board" id="interaction-demo"></div>
         </section>
 
-        <section class="sc-sec" data-catalog="组件用法" id="disclosure"><h2>收起与展开</h2><p class="sc-lead">复用原型里的分组摘要、对象详情、编辑区、行内步骤和对话执行过程。操作下面的示例，查看收起与展开前后的内容与状态。</p><div id="disclosure-demo"></div></section>
+        <section class="sc-sec" data-catalog="组件用法" id="disclosure"><h2>收起与展开</h2><p class="sc-lead">摘要应足够判断是否需要查看明细。试着关掉来源检查，再收起设置，核对摘要是否反映刚才的选择。</p><div id="disclosure-demo"></div></section>
 
         <section class="sc-sec" data-catalog="组件用法" id="breadcrumbs"><h2>面包屑与二级页</h2><p class="sc-lead">历史页的路径直接承担页面标题。点击一级标题返回原待办范围，再从页头进入历史；无记录时只保留路径和空状态。</p><div id="breadcrumbs-demo"></div></section>
 

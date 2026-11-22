@@ -12,28 +12,32 @@ export function DisclosureExamples() {
  const editor=useRef<HTMLDivElement>(null)
  const stepsExpanded=running||stepsOpen
  return <div className="vx-stack vx-stack--lg" data-testid="disclosure-examples">
-  <SectionCard title="分组收纳" data-testid="group-disclosure">
-   <Fold summary="内容检查" description={groupOpen?undefined:'核对资料来源；检查发布范围'} count="2 条" open={groupOpen} onOpenChange={setGroupOpen}>
-    <div className="vx-rows"><div className="vx-row"><span className="vx-row-main"><span className="vx-row-title">核对资料来源</span><span className="vx-row-meta">内容进入发布准备前检查</span></span><Switch label="来源检查" checked={enabled} onChange={e=>setEnabled(e.target.checked)}/></div><div className="vx-row"><span className="vx-row-main"><span className="vx-row-title">检查发布范围</span><span className="vx-row-meta">仅覆盖当前选定渠道</span></span><span className="vx-meta">已启用</span></div></div>
+  <SectionCard title="本次发布" data-testid="group-disclosure">
+   <p className="vx-body">发布渠道为网站和移动端。</p>
+   <Fold summary="发布前自动检查" description={groupOpen ? undefined : enabled ? '核对来源和发布范围' : '仅核对发布范围'} open={groupOpen} onOpenChange={setGroupOpen}>
+    <div className="vx-stack">
+     <Switch label="核对资料来源" checked={enabled} onChange={e=>setEnabled(e.target.checked)}/>
+     <p className="vx-body">每次发布都会核对所选渠道的发布范围。</p>
+    </div>
    </Fold>
   </SectionCard>
-  <SectionCard title="对象详情与编辑" data-testid="detail-disclosure">
-   <Fold variant="row" summary="参考资料" description="渠道资料 · 2 份待核对" count="2 份"><p className="vx-body">对象名称与必要说明在展开后继续保留，补充内容直接排在原承载面。</p></Fold>
+  <SectionCard title="资料核对" data-testid="detail-disclosure">
+   <Fold variant="row" summary="参考资料" description="发布前需核对来源与适用渠道"><ul className="vx-list"><li>渠道清单 · 核对适用渠道</li><li>授权说明 · 核对来源和有效期</li></ul></Fold>
    <div ref={editor}><Fold summary={saved?'编辑来源链接':'补充来源链接'} open={editorOpen} onOpenChange={next=>{setDraft(saved);setEditorOpen(next)}}>
     <div className="vx-stack"><Field label="来源链接" error={draft.trim()&&!validLink?'请输入不含登录信息的完整 HTTPS 链接。':undefined} hint="示例仅保存本页状态。关闭编辑区会放弃尚未保存的修改。">{props=><input {...props} type="url" className="vx-input" value={draft} onChange={e=>setDraft(e.target.value)} placeholder="https://example.com/reference"/>}</Field><div><Button disabled={!validLink||draft===saved} onClick={()=>{setSaved(draft.trim());setEditorOpen(false);requestAnimationFrame(()=>editor.current?.querySelector<HTMLButtonElement>('.vx-fold-head')?.focus())}}>保存链接</Button></div></div>
    </Fold></div>
    {saved&&<p className="vx-meta" role="status">已保存：{saved}</p>}
   </SectionCard>
-  <SectionCard title="分组入口与历史" data-testid="history-disclosure">
+  <SectionCard title="核对进度" data-testid="history-disclosure">
    <Fold summary={<AttentionTitle count={2}>待核对资料</AttentionTitle>} defaultOpen className="vx-todo-group"><ul className="vx-list"><li>来源记录</li><li>范围说明</li></ul></Fold>
    <Fold summary="处理记录" count="2 项"><ul className="vx-list"><li>范围已核对</li><li>来源已补齐</li></ul></Fold>
   </SectionCard>
-  <SectionCard title="行内补充步骤" data-testid="inline-disclosure">
+  <SectionCard title="数据来源" data-testid="inline-disclosure">
    <div className="vx-cluster"><span className="vx-body">数据来源尚未连接</span><Button size="sm" aria-expanded={inlineOpen} aria-controls={inlineId} onClick={()=>setInlineOpen(v=>!v)}>查看连接步骤<Icon name="expand" size="sm" className="vx-chev"/></Button></div>
    <div id={inlineId} hidden={!inlineOpen}><ol className="vx-list"><li>打开来源设置。</li><li>核对授权范围后连接。</li></ol></div>
   </SectionCard>
-  <SectionCard title="对话中的执行过程" data-testid="steps-disclosure">
-   <div className="vx-msg-block"><button type="button" className="vx-steps-toggle" aria-expanded={stepsExpanded} aria-controls={stepsId} onClick={()=>setStepsOpen(v=>!v)}><span className="vx-msg-block-title">整理参考资料</span><span className="vx-count">{running?'1/2':'2/2'}</span><span className="vx-spacer"/><Icon name="expand" size="sm"/></button><div id={stepsId} className="vx-steps" hidden={!stepsExpanded}><div className="vx-step" data-state="done"><span className="vx-dot"/>已核对来源</div><div className="vx-step" data-state={running?'running':'done'}><span className="vx-dot"/>{running?'正在整理范围':'已整理范围'}</div></div></div>
+  <SectionCard title="资料整理进度" data-testid="steps-disclosure">
+   <div className="vx-msg-block"><button type="button" className="vx-steps-toggle" aria-expanded={stepsExpanded} aria-controls={stepsId} onClick={()=>setStepsOpen(v=>!v)}><Icon name="expand" size="sm" className="vx-disclosure-indicator"/><span className="vx-msg-block-title">整理参考资料</span><span className="vx-count">{running?'1/2':'2/2'}</span></button><div id={stepsId} className="vx-steps" hidden={!stepsExpanded}><div className="vx-step" data-state="done"><span className="vx-dot"/>已核对来源</div><div className="vx-step" data-state={running?'running':'done'}><span className="vx-dot"/>{running?'正在整理范围':'已整理范围'}</div></div></div>
    <p className="vx-meta">执行中保持展开；点击过程标题设置结束后的展开偏好。</p><div><Button size="sm" variant="ghost" onClick={()=>setRunning(v=>!v)}>{running?'完成执行示例':'开始执行示例'}</Button></div>
   </SectionCard>
  </div>

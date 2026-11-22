@@ -14,7 +14,7 @@ test('即时偏好、未提交草稿和已保存设置各自在刷新后呈现�
   const theme = page.getByRole('group', { name: '浏览偏好' }).getByRole('button')
   await checkbox.uncheck()
   await theme.click()
-  await expect(page.locator('.vx-theme-toggle').first()).toHaveAccessibleName('切换到浅色')
+  await expect(page.locator('.vx-theme-toggle').first()).toHaveAccessibleName('暗色，切换到浅色')
   await page.reload()
   await expect(theme).toHaveText('暗色')
   await expect(checkbox).toBeChecked()

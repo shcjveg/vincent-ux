@@ -41,7 +41,7 @@ export function ThemeToggle({ variant = 'floating' }: { variant?: 'floating' | '
     document.documentElement.dataset.theme = next
     try { localStorage.setItem(KEY, next) } catch { /* Storage may be unavailable in an embedded host. */ }
   }
-  if (variant === 'inline') return <button type="button" disabled={scope && !scope.changeMode} className="vx-btn vx-btn--sm vx-theme-toggle vx-theme-toggle--inline" aria-label={mode === 'dark' ? '切换到浅色' : '切换到暗色'} onClick={toggle}>
+  if (variant === 'inline') return <button type="button" disabled={scope && !scope.changeMode} className="vx-btn vx-btn--sm vx-theme-toggle vx-theme-toggle--inline" aria-label={mode === 'dark' ? '暗色，切换到浅色' : '浅色，切换到暗色'} onClick={toggle}>
     <Icon name="theme" size="sm" />{mode === 'dark' ? '暗色' : '浅色'}
   </button>
   return <button type="button" disabled={scope && !scope.changeMode} className="vx-icon-btn vx-theme-toggle" aria-label={mode === 'dark' ? '切换到浅色' : '切换到暗色'} title={mode === 'dark' ? '浅色' : '暗色'} onClick={toggle}>

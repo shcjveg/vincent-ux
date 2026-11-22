@@ -25,21 +25,30 @@ for (const row of principleTable.split('\n').slice(2)) {
 // 正文章节给出名称和所属组，目录与阅读顺序自然一致。
 const sections = $$('.sc-main > section[id]')
 const chapters = $('[data-chapters]')
-let group
+let previousCategory
+let chapterList
 for (const section of sections) {
   const category = section.dataset.catalog
-  if (category && category !== group) {
-    const label = document.createElement('p')
-    label.className = 'vx-meta'
-    label.textContent = category
-    chapters.append(label)
-  }
-  group = category
   const anchor = document.createElement('a')
   section.tabIndex = -1
   anchor.href = '#' + section.id
   anchor.textContent = $('h2', section).textContent
-  chapters.append(anchor)
+  if (!category) {
+    chapters.append(anchor)
+    continue
+  }
+  if (category !== previousCategory) {
+    const group = document.createElement('div')
+    group.className = 'vx-index-group'
+    const heading = document.createElement('h3')
+    heading.className = 'vx-index-label'
+    heading.textContent = category
+    chapterList = document.createElement('ul')
+    group.append(heading, chapterList)
+    chapters.append(group)
+    previousCategory = category
+  }
+  chapterList.appendChild(document.createElement('li')).append(anchor)
 }
 
 // 共用一份目录。窄屏先读项目指南，页首链接可直接跳到正文里的目录。

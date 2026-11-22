@@ -3,7 +3,7 @@
   margin-inline: auto;
   padding-inline: clamp(var(--vx-space-4), 4vw, var(--vx-space-8));
 }
-.hb-header, .hb-nav, .hb-sections {
+.hb-header, .hb-nav {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -17,8 +17,7 @@
 .hb-main article h2 { margin-block-start: var(--vx-space-8); font-size: var(--vx-font-size-xl); }
 .hb-main article h3 { font-size: var(--vx-font-size-lg); }
 .hb-main :is(h1, h2, h3, h4) { scroll-margin-top: var(--vx-space-4); }
-.hb-sections { padding-block: var(--vx-space-3); }
-.hb-sections > p { flex-basis: 100%; }
+.hb-sections { padding: var(--vx-space-4); border-radius: var(--vx-radius-md); background: var(--vx-surface-shell); }
 .hb-main :is(pre, code) { font-family: var(--vx-font-family-mono); font-size: var(--vx-font-size-sm); }
 .hb-main pre, .hb-table { max-width: 100%; overflow: auto; background: var(--vx-surface-shell); border-radius: var(--vx-radius-md); }
 .hb-main pre { padding: var(--vx-space-4); }
@@ -37,6 +36,6 @@
   .hb-tasks dd + dt { margin-block-start: var(--vx-space-3); }
 }
 
-.hb-header a, .hb-nav a, .hb-sections a {
+.hb-header a, .hb-nav a {
   display: inline-flex; align-items: center; min-height: var(--vx-size-hit); min-width: var(--vx-size-hit);
 }

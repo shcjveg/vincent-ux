@@ -145,7 +145,7 @@ function ItemDrawer({ item, onClose, onSave }: { item: Item; onClose: () => void
   const date = (iso: string) => iso.slice(0, 16).replace('T', ' ')
   return <TipProvider><DetailDrawer title={item.title} onClose={onClose} editable editing={editing} dirty={dirty}
     onEdit={() => { setDraft(item); setEditing(true) }} onCancel={() => { setDraft(item); setError(undefined); setEditing(false) }} onSave={save}>
-    <DrawerSection title="基本信息">
+    <DrawerSection title="基本信息" collapsible={false}>
       <div className="vx-props">
         <Property label="标题" tip="列表与搜索使用的名称" editing={editing} value={item.title}>{p => <input {...p} className="vx-input" value={draft.title} onChange={e => setDraft({ ...draft, title: e.target.value })} />}</Property>
         <Property label="类型" tip="报告、模板或笔记，可以在下拉里新增类型" editing={editing} value={item.type}>{p => <Select label={p['aria-label']} creatable value={draft.type} onChange={v => setDraft({ ...draft, type: v })} options={[...new Set(['报告', '模板', '笔记', draft.type])].map(t => ({ value: t, label: t }))} />}</Property>
@@ -153,7 +153,7 @@ function ItemDrawer({ item, onClose, onSave }: { item: Item; onClose: () => void
         <Property label="更新时间" tip="最近一次保存的时间，系统记录" editing={editing} value={date(item.updatedAt)} />
       </div>
     </DrawerSection>
-    <DrawerSection title="内容" status={<span className="vx-tag">{itemStatus(item)}</span>} attention={pending}>
+    <DrawerSection title="内容" collapsible={false} status={<span className="vx-tag">{itemStatus(item)}</span>} attention={pending}>
       <div className="vx-props">
         <Property label="摘要" tip="写满 12 个字后，草稿自动转为已完成" wide required editing={editing} error={error} value={item.summary}>{p => <textarea {...p} className="vx-textarea" rows={3} value={draft.summary} onChange={e => setDraft({ ...draft, summary: e.target.value })} />}</Property>
         <Property label="字数" tip="摘要的字数，随填写实时计算" editing={editing} value={<span className="vx-num">{(editing ? draft : item).summary.trim().length}</span>} />
@@ -219,7 +219,6 @@ function InteractionDemo() {
         </table>
       </TableScroll>
     </section>
-    <Fold summary="更多说明"><p className="vx-body">普通说明可以没有计数；内容折叠后仍保留表单状态。</p></Fold>
   </div></TipProvider>
 }
 

@@ -28,16 +28,16 @@ export function Fold({ summary, description, count, side, children, defaultOpen 
   return (
     <div {...rest} className={['vx-fold', variant === 'row' && 'vx-fold--row', className].filter(Boolean).join(' ')} data-open={open}>
       <button type="button" className="vx-fold-head" aria-expanded={open} aria-controls={id} onClick={toggle}>
+        <Icon name="expand" size="sm" className="vx-disclosure-indicator" />
         <span className="vx-fold-summary">
-          <span className={variant === 'row' ? 'vx-fold-title' : undefined}>{summary}</span>
+          <span className="vx-fold-label">
+            <span className="vx-fold-title">{summary}</span>
+            {count != null && <span className="vx-count">{count}</span>}
+          </span>
           {description && <span className="vx-fold-description">{description}</span>}
         </span>
         {side != null && <span className="vx-fold-side">{side}</span>}
-        <span className="vx-fold-act">
-          {count != null && <span className="vx-count">{count}</span>}
-          <span className="vx-sr-only">{open ? '收起' : '展开'}</span>
-          <Icon name="expand" size="sm" />
-        </span>
+        <span className="vx-sr-only">{open ? '收起' : '展开'}</span>
       </button>
       {/* 收起时不用 hidden：靠 grid 行高 0fr → 1fr 做高度过渡，内容对读屏与键盘用 inert 隔离 */}
       {children != null && (

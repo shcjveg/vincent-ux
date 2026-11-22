@@ -88,17 +88,21 @@ function indexHeadings() {
   const sections = [...article.querySelectorAll('h2')]
   if (sections.length < 2) return
   const nav = document.createElement('nav')
-  nav.className = 'hb-sections'
+  nav.className = 'hb-sections vx-index'
   nav.setAttribute('aria-label', '本页章节')
   const label = document.createElement('p')
-  label.className = 'vx-meta'
+  label.className = 'vx-index-label'
   label.textContent = '本页章节'
-  nav.append(label)
+  const group = document.createElement('div')
+  group.className = 'vx-index-group'
+  const list = document.createElement('ul')
+  group.append(label, list)
+  nav.append(group)
   for (const heading of sections) {
     const link = document.createElement('a')
     link.href = '#' + heading.id
     link.textContent = heading.textContent
-    nav.append(link)
+    list.appendChild(document.createElement('li')).append(link)
   }
   const title = article.querySelector('h1')
   const lead = title?.nextElementSibling

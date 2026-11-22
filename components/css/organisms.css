@@ -755,6 +755,7 @@ button.vx-stat:hover {
 /* 执行步骤：AI 助理做事的过程，默认安静；完成后收起成一行 */
 .vx-steps-toggle {
   display: flex;
+  min-height: var(--vx-size-hit);
   align-items: center;
   gap: var(--vx-space-1-5);
   width: 100%;
@@ -763,17 +764,19 @@ button.vx-stat:hover {
   color: var(--vx-text-secondary);
 }
 
+.vx-steps-toggle:is(:hover, :focus-visible) .vx-msg-block-title { text-decoration: underline; text-underline-offset: 0.18em; }
+
 /* 过程标题与完成数量同一行；无需使用方再以行内样式清掉标题底部留白。 */
 .vx-steps-toggle > .vx-msg-block-title { margin: 0; }
 
-.vx-steps-toggle svg {
+.vx-steps-toggle svg:not(.vx-disclosure-indicator) {
   width: var(--vx-size-icon-sm);
   height: var(--vx-size-icon-sm);
   color: var(--vx-text-tertiary);
   transition: transform var(--vx-motion-duration-base);
 }
 
-.vx-steps-toggle[aria-expanded='true'] svg {
+.vx-steps-toggle[aria-expanded='true'] svg:not(.vx-disclosure-indicator) {
   transform: rotate(180deg);
 }
 
@@ -1313,13 +1316,14 @@ body:has(.vx-guide--banner) [data-tour] { scroll-margin-bottom: calc(var(--vx-gu
 .vx-drawer-section:last-child { padding-bottom: 0; }
 .vx-drawer-section + .vx-drawer-section { box-shadow: inset 0 1px 0 var(--vx-line-faint); }
 .vx-drawer-section-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--vx-space-2); min-height: 28px; }
-.vx-drawer-section-heading { margin: 0; min-width: 0; font: inherit; }
+.vx-drawer-section-heading { display: flex; align-items: baseline; gap: var(--vx-space-2); flex-wrap: wrap; margin: 0; min-width: 0; font: inherit; }
 /* 标题行即开关：不画按钮外观，箭头低调，悬停时箭头亮一档 */
 .vx-drawer-section-toggle { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--vx-space-2); min-height: var(--vx-size-hit); padding: 0; border: 0; border-radius: var(--vx-radius-sm); background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
 .vx-drawer-section-title { font-size: var(--vx-font-size-md); font-weight: var(--vx-font-weight-semibold); color: var(--vx-text-primary); }
 .vx-drawer-section-chevron { width: 14px; height: 14px; color: var(--vx-text-muted); transform: rotate(-90deg); transition: transform var(--vx-motion-duration-fast), color var(--vx-motion-duration-fast); }
 .vx-drawer-section[data-open='true'] .vx-drawer-section-chevron { transform: none; }
 .vx-drawer-section-toggle:hover .vx-drawer-section-chevron { color: var(--vx-text-secondary); }
+.vx-drawer-section-toggle:is(:hover, :focus-visible) .vx-drawer-section-title { text-decoration: underline; text-underline-offset: 0.18em; }
 .vx-drawer-section-actions { display: inline-flex; gap: var(--vx-space-2); margin-left: auto; }
 .vx-drawer-section-body { display: flex; flex-direction: column; gap: var(--vx-space-4); }
 .vx-drawer-section-body[hidden] { display: none; }
