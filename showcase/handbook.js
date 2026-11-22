@@ -59,9 +59,9 @@ function presentTasks(table) {
   const labels = [...table.tHead.rows[0].cells].map(cell => cell.textContent)
   for (const row of table.tBodies[0].rows) {
     const [name, ...fields] = row.cells
-    const item = document.createElement('details')
-    const summary = document.createElement('summary')
-    summary.textContent = name.textContent
+    const item = document.createElement('section')
+    const title = document.createElement('h2')
+    title.textContent = name.textContent
     const body = document.createElement('dl')
     fields.forEach((cell, index) => {
       const term = document.createElement('dt')
@@ -70,7 +70,7 @@ function presentTasks(table) {
       value.append(...cell.childNodes)
       body.append(term, value)
     })
-    item.append(summary, body)
+    item.append(title, body)
     list.append(item)
   }
   table.replaceWith(list)
@@ -87,20 +87,23 @@ function indexHeadings() {
   }
   const sections = [...article.querySelectorAll('h2')]
   if (sections.length < 2) return
-  const index = document.createElement('details')
-  index.className = 'hb-sections'
-  const summary = document.createElement('summary')
-  summary.textContent = '本页章节'
   const nav = document.createElement('nav')
+  nav.className = 'hb-sections'
   nav.setAttribute('aria-label', '本页章节')
+  const label = document.createElement('p')
+  label.className = 'vx-meta'
+  label.textContent = '本页章节'
+  nav.append(label)
   for (const heading of sections) {
     const link = document.createElement('a')
     link.href = '#' + heading.id
     link.textContent = heading.textContent
     nav.append(link)
   }
-  index.append(summary, nav)
-  article.querySelector('h1')?.after(index)
+  const title = article.querySelector('h1')
+  const lead = title?.nextElementSibling
+  const introduction = lead?.tagName === 'P' ? lead : title
+  introduction?.after(nav)
 }
 
 function showText(title, content) {

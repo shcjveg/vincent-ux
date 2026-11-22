@@ -54,7 +54,6 @@ test('空结果提供恢复动作；加载和失败可以重试', async ({ page 
   await expect(demo.getByText('没有匹配的内容', { exact: true })).toBeVisible()
   await demo.getByRole('button', { name: '清除筛选', exact: true }).click()
   await expect(demo.locator('.vx-browse-item')).toHaveCount(6)
-  await demo.locator('summary').click()
   await demo.getByRole('button', { name: '演示请求失败' }).click()
   await expect(demo.getByRole('alert')).toHaveText('暂时无法更新内容，请重试。')
   await demo.getByRole('button', { name: '重试', exact: true }).click()
@@ -145,7 +144,6 @@ test('真实工作区侧栏折叠仍有名称，关闭聊天恢复页签焦点',
 
 test('导览不会抢输入方向键，目标缺失可自动结束', async ({ page }) => {
   const demo = browse(page)
-  await demo.locator('summary').click()
   const trigger = demo.getByRole('button', { name: '开始浏览导览' })
   await trigger.click()
   const guide = page.getByRole('dialog', { name: '浏览内容' })
@@ -667,7 +665,6 @@ test('待办提交期间锁定选择与动作，失败保留输入并可重试',
  const demo=page.getByTestId('task-card-demo'),card=demo.locator('.vx-task-card')
  await demo.getByRole('radio',{name:'自定义',exact:true}).check()
  await demo.getByRole('textbox',{name:'处理要求'}).fill('先核对来源，再继续准备')
- await demo.getByText('体验提交状态',{exact:true}).click()
  await demo.getByRole('checkbox',{name:'下次提交失败'}).check()
  const submit=demo.getByRole('button',{name:'交给 AI 继续',exact:true})
  await submit.click();await expect(card).toHaveAttribute('aria-busy','true')

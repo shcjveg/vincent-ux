@@ -36,35 +36,31 @@ for (const section of sections) {
   }
   group = category
   const anchor = document.createElement('a')
+  section.tabIndex = -1
   anchor.href = '#' + section.id
   anchor.textContent = $('h2', section).textContent
   chapters.append(anchor)
 }
 
-const catalogMenu = $('.sc-catalog')
+// 共用一份目录。窄屏先读项目指南，页首链接可直接跳到正文里的目录。
+const catalogNav = $('#demo-index')
+const side = $('.sc-toc')
+const guide = $('#handbook')
 const narrow = matchMedia('(max-width: 740px)')
-const fitMenu = () => { catalogMenu.open = !narrow.matches }
-fitMenu()
-narrow.addEventListener('change', fitMenu)
-catalogMenu.addEventListener('click', event => {
-  const link = event.target.closest('a[href^="#"]')
-  if (!link || !narrow.matches) return
-  catalogMenu.open = false
-  const section = document.getElementById(link.hash.slice(1))
-  section.tabIndex = -1
-  section.focus({ preventScroll: true })
-})
-catalogMenu.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && catalogMenu.open && !event.defaultPrevented && !event.target.closest('[role="combobox"]')) {
-    catalogMenu.open = false
-    $('summary', catalogMenu).focus()
-  }
-})
+function placeCatalog() {
+  if (narrow.matches) guide.after(catalogNav)
+  else side.append(catalogNav)
+}
+placeCatalog()
+narrow.addEventListener('change', placeCatalog)
 const chapterLinks = $$('.sc-catalog a[href^="#"]')
 function markChapter() {
-  const chapter = sections.findLast(el => el.getBoundingClientRect().top <= innerHeight * 0.2) || sections[0]
+  const readingLine = innerHeight * 0.2
+  const index = catalogNav.getBoundingClientRect()
+  const inCatalog = narrow.matches && index.top <= readingLine && index.bottom > readingLine
+  const chapter = sections.findLast(el => el.getBoundingClientRect().top <= readingLine) || sections[0]
   for (const link of chapterLinks) {
-    if (link.hash === '#' + chapter.id) link.setAttribute('aria-current', 'location')
+    if (!inCatalog && link.hash === '#' + chapter.id) link.setAttribute('aria-current', 'location')
     else link.removeAttribute('aria-current')
   }
 }

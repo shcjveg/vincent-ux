@@ -98,7 +98,7 @@
 | 一组内容不需要卡片包裹 | `.vx-section-title` 加留白 |
 | 一串同类对象 | `.vx-rows` > `.vx-row`；长列表要分隔时 `--ruled` |
 | 要点或步骤说明 | `.vx-list` |
-| 次要信息（已做完的、依据、明细） | `Fold`（React）/ `.vx-fold`；按实际用途设置摘要与默认状态，见[收起与展开](disclosure.md) |
+| 摘要已足够决定下一步，部分人还要核对依据或明细 | `Fold`（React）/ `.vx-fold`；按实际用途设置摘要与默认状态，见[收起与展开](disclosure.md) |
 | 列表里每行能展开看详情 | `Fold variant="row" summary="标题" description="必要说明"`，展开后保留对象身份 |
 | 自己做的展开按钮要一个朝向提示 | `.vx-chev`，展开时自动翻转 |
 | 少量「名称：值」 | `.vx-kv`（窄处 `--stack`） |

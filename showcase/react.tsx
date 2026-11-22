@@ -119,12 +119,12 @@ function BrowserDemo() {
         requestAnimationFrame(() => document.getElementById('browse-batch-receipt')?.focus())
       }}>撤销归档</Button>}
     </div>
-    <details className="sc-test-tools"><summary>体验导览与不同状态</summary><div className="vx-cluster">
+    <div className="vx-cluster" role="group" aria-label="浏览示例的验收操作">
       <Button size="sm" onClick={() => setGuide(tour)}>开始浏览导览</Button>
       <Button size="sm" onClick={reload}>演示加载</Button>
       <Button size="sm" onClick={() => setError('暂时无法更新内容，请重试。')}>演示请求失败</Button>
       <Button size="sm" onClick={() => setGuide([{ target: 'missing-target', title: '不可用目标', text: '目标缺失时自动退出。' }])}>验证缺失目标</Button>
-    </div></details>
+    </div>
     {detail && <ItemDrawer item={detail} onClose={() => setDetail(null)} onSave={next => { setContent(content.map(x => x.id === next.id ? next : x)); setDetail(next) }} />}
     {guide && <Guide name="浏览内容" steps={guide} onExit={() => setGuide(null)} />}
   </div>
@@ -352,7 +352,7 @@ function TaskCardDemo(){
    onContinue={choice=>submit(choice,'continue')} onTakeover={choice=>submit(choice,'takeover')} onDiscuss={()=>{if(!history)setRevision(n=>n+1)}}
    completedChoice={completedChoice} completedAction={completedAction}
    pending={pending} error={error} done={history}/>:<EmptyState message={history?'还没有处理记录':'当前没有待办事项'}/>}
-  <details className="sc-test-tools"><summary>体验提交状态</summary><div className="vx-cluster"><Checkbox label="下次提交失败" checked={failNext} disabled={!!pending||!!handled} onChange={e=>setFailNext(e.target.checked)}/><span className="vx-meta">提交尝试：{attempts}</span></div></details>
+  <div className="vx-cluster"><Checkbox label="下次提交失败" checked={failNext} disabled={!!pending||!!handled} onChange={e=>setFailNext(e.target.checked)}/><span className="vx-meta">提交尝试：{attempts}</span></div>
  </div>
 }
 

@@ -11,17 +11,16 @@
   <body>
     <a class="sc-skip" href="#handbook">跳到项目使用指南</a>
     <div class="sc">
-      <nav class="sc-toc" aria-label="目录">
+      <header class="sc-toc">
         <div class="sc-brand"><h1>Vincent UX</h1><div id="showcase-mode"></div></div>
         <span class="vx-text-3" data-version>展示与验收</span>
-        <details class="sc-catalog" open>
-          <summary>演示目录</summary>
-          <div class="sc-catalog-body">
-            <div data-chapters></div>
-            <div class="sc-palette-pick"><span aria-hidden="true">配色</span><div id="palette-pick"></div></div>
-          </div>
-        </details>
-      </nav>
+        <a class="sc-index-jump" href="#demo-index">浏览演示目录</a>
+        <div class="sc-palette-pick"><span aria-hidden="true">配色</span><div id="palette-pick"></div></div>
+        <nav class="sc-catalog" id="demo-index" aria-labelledby="demo-index-title" tabindex="-1">
+          <h2 id="demo-index-title">演示目录</h2>
+          <div data-chapters></div>
+        </nav>
+      </header>
       <main class="sc-main">
         <section class="sc-sec" id="handbook" tabindex="-1" aria-labelledby="handbook-title">
           <h2 id="handbook-title">项目使用指南</h2>
@@ -29,13 +28,13 @@
             <section><h3>设计界面</h3>
               <a href="#design-principles">查看设计原则与取舍</a>
               <a href="./handbook.html?doc=docs/tasks.md">按任务找设计案例</a>
-              <details><summary>选组件与组合方式</summary><div>
+              <div class="sc-guide-links">
                 <a href="./handbook.html?doc=components/README.md">选择组件</a>
-                <a href="./handbook.html?doc=patterns/README.md">组合交互模式</a>
-                <a href="./handbook.html?doc=templates/README.md">选择页面模板</a>
-                <a href="./handbook.html?doc=docs/tasks.md#找不到相近任务时">没有现成组件时怎么做</a>
-                <a href="./handbook.html?doc=SKILL.md">让 AI 按规范写界面</a>
-              </div></details>
+                <a href="./handbook.html?doc=patterns/README.md">交互模式</a>
+                <a href="./handbook.html?doc=templates/README.md">页面模板</a>
+              </div>
+              <a href="./handbook.html?doc=docs/tasks.md#找不到相近任务时">没有现成组件时怎么做</a>
+              <a href="./handbook.html?doc=SKILL.md">让 AI 按规范写界面</a>
             </section>
             <section><h3>接入项目</h3>
               <a href="./handbook.html?doc=docs/usage.md#复制到项目">首次接入项目</a>

@@ -255,7 +255,6 @@ test('22 套主题的阅读卡、门户与行内链接使用对应的文字色�
 
 test('可操作的导览跳过文字与正文链接一致，支持键盘退出', async ({ page }) => {
   const browse = page.getByTestId('browser-demo')
-  await browse.locator('summary').filter({ hasText: '体验导览与不同状态' }).click()
   await browse.getByRole('button', { name: '开始浏览导览' }).click()
   const skip = page.getByRole('button', { name: '跳过导览' })
   const anchor = page.locator('#text-colors a')
