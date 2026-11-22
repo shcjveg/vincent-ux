@@ -1,8 +1,9 @@
-// vincent-ux v1.6.0 · components/react/Guide.tsx
+// vincent-ux v1.7.0 · components/react/Guide.tsx
 // 实机导览：目标完整挖空，说明卡优先固定停靠；遮挡目标时由说明卡避让。每一步先 go() 再定位；
 // 找不到先用 alt，再找不到就按当前方向跳过。挖空框在步骤之间平滑移动、不闪回左上角。外观见 .vx-guide-*
 // 底部一排进度点标出当前步；末步之前有「跳过导览」文字链，等于退出。
 // 横幅只有两行：标题后跟进度，下一行说明；动作在右侧同一行，不另设阶段列。贴底会挡住目标时换到顶部。
+import { useThemeContainer } from './ThemeScope'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { Icon } from './Icon'
@@ -19,6 +20,7 @@ export type GuideStep = {
 }
 
 export function Guide({ name, steps, onExit, scrollRoot, placement = 'bottom', variant = 'card', onComplete, initialStep = 0 }: { name: string; steps: GuideStep[]; onExit: () => void; onComplete?: () => void; initialStep?: number; scrollRoot?: string; placement?: 'bottom' | 'left'; variant?: 'card' | 'banner' }) {
+  const container = useThemeContainer()
   const cardRef = useRef<HTMLDivElement>(null)
   const dock = useRef<Dock>(placement)
   const completeRef = useRef(onComplete ?? onExit)
@@ -48,7 +50,7 @@ export function Guide({ name, steps, onExit, scrollRoot, placement = 'bottom', v
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.defaultPrevented) return
+      if (e.defaultPrevented || (container && e.target instanceof Node && !container.contains(e.target))) return
       if (e.key === 'Escape') { e.preventDefault(); exitRef.current(); return }
       const target = e.target
       if (!(target instanceof HTMLElement) || !cardRef.current?.contains(target) || target.closest('input, textarea, select, [contenteditable="true"]')) return
@@ -57,7 +59,7 @@ export function Guide({ name, steps, onExit, scrollRoot, placement = 'bottom', v
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [next, prev])
+  }, [next, prev, container])
 
   // 每一步只把不可见目标滚入视口；已经可见的功能保持原位，由说明卡避让。
   useLayoutEffect(() => {
@@ -74,7 +76,7 @@ export function Guide({ name, steps, onExit, scrollRoot, placement = 'bottom', v
     }
     const find = () => {
       if (cancelled) return
-      const visibleTarget = (target: string) => Array.from(document.querySelectorAll<HTMLElement>(`[data-tour="${CSS.escape(target)}"]`)).find(el => el.getClientRects().length > 0)
+      const visibleTarget = (target: string) => Array.from((container ?? document).querySelectorAll<HTMLElement>(`[data-tour="${CSS.escape(target)}"]`)).find(el => el.getClientRects().length > 0)
       const pick = [step, ...(step.alt ? [step.alt] : [])].find(c => visibleTarget(c.target))
       const el = pick && visibleTarget(pick.target)
       if (el && pick && el.getClientRects().length > 0) {
@@ -91,7 +93,7 @@ export function Guide({ name, steps, onExit, scrollRoot, placement = 'bottom', v
       if (!cancelled) timer = window.setTimeout(find, 40)
     }).catch(skip)
     return () => { cancelled = true; window.clearTimeout(timer) }
-  }, [i, dir, stepKey, steps.length, scrollRoot])
+  }, [i, dir, stepKey, steps.length, scrollRoot, container])
 
   // 挖空框每帧向目标的实时位置靠近：同页换目标时从上一个滑到下一个，页面滚动时跟着走，换页时从旧位置滑到新位置。
   // 按时间插值（约 280ms 缓出），并限制每帧最大位移，滚动途中也不会一帧跳很远
@@ -150,16 +152,16 @@ export function Guide({ name, steps, onExit, scrollRoot, placement = 'bottom', v
   }, [scrollRoot, placement, variant])
 
   useLayoutEffect(() => {
-    if (variant !== 'banner') return
+    if (variant !== 'banner' || container === null) return
     const card = cardRef.current
     if (!card) return
-    const update = () => document.body.style.setProperty('--vx-guide-space', `${card.getBoundingClientRect().height + 32}px`)
+    const update = () => (container ?? document.body).style.setProperty('--vx-guide-space', `${card.getBoundingClientRect().height + 32}px`)
     const observer = new ResizeObserver(update)
     observer.observe(card); update()
-    return () => { observer.disconnect(); document.body.style.removeProperty('--vx-guide-space') }
-  }, [variant])
+    return () => { observer.disconnect(); (container ?? document.body).style.removeProperty('--vx-guide-space') }
+  }, [variant, container])
 
-  if (!step || typeof document === 'undefined') return null
+  if (!step || container === null || typeof document === 'undefined') return null
 
   return createPortal(
     <div className={`vx-guide${variant === 'banner' ? ' vx-guide--banner' : ''}`} role="dialog" aria-modal="false" aria-label={name}>
@@ -204,7 +206,7 @@ export function Guide({ name, steps, onExit, scrollRoot, placement = 'bottom', v
         </div>
         {!last && <button type="button" className="vx-link vx-guide-skip" onClick={onExit}>跳过导览</button>}
       </div>
-    </div>, document.body,
+    </div>, container ?? document.body,
   )
 }
 

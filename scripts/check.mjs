@@ -31,9 +31,20 @@ const warnings = []
 const pascal = (s) => s.split('-').map((x) => x[0].toUpperCase() + x.slice(1)).join('')
 const forbidden = icons.forbidden.names.flatMap((n) => [n, pascal(n)])
 
+// 同步目录由宿主决定。用发布内容辨认系统样式，业务修改后的副本仍按页面检查。
+const consumer = process.argv.length > 2
+const shippedCSS = consumer ? new Set([
+  ...readdirSync(join(ROOT, 'components/css')).filter(f => f.endsWith('.css')).map(f => 'components/css/' + f),
+  'templates/css/templates.css', 'tokens/dist/embedded.css',
+].map(f => readFileSync(join(ROOT, f), 'utf8'))) : new Set()
+const iconSrc = readFileSync(join(ROOT, 'components/react/Icon.tsx'), 'utf8')
+
 for (const f of files) {
   const rel = relative(process.cwd(), f)
   const src = readFileSync(f, 'utf8')
+  const pageCSS = consumer && extname(f) === '.css' && !shippedCSS.has(src)
+  if (consumer && /\.(tsx|jsx)$/.test(f) && src !== iconSrc && /from ['"]lucide-react['"]/.test(src))
+    warnings.push(`${rel} 直接引用 lucide-react，改用 <Icon name="含义" />`)
   const code = src.replace(/\/\*[\s\S]*?\*\//g, match => match.replace(/[^\n]/g, ' ')).replace(/^\s*\/\/.*$/gm, '')
   if (/tokens\.css$/.test(f)) continue
   code.split('\n').forEach((line, i) => {
@@ -41,27 +52,32 @@ for (const f of files) {
     if (extname(f) === '.css' && /(#[0-9a-f]{3,8}\b|rgba?\(|hsla?\()/i.test(line) && !/var\(--/.test(line.split(':')[0])) {
       if (!/^\s*--/.test(line)) errors.push(`${at} 裸色值：${line.trim()}`)
     }
-    if (process.argv.slice(2).length && extname(f) === '.css' && !/vendor[\\/]vincent-ux/.test(f) && !f.startsWith(ROOT) && /var\(--vx-brand-(accent|critical)(-bright)?\)/.test(line))
+    if (pageCSS && /var\(--vx-brand-(accent|critical)(-bright)?\)/.test(line))
       warnings.push(`${at} 页面直接用品牌色，改用语气：元素上写 data-tone，样式取 var(--vx-tone) / var(--vx-tone-soft)，或用 .vx-text-accent / .vx-text-critical / .vx-tag--*`)
-    const m = extname(f) === '.css' && line.match(/^\s*(padding|margin|gap)[a-z-]*\s*:\s*([^;]+)/)
-    if (m) for (const v of m[2].matchAll(/(-?\d+(?:\.\d+)?)px/g)) if (!SPACE.has(Math.abs(Number(v[1])))) errors.push(`${at} 间距 ${v[1]}px 不在 tokens/src/base.tokens.json 刻度里`)
     for (const n of forbidden) {
       const re = new RegExp(`(['"\`<\\s{,])${n}(['"\`\\s/>,}])`)
       if (re.test(line) && /icon|lucide|from|<|name=/i.test(line)) errors.push(`${at} 禁用图标：${n}`)
     }
   })
+  if (extname(f) === '.css') {
+    const internal = !process.argv.slice(2).length
+    const declarations = /(?:^|[;{])\s*((?:padding|margin)(?:-[\w-]+)?|(?:row-|column-)?gap|font-size|border-radius)\s*:\s*([^;}]+)/gm
+    for (const match of code.matchAll(declarations)) {
+      for (const size of match[2].matchAll(/(-?\d+(?:\.\d+)?)px\b/g)) {
+        const at = `${rel}:${code.slice(0, match.index + match[0].indexOf(match[1])).split('\n').length}`
+        const spacing = !['font-size', 'border-radius'].includes(match[1])
+        if (spacing && !SPACE.has(Math.abs(Number(size[1])))) errors.push(`${at} 间距 ${size[0]} 不在设计刻度里`)
+        else if (internal) errors.push(`${at} ${match[1]} 的 ${size[0]} 应使用对应设计变量`)
+      }
+    }
+  }
 }
 
 // 图标：React 组件里的含义必须和 icons.json 一一对应；使用方直接 import lucide-react 的地方提示改用 <Icon>
 const meanings = Object.values(icons.meanings).flatMap((g) => Object.keys(g).filter((k) => !k.startsWith('$')))
-const iconSrc = readFileSync(join(ROOT, 'components/react/Icon.tsx'), 'utf8')
 const iconKeys = [...iconSrc.slice(iconSrc.indexOf('const ICONS'), iconSrc.indexOf('satisfies')).matchAll(/'?([a-z][a-z-]*)'?:\s*[A-Z]/g)].map((m) => m[1])
 for (const k of meanings) if (!iconKeys.includes(k)) errors.push(`Icon.tsx 缺少含义 ${k}（icons.json 里有）`)
 for (const k of iconKeys) if (!meanings.includes(k)) errors.push(`Icon.tsx 的含义 ${k} 没有在 icons.json 登记`)
-if (process.argv.slice(2).length)
-  for (const f of files)
-    if (/\.(tsx|jsx)$/.test(f) && !/(vincent-ux|components)[\\/]react[\\/]Icon\.tsx$/.test(f) && /from ['"]lucide-react['"]/.test(readFileSync(f, 'utf8')))
-      warnings.push(`${relative(process.cwd(), f)} 直接引用 lucide-react，改用 <Icon name="含义" />`)
 
 // 按实际用途检查；透明面先与底层合成，普通小字一律 4.5:1。默认配色与每套配色主题（tokens/dist/tokens.json 的 palettes）逐套核对。
 if (!process.argv.slice(2).length) {
@@ -82,21 +98,50 @@ if (!process.argv.slice(2).length) {
       if (d < 40) errors.push(`色相 [${id}] ${mode} brand-accent 与 brand-critical 只隔 ${d.toFixed(0)}°，需 ≥ 40°`)
     }
     for (const mode of ['light', 'dark']) {
+      const readingInk = {
+        primary: t.text.primary[mode], secondary: t.text.secondary[mode], tertiary: t.text.tertiary[mode],
+        link: t.text.link[mode] ?? b.brand.accent[mode],
+      }
+      const verifyReading = (bg, label) => {
+        for (const [role, value] of Object.entries(readingInk)) verify(`${mode} text-${role} / ${label}`, value, bg, 4.5)
+      }
       const surfaces = Object.entries(t.surface).filter(([key]) => !key.startsWith('$') && key !== 'scrim')
       for (const [surface, value] of surfaces) {
         for (const under of ['canvas', 'card']) {
           const bg = blend(rgb(value[mode]), rgb(t.surface[under][mode]))
           for (const k of ['positive', 'negative']) if (t.data?.[k]) verify(`${mode} data-${k} / ${surface}`, t.data[k][mode], bg, 4.5)
-          for (const k of ['primary', 'secondary', 'tertiary']) verify(`${mode} text-${k} / ${surface}`, t.text[k][mode], bg, 4.5)
+          verifyReading(bg, surface)
           for (const k of ['accent', 'critical', 'warning']) verify(`${mode} brand-${k} / ${surface}`, b.brand[k][mode], bg, 4.5)
           verify(`${mode} focus / ${surface}`, t.focus.ring[mode], bg, 3)
           verify(`${mode} control / ${surface}`, t.line.control[mode], bg, 3)
         }
       }
-      for (const surface of ['shell', 'card']) verify(`${mode} text-muted / ${surface}`, t.text.muted[mode], rgb(t.surface[surface][mode]), 4.5)
+      for (const surface of ['shell', 'card']) {
+        const bg = rgb(t.surface[surface][mode])
+        const hierarchy = ['primary', 'secondary', 'tertiary', 'muted'].map(k => contrast(rgb(t.text[k][mode]), bg))
+        if (hierarchy.some((ratio, i) => i > 0 && ratio >= hierarchy[i - 1])) errors.push(`[${id}] ${mode} 在 ${surface} 上的文字层级次序有误`)
+        verify(`${mode} text-muted / ${surface}`, t.text.muted[mode], bg, 4.5)
+        for (const state of ['hover', 'selected']) verifyReading(blend(rgb(t.fill[state][mode]), bg), `${surface} + ${state}`)
+      }
       for (const tone of ['accent', 'critical', 'warning']) {
         const bg = blend(rgb(b.brand[`${tone}-soft`][mode]), rgb(t.surface.card[mode]))
+        verifyReading(bg, `${tone}-soft`)
         verify(`${mode} ${tone} / soft`, b.brand[tone][mode], bg, 4.5)
+      }
+      const label = t.action.text[mode] ?? t.text['on-strong'][mode]
+      const edge = t.action.edge[mode] ?? 'transparent'
+      if (palette.swatches && toOklch(rgb(label))[1] > 0.025) errors.push(`主动作 [${id}] ${mode} 字色过艳`)
+      const paints = [t.action.fill[mode] ?? t.ink.base[mode], t.action['fill-hover'][mode] ?? t.ink.top[mode]]
+      if (!t.action.fill[mode]) paints.push(t.ink.top[mode])
+      for (const fill of new Set(paints)) {
+        const paint = rgb(fill)
+        verify(`${mode} 主动作文字 / ${fill}`, label, paint, 4.5)
+        for (const [key, surface] of surfaces) {
+          const bg = blend(rgb(surface[mode]), rgb(t.surface.canvas[mode]))
+          if (Math.max(contrast(paint, bg), edge === 'transparent' ? 0 : contrast(rgb(edge), bg)) < 3) {
+            errors.push(`主动作 [${id}] ${mode} 边界 / ${key} 未达 3:1`)
+          }
+        }
       }
       for (const stop of ['base', 'top']) verify(`${mode} 主按钮 ${stop}`, t.text['on-strong'][mode], rgb(t.ink[stop][mode]), 4.5)
       verify(`${mode} 红色计数`, t.text['on-critical'][mode], rgb(b.brand.critical[mode]), 4.5)

@@ -1,4 +1,5 @@
-// vincent-ux v1.6.0 · components/react/ObjectPreview.tsx
+// vincent-ux v1.7.0 · components/react/ObjectPreview.tsx
+import { useThemeContainer } from './ThemeScope'
 import { PreviewCard } from '@base-ui/react/preview-card'
 import { useState, type ReactNode, type RefCallback } from 'react'
 import { Icon, type IconName } from './Icon'
@@ -8,6 +9,7 @@ export function ObjectPreview({ title, summary, image, imageAlt, fallbackIcon = 
   title: string; summary?: string; image?: string; imageAlt?: string; fallbackIcon?: IconName
   preview: ReactNode; onOpen: () => void; triggerRef?: RefCallback<HTMLElement>; compact?: boolean; detailOpen?: boolean
 }) {
+  const container = useThemeContainer()
   const [open, setOpen] = useState(false)
   const [failedImage, setFailedImage] = useState<string>()
   const picture = (large = false) => image && failedImage !== image
@@ -20,7 +22,7 @@ export function ObjectPreview({ title, summary, image, imageAlt, fallbackIcon = 
       <span className="vx-object-image">{picture()}</span>
       <span className="vx-object-copy"><span className="vx-object-title">{title}</span>{summary && <span className="vx-object-summary">{summary}</span>}</span>
     </PreviewCard.Trigger>
-    <PreviewCard.Portal>
+    <PreviewCard.Portal container={container}>
       <PreviewCard.Positioner side="bottom" align="start" sideOffset={8} className="vx-object-positioner">
         <PreviewCard.Popup className="vx-popup vx-object-popover" aria-label={`${title}预览`}>
           <div className="vx-object-preview-image">{picture(true)}</div>

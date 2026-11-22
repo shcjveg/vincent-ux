@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>vincent-ux 展示页</title>
+    <title>设计系统预览 · Vincent UX</title>
     <link rel="stylesheet" href="../styles.css" />
     <link rel="stylesheet" href="showcase.css" />
   <style>body { padding-bottom: var(--vx-guide-space, 0px); }</style>
@@ -14,6 +14,7 @@
         <h1>vincent-ux</h1>
         <span class="vx-text-3" data-version>展示与验收</span>
         <a href="#browse">浏览与筛选</a>
+        <a href="#report">明细查询</a>
         <a href="#interactive">交互与状态</a>
         <a href="#disclosure">收起与展开</a>
         <a href="#breadcrumbs">面包屑与二级页</a>
@@ -38,6 +39,7 @@
           <h2>浏览与筛选</h2><p class="sc-lead">搜索、类型与状态筛选、列表与卡片、分页、选择和详情。下面使用实际 React 组件，所有条件可以组合。</p>
           <div class="sc-board" id="browse-demo"></div>
         </section>
+        <section class="sc-sec" id="report"><h2>按范围查询与导出</h2><div class="sc-board" id="report-demo"></div></section>
         <section class="sc-sec" id="interactive">
           <h2>交互与状态</h2><p class="sc-lead">试试键盘操作、输入错误、加载与重试，以及关闭弹层后的焦点恢复。决定卡第一次提交会演示失败，再次提交成功。</p>
           <div class="sc-board" id="interaction-demo"></div>
@@ -65,16 +67,22 @@
 
         <section class="sc-sec" id="color">
           <h2>颜色</h2>
-          <p class="sc-lead">中性层承担全部结构；品牌层只有两种强调：强调色给钱、选中和需要你看的地方，危急色给红点、亏损和阻断。主按钮用墨色。</p>
-          <div data-vx-swatch class="sc-swatches" data-swatches="text-primary text-secondary text-tertiary text-disabled ink-base brand-accent brand-accent-bright brand-accent-soft brand-critical brand-critical-soft fill-hover fill-selected line-faint"></div>
-          <h3 class="sc-sub">配色主题</h3>
-          <p class="sc-lead">按暖冷、软硬、清浊三条轴各占一个位置，只换颜色。明度沿用默认配色，对比度逐套核对。点一套即可切换整页。</p>
+          <p class="sc-lead">中性层承担结构。强调色标出关键金额和选中项，警示色提示需要留意的延误，危急色用于阻断等需要及时处理的情况。主按钮的底色与字色随所选配色生效。</p>
+          <div data-vx-swatch class="sc-swatches" data-swatches="text-primary text-secondary text-tertiary text-link text-disabled ink-base brand-accent brand-accent-bright brand-accent-soft brand-critical brand-critical-soft fill-hover fill-selected line-faint"></div>
+          <span id="leo-palettes"></span>
+          <h3 class="sc-sub" id="palettes">配色主题</h3>
+          <p class="sc-lead">每张卡都使用该主题的页面底色、文字和主按钮。应用后，可在<a href="#text-colors">正文</a>和<a href="#portal">登录表单</a>中查看效果。</p>
           <div class="sc-palettes" data-palettes></div>
         </section>
 
         <section class="sc-sec" id="type">
           <h2>文字</h2>
-          <p class="sc-lead">系统字体，层级先靠字色和字重，再靠字号；一屏不超过三档字号。数字用等宽数字字体。</p>
+          <p class="sc-lead">同一区域用标题、正文和辅助文字组织阅读。指标和页标题可使用独立字号，数值采用等宽数字。</p>
+          <article class="vx-card vx-card--padded vx-stack sc-reading-sample" id="text-colors" aria-labelledby="reading-title">
+            <h3 class="vx-title" id="reading-title">按地区核对明细</h3>
+            <p class="vx-body">先选择地区，再展开城市，核对这次要交接的记录。<a href="#report">打开明细查询</a></p>
+            <p class="vx-meta">导出范围以上一次成功查询为准。</p>
+          </article>
           <div class="sc-type">
             <div class="sc-type-row"><code>font-size-3xl</code><span style="font-size: var(--vx-font-size-3xl); font-weight: 650">今天有 4 件事等你</span></div>
             <div class="sc-type-row"><code>font-size-2xl</code><span style="font-size: var(--vx-font-size-2xl); font-weight: 600">页面标题</span></div>

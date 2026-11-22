@@ -19,43 +19,48 @@
     "size": {
       "xs": {
         "$type": "dimension",
-        "$value": "11px",
+        "$value": "0.6875rem",
         "$description": "角标、计数"
       },
       "sm": {
         "$type": "dimension",
-        "$value": "12px",
+        "$value": "0.75rem",
         "$description": "辅助说明、表头、标签"
       },
       "md": {
         "$type": "dimension",
-        "$value": "13px",
+        "$value": "0.8125rem",
         "$description": "正文、列表、按钮"
       },
       "lg": {
         "$type": "dimension",
-        "$value": "14px",
+        "$value": "0.875rem",
         "$description": "卡片标题、强调正文"
       },
       "xl": {
         "$type": "dimension",
-        "$value": "16px",
+        "$value": "1rem",
         "$description": "说明卡标题、区块标题"
       },
       "2xl": {
         "$type": "dimension",
-        "$value": "22px",
+        "$value": "1.375rem",
         "$description": "页面标题"
       },
       "3xl": {
         "$type": "dimension",
-        "$value": "26px",
+        "$value": "1.625rem",
         "$description": "首页标题、数字展示"
       },
       "display": {
         "$type": "dimension",
-        "$value": "44px",
+        "$value": "2.75rem",
         "$description": "引导页大标题"
+      },
+      "4xl": {
+        "$type": "dimension",
+        "$value": "2rem",
+        "$description": "概览指标与紧凑首屏标题"
       }
     },
     "weight": {
@@ -208,41 +213,51 @@
       "$type": "dimension",
       "$value": "999px",
       "$description": "胶囊、圆点"
+    },
+    "detail": {
+      "$type": "dimension",
+      "$value": "2px",
+      "$description": "紧凑图表标记"
     }
   },
   "size": {
     "control": {
       "sm": {
         "$type": "dimension",
-        "$value": "32px"
+        "$value": "max(var(--vx-size-hit), 32px, 2rem)"
       },
       "md": {
         "$type": "dimension",
-        "$value": "34px"
+        "$value": "max(var(--vx-size-hit), 34px, 2.125rem)"
       },
       "lg": {
         "$type": "dimension",
-        "$value": "42px"
+        "$value": "max(var(--vx-size-hit), 42px, 2.625rem)"
       }
     },
     "hit": {
       "$type": "dimension",
       "$value": "32px",
-      "$description": "最小点击区域（桌面）"
+      "$description": "独立操作最小命中区，桌面 32px，粗指针设备取 size-hit-touch。"
     },
     "icon": {
       "sm": {
         "$type": "dimension",
-        "$value": "14px"
+        "$value": "0.875rem"
       },
       "md": {
         "$type": "dimension",
-        "$value": "16px"
+        "$value": "1rem"
       },
       "lg": {
         "$type": "dimension",
-        "$value": "18px"
+        "$value": "1.125rem"
       }
+    },
+    "hit-touch": {
+      "$type": "dimension",
+      "$value": "44px",
+      "$description": "触控时独立操作的目标尺寸"
     }
   },
   "motion": {
@@ -261,6 +276,16 @@
         "$type": "duration",
         "$value": "280ms",
         "$description": "浮层进出、导览移动"
+      },
+      "spin": {
+        "$type": "duration",
+        "$value": "800ms",
+        "$description": "等待转圈"
+      },
+      "pulse": {
+        "$type": "duration",
+        "$value": "1400ms",
+        "$description": "加载占位与等待提示"
       }
     },
     "ease": {

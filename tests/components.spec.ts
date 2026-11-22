@@ -733,8 +733,8 @@ test('连续月历跨月选择、键盘跨年、单日与对比范围可应用',
  await date.click();await page.getByLabel('起始日期',{exact:true}).fill('2026-09-27');await page.getByLabel('截止日期',{exact:true}).fill('2026-10-24')
  await page.getByLabel('起始日期',{exact:true}).focus();await page.getByRole('gridcell',{name:'2026年9月27日',exact:true}).click();await page.getByRole('gridcell',{name:'2026年10月24日',exact:true}).click()
  await expect(page.getByLabel('起始日期',{exact:true})).toHaveValue('2026-09-27');await expect(page.getByLabel('截止日期',{exact:true})).toHaveValue('2026-10-24');await expect(page.locator('.vx-calendar-week [data-endpoint]')).toHaveCount(2)
- await page.getByRole('switch',{name:'对比上一时段',exact:true}).check();await expect(page.getByText('对比：2026-08-30 — 2026-09-26',{exact:true})).toBeVisible();await page.getByRole('button',{name:'应用',exact:true}).click()
- await date.click();await expect(page.getByRole('switch',{name:'对比上一时段',exact:true})).toBeChecked();await page.getByRole('button',{name:'具体日期',exact:true}).click();await page.getByLabel('具体日期',{exact:true}).fill('2026-12-31');const last=page.getByRole('gridcell',{name:'2026年12月31日',exact:true});await last.focus();await page.keyboard.press('ArrowRight');await expect(page.getByRole('gridcell',{name:'2027年1月1日',exact:true})).toBeFocused();await page.keyboard.press('Enter');await expect(page.getByLabel('具体日期',{exact:true})).toHaveValue('2027-01-01');await page.getByRole('button',{name:'取消',exact:true}).click();await expect(date).toContainText('2026-09-27—2026-10-24')
+ await page.getByRole('checkbox',{name:'对比上一时段',exact:true}).check();await expect(page.getByText('对比：2026-08-30 — 2026-09-26',{exact:true})).toBeVisible();await page.getByRole('button',{name:'应用',exact:true}).click()
+ await date.click();await expect(page.getByRole('checkbox',{name:'对比上一时段',exact:true})).toBeChecked();await page.getByRole('button',{name:'具体日期',exact:true}).click();await page.getByLabel('具体日期',{exact:true}).fill('2026-12-31');const last=page.getByRole('gridcell',{name:'2026年12月31日',exact:true});await last.focus();await page.keyboard.press('ArrowRight');await expect(page.getByRole('gridcell',{name:'2027年1月1日',exact:true})).toBeFocused();await page.keyboard.press('Enter');await expect(page.getByLabel('具体日期',{exact:true})).toHaveValue('2027-01-01');await page.getByRole('button',{name:'取消',exact:true}).click();await expect(date).toContainText('2026-09-27—2026-10-24')
 })
 
 test('月历浮层在窄屏与短窗口保留底部动作，展开不移动正文', async({page})=>{
@@ -890,13 +890,14 @@ test('对客门户：氛围层对读屏隐藏，快捷登录可键盘触发；�
 test('配色主题：切换后语义变量随之改变，明暗仍然生效，回到默认移除属性', async({page})=>{
  const accent=()=>page.evaluate(()=>{const el=document.createElement('i');el.style.color='var(--vx-brand-accent)';document.body.append(el);const c=getComputedStyle(el).color;el.remove();return c})
  const palette=()=>page.evaluate(()=>document.documentElement.dataset.palette??'')
- await expect(page.locator('.sc-palette')).toHaveCount(10)
+ await expect(page.locator('[data-palettes]')).toHaveCount(1)
+ await expect(page.locator('[data-palettes] .sc-palette')).toHaveCount(22)
  const base=await accent()
  const pick=page.getByRole('combobox',{name:'配色主题',exact:true});await expect(pick).toHaveText('墨金')
  await pick.click();await page.getByRole('option',{name:'信号',exact:true}).click();expect(await palette()).toBe('signal');await expect(pick).toHaveText('信号')
  const signal=await accent();expect(signal).not.toBe(base)
  await page.evaluate(t => { document.documentElement.dataset.theme = t }, 'dark');expect(await accent()).not.toBe(signal)
- await page.locator('.sc-palette',{hasText:'墨金'}).click();expect(await palette()).toBe('')
+ await page.getByRole('button',{name:'应用配色 · 墨金'}).click();expect(await palette()).toBe('')
  await expect(pick).toHaveText('墨金')
 })
 

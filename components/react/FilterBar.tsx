@@ -1,4 +1,4 @@
-// vincent-ux v1.6.0 · components/react/FilterBar.tsx
+// vincent-ux v1.7.0 · components/react/FilterBar.tsx
 import type { ReactNode } from 'react'
 import { Button } from './Button'
 import { Icon } from './Icon'
@@ -6,7 +6,7 @@ import { Icon } from './Icon'
 export type ActiveFilter = { id: string; label: string; onRemove: () => void }
 /**
  * side：和筛选项分开布局的一栏（通常是搜索框，下面可跟「清除筛选」）。筛选项在左边换行，
- * 不会挤进这一栏；窄屏下这一栏也不换行，只是收窄。视觉上没有分割线。
+ * 不会挤进这一栏；可用宽度不足时，搜索栏移到筛选项下方。视觉上没有分割线。
  */
 export function FilterBar({ children, side, filters = [], onClear, label = '筛选条件' }: {
   children: ReactNode; side?: ReactNode; filters?: ActiveFilter[]; onClear?: () => void; label?: string

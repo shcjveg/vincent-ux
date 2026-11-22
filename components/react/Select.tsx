@@ -1,4 +1,5 @@
-// vincent-ux v1.6.0 · components/react/Select.tsx
+// vincent-ux v1.7.0 · components/react/Select.tsx
+import { useThemeContainer } from './ThemeScope'
 import { Combobox as C } from '@base-ui/react/combobox'
 import { useState, type AriaAttributes, type Ref } from 'react'
 import { Attention, AttentionMark } from './Attention'
@@ -16,6 +17,7 @@ export type SelectProps<T extends string> = AriaAttributes & {
  creatable?:boolean
 }
 export function Select<T extends string>({value,options,onChange,label,placeholder='请选择',disabled,required,readOnly,name,id,form,className,ref,variant='field',allValue,attention=false,creatable=false,...aria}:SelectProps<T>){
+  const container = useThemeContainer()
  const [query,setQuery]=useState('')
  const [open,setOpen]=useState(false)
  const allOption=allValue===undefined?undefined:options.find(o=>o.value===allValue)
@@ -35,7 +37,7 @@ export function Select<T extends string>({value,options,onChange,label,placehold
   <C.Trigger {...aria} ref={ref} id={id} className={['vx-trigger',variant==='inline'&&'vx-trigger--inline',variant==='filter'&&'vx-trigger--filter',className].filter(Boolean).join(' ')} aria-label={label??aria['aria-label']}>
    <AttentionMark on={attention}><span className="vx-trigger-value">{allValue!==undefined&&value===allValue&&label?label:selected?<C.Value/>:<span className="vx-trigger-placeholder">{placeholder}</span>}</span></AttentionMark><Icon name="expand" size="sm"/>
   </C.Trigger>
-  <C.Portal><C.Positioner side="bottom" align="start" sideOffset={6} style={{zIndex:'var(--vx-z-popover)'}}>
+  <C.Portal container={container}><C.Positioner side="bottom" align="start" sideOffset={6} style={{zIndex:'var(--vx-z-popover)'}}>
    <C.Popup className="vx-popup vx-select-popup">
     <div className="vx-select-search"><Icon name="search" size="sm"/><C.Input aria-label={`搜索${label??'选项'}`} placeholder={creatable?'搜索或输入新选项…':'搜索选项…'}
      onKeyDown={e=>{if(e.key==='Enter'&&noMatch&&!e.nativeEvent.isComposing){e.preventDefault();onChange(q as T);setOpen(false)}}}/></div>

@@ -1,0 +1,7 @@
+[
+  { "region": "华东", "city": "上海", "title": "核对发布范围", "state": "待核对" },
+  { "region": "华东", "city": "上海", "title": "补充上次发布记录", "state": "已完成" },
+  { "region": "华东", "city": "杭州", "title": "复核资料有效期", "state": "待核对" },
+  { "region": "华南", "city": "广州", "title": "更新审核人", "state": "已完成" },
+  { "region": "华南", "city": "深圳", "title": "核对资料版本", "state": "待核对" }
+]

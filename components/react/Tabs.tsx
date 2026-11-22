@@ -1,4 +1,4 @@
-// vincent-ux v1.6.0 · components/react/Tabs.tsx
+// vincent-ux v1.7.0 · components/react/Tabs.tsx
 import { Tabs as T } from '@base-ui/react/tabs'
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { Icon } from './Icon'
@@ -23,7 +23,7 @@ export function Tabs<V extends string>({ label, value, items, onChange, onClose,
     if(!root||!scroller)return
     const measure=()=>{
       const box=root.getBoundingClientRect(),next:Record<string,ClosePosition>={}
-      for(const item of items){const target=buttons.current.get(item.value);if(!target||!item.closable)continue;const rect=target.getBoundingClientRect(),style=getComputedStyle(target),size=parseFloat(style.getPropertyValue('--vx-tab-close-size'))||24,inset=parseFloat(style.getPropertyValue('--vx-tab-close-inset'))||2,left=rect.right-box.left-size-inset;next[item.value]={left,top:rect.top-box.top+(rect.height-size)/2,visible:left>=0&&left+size<=box.width}}
+      for(const item of items){const target=buttons.current.get(item.value);if(!target||!item.closable)continue;const rect=target.getBoundingClientRect(),style=getComputedStyle(target),size=parseFloat(style.getPropertyValue('--vx-tab-close-size'))||32,inset=parseFloat(style.getPropertyValue('--vx-tab-close-inset'))||2,left=rect.right-box.left-size-inset;next[item.value]={left,top:rect.top-box.top+(rect.height-size)/2,visible:left>=0&&left+size<=box.width}}
       setPositions(prev=>JSON.stringify(prev)===JSON.stringify(next)?prev:next)
     }
     measure()

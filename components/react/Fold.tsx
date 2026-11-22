@@ -1,4 +1,4 @@
-// vincent-ux v1.6.0 · components/react/Fold.tsx
+// vincent-ux v1.7.0 · components/react/Fold.tsx
 // 内容收纳：分组、对象详情与编辑区共用此结构。外观见 components/css/molecules.css（.vx-fold*）
 // 数量与箭头表达折叠；分组摘要和草稿策略由宿主控制，见 components/disclosure.md。
 // 展开收起是高度过渡（约 280ms 缓出），减少动态效果时直接切换。

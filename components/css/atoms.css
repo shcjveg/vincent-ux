@@ -1,7 +1,7 @@
-/* vincent-ux v1.6.0 · components/css/atoms.css */
+/* vincent-ux v1.7.0 · components/css/atoms.css */
 /* 原子：按钮、图标、标签、红点、缩略图与头像、输入框、开关、复选框、数字、骨架、转圈。依赖 tokens.css、base.css。 */
 
-/* ---------- 按钮：主（墨）· 次（凹面）· 文字 ---------- */
+/* ---------- 按钮：主（主题动作色）· 次（凹面）· 文字 ---------- */
 .vx-btn {
   display: inline-flex;
   align-items: center;
@@ -13,7 +13,9 @@
   background: var(--vx-surface-inset);
   color: var(--vx-text-primary);
   font-size: var(--vx-font-size-md);
-  white-space: nowrap;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
   transition: background var(--vx-motion-duration-fast), transform var(--vx-motion-duration-fast);
 }
 
@@ -33,20 +35,21 @@
 }
 
 .vx-btn svg {
+  flex-shrink: 0;
   width: var(--vx-size-icon-sm);
   height: var(--vx-size-icon-sm);
 }
 
-.vx-btn--primary {
-  background: linear-gradient(180deg, var(--vx-ink-top), var(--vx-ink-base));
-  color: var(--vx-text-on-strong);
-  font-weight: var(--vx-font-weight-medium);
+/* 同一主动作外观可用于标准按钮、图标发送键和悬浮入口。 */
+.vx-action, .vx-btn--primary, .vx-composer-send, .vx-ask {
+  background: var(--vx-action-fill);
+  color: var(--vx-action-text);
+  box-shadow: inset 0 0 0 1px var(--vx-action-edge), var(--vx-action-elevation, 0 0 transparent);
 }
-
-.vx-btn--primary:hover {
-  background: linear-gradient(180deg, var(--vx-ink-top), var(--vx-ink-base));
-  filter: brightness(1.12);
+:is(.vx-action, .vx-btn--primary, .vx-composer-send, .vx-ask):hover:not(:disabled, [aria-disabled='true']) {
+  background: var(--vx-action-fill-hover);
 }
+.vx-btn--primary { font-weight: var(--vx-font-weight-medium); }
 
 .vx-btn--ghost {
   background: transparent;
@@ -87,6 +90,8 @@
   position: relative;
 }
 
+.vx-btn[data-loading='true'] > * { opacity: 0; }
+
 .vx-btn[data-loading='true']::after {
   content: '';
   position: absolute;
@@ -97,11 +102,11 @@
   border-radius: 50%;
   border: 2px solid currentColor;
   border-color: var(--vx-text-tertiary) transparent var(--vx-text-tertiary) transparent;
-  animation: vx-spin 0.8s linear infinite;
+  animation: vx-spin var(--vx-motion-duration-spin) linear infinite;
 }
 
 .vx-btn--primary[data-loading='true']::after {
-  border-color: var(--vx-text-on-strong) transparent var(--vx-text-on-strong) transparent;
+  border-color: var(--vx-action-text) transparent var(--vx-action-text) transparent;
 }
 
 /* ---------- 图标：纯 HTML 页面用 <svg class="vx-icon"><use href="…/sprite.svg#含义"/></svg> ---------- */
@@ -193,7 +198,7 @@ button.vx-toggle:hover {
 }
 
 /* ---------- 文字链接：按钮形态的链接与 <a> 同一外观（base.css a） ---------- */
-.vx-link { display: inline; padding: 0; border: 0; background: none; font: inherit; line-height: inherit; text-align: inherit; cursor: pointer; color: var(--vx-brand-accent); text-decoration: underline; text-underline-offset: 0.18em; }
+.vx-link { display: inline; padding: 0; border: 0; background: none; font: inherit; line-height: inherit; text-align: inherit; cursor: pointer; color: var(--vx-text-link); text-decoration: underline; text-underline-offset: 0.18em; }
 .vx-link:hover, a:hover { text-decoration-thickness: 2px; }
 
 /* ---------- 标签：中性 · 强调（金）· 危急（朱）---------- */
@@ -201,12 +206,13 @@ button.vx-toggle:hover {
   display: inline-flex;
   align-items: center;
   gap: var(--vx-space-1);
-  height: 22px;
+  min-height: max(22px, 1.75em);
+  max-width: 100%;
   padding: 0 var(--vx-space-2);
   border-radius: var(--vx-radius-full);
   font-size: var(--vx-font-size-sm);
-  line-height: 1;
-  white-space: nowrap;
+  line-height: var(--vx-font-leading-tight);
+  overflow-wrap: anywhere;
   background: var(--vx-fill-quiet);
   color: var(--vx-text-secondary);
 }
@@ -240,15 +246,15 @@ button.vx-toggle:hover {
 
 /* ---------- 红点与计数：只在必要时出现 ---------- */
 .vx-badge {
-  min-width: 18px;
-  height: 18px;
+  min-width: max(18px, 1.4em);
+  min-height: max(18px, 1.4em);
   padding: 0 var(--vx-space-1);
   border-radius: var(--vx-radius-full);
   background: var(--vx-brand-critical);
   color: var(--vx-text-on-critical);
   font-family: var(--vx-font-family-num);
   font-size: var(--vx-font-size-xs);
-  line-height: 18px;
+  line-height: max(18px, 1.4em);
   text-align: center;
 }
 
@@ -377,8 +383,8 @@ button.vx-toggle:hover {
 
 /* ---------- 开关：32px 命中区内保留紧凑轨道 ---------- */
 .vx-switch { position: relative; display: inline-block; width: 44px; height: var(--vx-size-hit); flex-shrink: 0; background: transparent; border-radius: var(--vx-radius-full); }
-.vx-switch::before { content: ''; position: absolute; width: 30px; height: 18px; left: 7px; top: 7px; border-radius: var(--vx-radius-full); background: var(--vx-surface-inset); border: 1px solid var(--vx-line-control); }
-.vx-switch::after { content: ''; position: absolute; width: 14px; height: 14px; top: 9px; left: 9px; border-radius: 50%; background: var(--vx-text-secondary); transition: transform var(--vx-motion-duration-base) var(--vx-motion-ease-standard); }
+.vx-switch::before { content: ''; position: absolute; width: 30px; height: 18px; left: 7px; top: calc(50% - 9px); border-radius: var(--vx-radius-full); background: var(--vx-surface-inset); border: 1px solid var(--vx-line-control); }
+.vx-switch::after { content: ''; position: absolute; width: 14px; height: 14px; top: calc(50% - 7px); left: 9px; border-radius: 50%; background: var(--vx-text-secondary); transition: transform var(--vx-motion-duration-base) var(--vx-motion-ease-standard); }
 .vx-switch[aria-checked='true']::before, .vx-switch-input:checked + .vx-switch::before { background: var(--vx-ink-base); border-color: var(--vx-ink-base); }
 .vx-switch[aria-checked='true']::after, .vx-switch-input:checked + .vx-switch::after { transform: translateX(12px); background: var(--vx-text-on-strong); }
 .vx-switch-input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: inherit; }
@@ -434,7 +440,7 @@ button.vx-toggle:hover {
   border-radius: var(--vx-radius-xs);
   background: linear-gradient(90deg, var(--vx-fill-quiet) 0%, var(--vx-fill-selected) 50%, var(--vx-fill-quiet) 100%);
   background-size: 200% 100%;
-  animation: vx-shimmer 1.4s ease-in-out infinite;
+  animation: vx-shimmer var(--vx-motion-duration-pulse) ease-in-out infinite;
 }
 
 .vx-spinner {
@@ -443,7 +449,7 @@ button.vx-toggle:hover {
   border-radius: 50%;
   border: 2px solid var(--vx-fill-selected);
   border-top-color: var(--vx-text-secondary);
-  animation: vx-spin 0.8s linear infinite;
+  animation: vx-spin var(--vx-motion-duration-spin) linear infinite;
 }
 
 @keyframes vx-spin {

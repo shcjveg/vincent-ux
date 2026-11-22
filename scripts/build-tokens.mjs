@@ -8,9 +8,10 @@
 //   - 阴影、模糊等非颜色值 light-dark() 不支持，分别写进浅色与暗色两段
 // - :root 默认跟随系统；<html data-theme="light|dark"> 强制指定
 // - 配色主题（tokens/src/palettes.json）：<html data-palette="主题 id"> 切换，与明暗正交。
-//   每套主题只给参数，色值从默认配色派生：明度不变，只换色相与彩度（见 derive）
+//   基础主题按色相与彩度派生；网站三色主题从原色映射到承载面、文字和主按钮。
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { fromOklch, format, parse, toOklch } from './color.mjs'
+import { websitePalette, websiteNeutral, websiteAction, websiteTextLink } from './website-palette.mjs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -41,36 +42,18 @@ const v = (t) => `--${PREFIX}-${t.name}`
 
 const base = flat.filter((t) => t.value !== undefined)
 const themed = flat.filter((t) => t.light !== undefined)
-const colors = themed.filter((t) => t.type === 'color')
 const others = themed.filter((t) => t.type !== 'color')
 
 const header = `/* vincent-ux v${pkg.version} · tokens/dist/tokens.css · 由 scripts/build-tokens.mjs 生成，不要手改 */`
-const css = `${header}
-
-:root {
-  color-scheme: light dark;
-${base.map((t) => `  ${v(t)}: ${fmt(t)};`).join('\n')}
-${colors.map((t) => `  ${v(t)}: light-dark(${t.light}, ${t.dark});`).join('\n')}
-${others.map((t) => `  ${v(t)}: ${t.light};`).join('\n')}
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-${others.map((t) => `    ${v(t)}: ${t.dark};`).join('\n')}
-  }
-}
-
-:root[data-theme='light'] {
-  color-scheme: light;
-${others.map((t) => `  ${v(t)}: ${t.light};`).join('\n')}
-}
-
-:root[data-theme='dark'] {
-  color-scheme: dark;
-${others.map((t) => `  ${v(t)}: ${t.dark};`).join('\n')}
-}
-`
-
+const scope = ':where(:root, .vx-theme)'
+const properties = items => items.map(([key, val]) => `  ${key}: ${val};`).join('\n')
+const rule = (selector, props) => `${selector} {\n${properties(props)}\n}\n`
+const paletteProperties = tokens => tokens.flatMap(t => t.type === 'color'
+  ? [[v(t), `light-dark(${t.light}, ${t.dark})`]]
+  : [[v(t) + '-light', t.light], [v(t) + '-dark', t.dark]])
+// 自定义属性的空值让选定的分支展开，initial 触发 var 的回退值。
+// 阴影与滤镜也因此能继承最近一层明暗选择。
+const modeProperties = dark => [['--vx-light', dark ? ' ' : 'initial'], ['--vx-dark', dark ? 'initial' : ' ']]
 // —— 配色主题 ——
 // 角色：中性层（面、文字、线、填充、墨色、阴影、中性图表色）跟主题的中性色相；强调色（含焦点环、强调图表色）
 // 跟主题的强调色；危急色只换色相；警示色默认不随主题变（主题可给 warning.hue）；涨跌色（data）不随主题变，保证正负含义稳定。
@@ -83,11 +66,12 @@ const role = (p) => {
   if (['surface', 'fill', 'text', 'line', 'ink', 'shadow'].includes(group)) return 'neutral'
   return null
 }
-function shift(color, r, palette, mode) {
+function shift(color, r, palette, mode, path) {
   const c = parse(color)
   const [L, C, h] = toOklch(c)
   let next
-  if (r === 'neutral') {
+  if (r === 'neutral' && palette.paper) next = websiteNeutral([L, C], palette, mode, path)
+  else if (r === 'neutral') {
     const k = mode === 'dark' ? palette.neutral.darkChroma ?? palette.neutral.chroma : palette.neutral.chroma
     next = [L, C * k, palette.neutral.hue]
   } else if (r === 'accent') next = [L + (mode === 'light' ? palette.accent.lightness ?? 0 : 0), C * (palette.accent.chroma / ACCENT_BASE_CHROMA), palette.accent.hue]
@@ -96,37 +80,41 @@ function shift(color, r, palette, mode) {
   return format([...fromOklch(next), c[3]])
 }
 const derive = (t, r, palette, mode) => t.type === 'color'
-  ? shift(t[mode], r, palette, mode)
-  : String(t[mode]).replace(/rgba?\([^)]*\)|#[0-9A-Fa-f]{6}\b/g, (m) => shift(m, r, palette, mode))
+  ? shift(t[mode], r, palette, mode, t.path)
+  : String(t[mode]).replace(/rgba?\([^)]*\)|#[0-9A-Fa-f]{6}\b/g, (m) => shift(m, r, palette, mode, t.path))
 
 const paletteSource = read('palettes.json')
-const palettes = Object.entries(paletteSource).filter(([id, p]) => !id.startsWith('$') && !p.default).map(([id, p]) => ({
-  id, meta: p,
-  tokens: themed.filter((t) => role(t.path)).map((t) => ({ ...t, light: derive(t, role(t.path), p, 'light'), dark: derive(t, role(t.path), p, 'dark') })),
-}))
-const paletteCSS = palettes.map(({ id, meta, tokens }) => {
-  const sel = `:root[data-palette='${id}']`
-  const c = tokens.filter((t) => t.type === 'color'), o = tokens.filter((t) => t.type !== 'color')
-  return `/* ${meta.name}：${meta.tone} */
-${sel} {
-${c.map((t) => `  ${v(t)}: light-dark(${t.light}, ${t.dark});`).join('\n')}
-${o.map((t) => `  ${v(t)}: ${t.light};`).join('\n')}
-}
+const palettes = Object.entries(paletteSource).filter(([id, p]) => !id.startsWith('$') && !p.default).map(([id, meta]) => {
+  const palette = meta.swatches ? websitePalette(meta.swatches) : meta
+  const tokens = themed.filter(t => role(t.path)).map(t => ({
+    ...t, light: derive(t, role(t.path), palette, 'light'), dark: derive(t, role(t.path), palette, 'dark'),
+  }))
+  if (meta.swatches) tokens.push(websiteTextLink(meta.swatches), ...websiteAction(meta.swatches, tokens))
+  return { id, meta, tokens }
+}).sort((a, b) => a.meta.name.localeCompare(b.meta.name, 'zh-CN'))
+const overridden = new Set(palettes.flatMap(p => p.tokens.map(t => t.name)))
+const defaultsAtScope = base.filter(t => overridden.has(t.name) || String(t.value).includes('var('))
+const css = [
+  header,
+  rule(':root', [['color-scheme', 'light dark'], ...modeProperties(false), ...base.map(t => [v(t), fmt(t)])]),
+  rule(':root, .vx-theme[data-palette]', [...defaultsAtScope.map(t => [v(t), fmt(t)]), ...paletteProperties(themed)]),
+  rule(scope, others.map(t => [v(t), `var(--vx-light, var(${v(t)}-light)) var(--vx-dark, var(${v(t)}-dark))`])),
+  `@media (pointer: coarse) {\n${rule(':root', [['--vx-size-hit', 'var(--vx-size-hit-touch)']])}}\n`,
+  `@media (prefers-color-scheme: dark) {\n${rule(":root:not([data-theme='light'])", modeProperties(true))}}\n`,
+  ...['light', 'dark'].map(mode => rule(`${scope}[data-theme='${mode}']`, [['color-scheme', mode], ...modeProperties(mode === 'dark')])),
+].join('\n')
 
-@media (prefers-color-scheme: dark) {
-  ${sel}:not([data-theme='light']) {
-${o.map((t) => `    ${v(t)}: ${t.dark};`).join('\n')}
-  }
-}
-
-${sel}[data-theme='dark'] {
-${o.map((t) => `  ${v(t)}: ${t.dark};`).join('\n')}
-}
-`
-}).join('\n')
+const paletteCSS = palettes.map(({ id, meta, tokens }) =>
+  `/* ${meta.name} */\n` + rule(`:is(:root, .vx-theme)[data-palette='${id}']`, paletteProperties(tokens))
+).join('\n')
 
 mkdirSync(join(ROOT, 'tokens/dist'), { recursive: true })
 writeFileSync(join(ROOT, 'tokens/dist/tokens.css'), css + (paletteCSS ? `\n${paletteCSS}` : ''))
+const catalog = [
+  ...Object.entries(paletteSource).filter(([, p]) => p.default).map(([id, p]) => ({ id, name: p.name, default: true })),
+  ...palettes.map(({ id, meta }) => ({ id, name: meta.name })),
+]
+writeFileSync(join(ROOT, 'tokens/dist/palettes.json'), JSON.stringify(catalog, null, 2) + '\n')
 writeFileSync(
   join(ROOT, 'tokens/dist/tokens.json'),
   JSON.stringify({

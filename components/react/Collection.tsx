@@ -1,11 +1,11 @@
-// vincent-ux v1.6.0 · components/react/Collection.tsx
+// vincent-ux v1.7.0 · components/react/Collection.tsx
 import type { Key, ReactNode } from 'react'
 import { EmptyState } from './EmptyState'
 import { Button } from './Button'
 
 // 只承接呈现与反馈；排序、筛选、选择、分页及请求状态由消费方控制。
 export function Collection<T>({ items, getKey, renderItem, layout = 'list', label = '结果', loading = false,
-  error, onRetry, emptyTitle = '暂无内容', emptyDescription = '添加第一项后会显示在这里。', emptyAction, total = items.length, actions }: {
+  error, onRetry, emptyTitle = '暂无内容', emptyDescription, emptyAction, total = items.length, actions }: {
   items: T[]; getKey: (item: T) => Key; renderItem: (item: T) => ReactNode
   layout?: 'list' | 'grid'; label?: string; loading?: boolean; error?: string; onRetry?: () => void
   emptyTitle?: string; emptyDescription?: string; emptyAction?: ReactNode; total?: number; actions?:ReactNode

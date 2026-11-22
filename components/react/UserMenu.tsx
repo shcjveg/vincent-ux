@@ -1,6 +1,7 @@
-// vincent-ux v1.6.0 · components/react/UserMenu.tsx
+// vincent-ux v1.7.0 · components/react/UserMenu.tsx
 // 右上角的当前用户入口：只放一个头像，点开是极简菜单——名字与身份一行说明，下面是账户动作。
 // 外壳已有用户卡片的产品（例如侧栏底部）不再重复放；嵌入宿主的应用页只在宿主不显示身份时使用。
+import { useThemeContainer } from './ThemeScope'
 import { Menu } from '@base-ui/react/menu'
 import { Icon, type IconName } from './Icon'
 
@@ -13,10 +14,11 @@ export function UserMenu({ name, meta, items = [], tour }: {
   /** 导览锚点名，写到头像入口的 data-tour 上。 */
   tour?: string
 }) {
+  const container = useThemeContainer()
   const initial = Array.from(name.trim())[0] ?? '?'
   return <Menu.Root>
     <Menu.Trigger className="vx-user-trigger" data-tour={tour} aria-label={`当前用户：${name}`}><span className="vx-avatar" aria-hidden="true">{initial}</span></Menu.Trigger>
-    <Menu.Portal><Menu.Positioner side="bottom" align="end" sideOffset={8} className="vx-menu-positioner">
+    <Menu.Portal container={container}><Menu.Positioner side="bottom" align="end" sideOffset={8} className="vx-menu-positioner">
       <Menu.Popup className="vx-menu" aria-label="当前用户">
         <div className="vx-menu-head">
           <span className="vx-avatar" aria-hidden="true">{initial}</span>

@@ -1,4 +1,6 @@
-// vincent-ux v1.6.0 · components/react/Pagination.tsx
+// vincent-ux v1.7.0 · components/react/Pagination.tsx
+import { Icon } from './Icon'
+
 export function Pagination({ page, totalPages, onChange, disabled = false }: {
   page: number; totalPages: number; onChange: (page: number) => void; disabled?: boolean
 }) {
@@ -7,10 +9,10 @@ export function Pagination({ page, totalPages, onChange, disabled = false }: {
   const start = Math.max(1, Math.min(current - 2, totalPages - 4))
   const pages = Array.from({ length: Math.min(5, totalPages) }, (_, i) => start + i)
   return <nav className="vx-pager" aria-label="分页">
-    <button type="button" aria-label="上一页" disabled={disabled || current === 1} onClick={() => onChange(current - 1)}>‹</button>
+    <button type="button" aria-label="上一页" disabled={disabled || current === 1} onClick={() => onChange(current - 1)}><Icon name="back" size="sm" /></button>
     {pages.map(p => <button type="button" key={p} disabled={disabled} aria-label={`第 ${p} 页`}
       aria-current={p === current ? 'page' : undefined} onClick={() => onChange(p)}>{p}</button>)}
-    <button type="button" aria-label="下一页" disabled={disabled || current === totalPages} onClick={() => onChange(current + 1)}>›</button>
+    <button type="button" aria-label="下一页" disabled={disabled || current === totalPages} onClick={() => onChange(current + 1)}><Icon name="next" size="sm" /></button>
     <span>第 {current} / {totalPages} 页</span>
   </nav>
 }

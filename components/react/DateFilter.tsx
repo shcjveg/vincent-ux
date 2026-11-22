@@ -1,9 +1,10 @@
-// vincent-ux v1.6.0 · components/react/DateFilter.tsx
+// vincent-ux v1.7.0 · components/react/DateFilter.tsx
+import { useThemeContainer } from './ThemeScope'
 import { useState } from 'react'
 import { Popover } from '@base-ui/react/popover'
 import { Icon } from './Icon'
 import { Select } from './Select'
-import { Switch } from './Switch'
+import { Checkbox } from './Checkbox'
 import { DateCalendar } from './DateCalendar'
 import { localDay, parseDay } from './dateMath'
 
@@ -22,6 +23,7 @@ function presetRange(label:string,today:string){const end=parseDay(today),start=
 }
 function precedingRange(from:string,to:string){const a=parseDay(from),b=parseDay(to),days=Math.round((Date.UTC(b.getFullYear(),b.getMonth(),b.getDate())-Date.UTC(a.getFullYear(),a.getMonth(),a.getDate()))/86400000)+1,end=new Date(a),start=new Date(a);end.setDate(end.getDate()-1);start.setDate(start.getDate()-days);return{from:localDay(start),to:localDay(end)}}
 export function DateFilter({value,field,fields,onChange,allowComparison=false}:{value:DateFilterValue;field:string;fields:{id:string;label:string}[];onChange:(value:DateFilterValue,field:string)=>void;allowComparison?:boolean}){
+  const container = useThemeContainer()
  const [open,setOpen]=useState(false),[draft,setDraft]=useState(value),[draftField,setDraftField]=useState(field),[active,setActive]=useState<'from'|'to'>('from'),[single,setSingle]=useState(false),[today,setToday]=useState(()=>localDay(new Date())),[anchor,setAnchor]=useState(()=>value.from||localDay(new Date())),[compare,setCompare]=useState(!!value.comparison)
  const fieldLabel=fields.find(f=>f.id===field)?.label??'时间'
  // 字段名为空：页面只有一个时间口径，触发器只显示范围，浮层不出字段下拉。
@@ -33,7 +35,7 @@ export function DateFilter({value,field,fields,onChange,allowComparison=false}:{
  const apply=()=>{onChange({...draft,comparison:allowComparison&&compare?precedingRange(draft.from,draft.to):undefined},draftField);setOpen(false)}
  return <Popover.Root open={open} onOpenChange={v=>{setOpen(v);if(v){const now=localDay(new Date());setToday(now);setDraft(value);setDraftField(field);setAnchor(value.from||now);setActive('from');setSingle(!!value.from&&value.from===value.to&&!value.preset);setCompare(!!value.comparison)}}}>
   <Popover.Trigger className="vx-btn vx-btn--ghost vx-btn--sm vx-date-trigger" aria-label={label==='时间范围'?label:`时间范围：${label}`} data-active={!!(value.from||value.to)||undefined}><Icon name="calendar"/><span>{label}</span></Popover.Trigger>
-  <Popover.Portal><Popover.Positioner side="bottom" align="end" sideOffset={6} className="vx-control-positioner"><Popover.Popup className="vx-popup vx-date-popup" aria-label="时间范围设置">
+  <Popover.Portal container={container}><Popover.Positioner side="bottom" align="end" sideOffset={6} className="vx-control-positioner"><Popover.Popup className="vx-popup vx-date-popup" aria-label="时间范围设置">
    <div className="vx-date-heading"><Popover.Title>时间范围</Popover.Title>{fieldLabel&&<Select label="筛选时间字段" value={draftField} options={fields.map(f=>({value:f.id,label:f.label}))} onChange={setDraftField} variant="inline"/>}</div>
    <div className="vx-date-body">
     <aside className="vx-date-sidebar"><div className="vx-date-presets" role="group" aria-label="快捷日期范围">
@@ -41,7 +43,7 @@ export function DateFilter({value,field,fields,onChange,allowComparison=false}:{
      <button type="button" className="vx-date-preset" aria-pressed={single} onClick={()=>{setSingle(true);const d=draft.from||today;setDraft({from:d,to:d});setAnchor(d);setActive('from')}}>具体日期</button>
      <div className="vx-control-divider"/>
      {PRESETS.map(p=><button type="button" className="vx-date-preset" key={p} aria-pressed={draft.preset===p} onClick={()=>{const range=presetRange(p,today);setDraft(range);setSingle(false);setAnchor(range.from);setActive('from')}}>{p}{p==='本周'&&<small>周一至今天</small>}{p==='上周'&&<small>周一至周日</small>}</button>)}
-    </div>{allowComparison&&<div className="vx-date-comparison"><Switch label="对比上一时段" checked={compare} onChange={e=>setCompare(e.target.checked)}/></div>}</aside>
+    </div>{allowComparison&&<div className="vx-date-comparison"><Checkbox label="对比上一时段" checked={compare} onChange={e=>setCompare(e.target.checked)}/></div>}</aside>
     <div className="vx-date-main">
      <div className="vx-date-inputs"><label data-active={active==='from'||undefined}>{single?'日期':'开始日期'}<input className="vx-input" type="date" aria-label={single?'具体日期':'起始日期'} value={draft.from} onFocus={()=>setActive('from')} onChange={e=>editDate('from',e.target.value)}/></label>{!single&&<><span className="vx-date-dash">—</span><label data-active={active==='to'||undefined}>结束日期<input className="vx-input" type="date" aria-label="截止日期" value={draft.to} onFocus={()=>setActive('to')} onChange={e=>editDate('to',e.target.value)}/></label></>}</div>
      <DateCalendar key={anchor} from={draft.from} to={draft.to} today={today} anchor={anchor} onSelect={selectDate}/>
