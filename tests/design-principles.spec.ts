@@ -1,5 +1,8 @@
+import paletteSource from '../tokens/src/palettes.json' with { type: 'json' }
 import { test, expect, type Page } from '@playwright/test'
 import { readFile } from 'node:fs/promises'
+
+const paletteCount = Object.keys(paletteSource).filter(key => !key.startsWith('$')).length
 
 test.beforeEach(async ({ page }) => { await page.goto('/showcase/') })
 
@@ -247,8 +250,13 @@ test('色卡、实际按钮和模式切换共用配色，选中反馈与键盘�
   await expect(login).toHaveCSS('background-image', /linear-gradient/)
 })
 
-test('22 套主题的阅读卡、门户与行内链接使用对应的文字色阶', async ({ page }) => {
-  await expect(page.locator('[data-palette-id]')).toHaveCount(22)
+test('各主题的阅读卡、门户与行内链接使用对应的文字色阶', async ({ page }) => {
+  await expect(page.locator('[data-palette-id]')).toHaveCount(paletteCount)
+  const sourceSwatches = Object.fromEntries(Object.entries(paletteSource).flatMap(([id, palette]) =>
+    typeof palette === 'object' && 'swatches' in palette ? [[id, palette.swatches]] : []))
+  const shownSwatches = await page.locator('.sc-palette:has(.sc-palette-band)').evaluateAll(cards => Object.fromEntries(
+    cards.map(card => [card.getAttribute('data-palette'), Array.from(card.querySelectorAll('dd code'), el => el.textContent)])))
+  expect(shownSwatches).toEqual(sourceSwatches)
   const themes = await page.locator('[data-palette-id]').evaluateAll(cards => cards.map(card => (card as HTMLElement).dataset.paletteId!))
   const mismatches = await page.evaluate(ids => {
     const root = document.documentElement
@@ -317,7 +325,7 @@ test('批量操作使用完整已选范围，可导出、移动、归档和撤�
 })
 
 test('各主题的局部色卡和整页主按钮在两种明暗下使用同一组外观', async ({ page }) => {
-  await expect(page.locator('[data-palette-id]')).toHaveCount(22)
+  await expect(page.locator('[data-palette-id]')).toHaveCount(paletteCount)
   await page.addStyleTag({ content: '* { transition: none !important; }' })
   const mismatches = await page.evaluate(() => {
     const root = document.documentElement

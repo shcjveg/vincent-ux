@@ -75,10 +75,14 @@
 }
 .sc-palette[data-current] { box-shadow: inset 0 0 0 2px var(--vx-focus-ring); }
 .sc-palette h4 { margin: 0; font-size: var(--vx-font-size-lg); }
-.sc-palette .vx-btn { justify-self: start; }
-.sc-palette-roles { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--vx-space-2); margin: 0; }
+.sc-palette .vx-btn { place-self: end start; }
+.sc-palette-band { display: grid; grid-template-columns: 6fr 3fr 1fr; height: var(--vx-space-5); margin-bottom: var(--vx-space-2); overflow: hidden; border-radius: var(--vx-radius-sm); }
+.sc-palette-roles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 3.25rem), 1fr)); gap: var(--vx-space-2); margin: 0; }
+.sc-palette-key { display: inline-block; width: var(--vx-space-2); height: var(--vx-space-2); margin-inline-end: var(--vx-space-1); border-radius: var(--vx-radius-full); box-shadow: inset 0 0 0 1px var(--vx-line-faint); }
 .sc-palette-roles dt { font-size: var(--vx-font-size-sm); color: var(--vx-text-secondary); }
-.sc-palette-roles dd { margin: var(--vx-space-1) 0 0; height: 8px; border-radius: var(--vx-radius-full); }
+.sc-palette-roles dd { margin: var(--vx-space-1) 0 0; }
+.sc-palette-roles i { display: block; height: var(--vx-space-2); border-radius: var(--vx-radius-full); box-shadow: inset 0 0 0 1px var(--vx-line-faint); }
+.sc-palette-roles code { font: var(--vx-font-size-xs) var(--vx-font-family-mono); color: var(--vx-text-secondary); }
 .sc-palette-paper { background: var(--vx-surface-shell); box-shadow: inset 0 0 0 1px var(--vx-line-faint); }
 .sc-palette-ink { background: var(--vx-text-secondary); }
 .sc-palette-action { background: var(--vx-action-fill); }

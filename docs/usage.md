@@ -130,7 +130,7 @@ import { Button, ThemeScope } from './vincent-ux/react'
 
 默认主题跟随系统；在根元素上设置 `data-theme="light"` 或 `data-theme="dark"` 可手动切换。要让用户自己切换，放一个 [`ThemeToggle`](../components/README.md)（React）：左下角最底的小圆钮，记住用户的选择；根元素上写的 `data-theme` 作为没选过时的默认值，适合嵌入固定浅色宿主的页面。
 
-在根元素上设置 `data-palette="主题 id"` 切换配色，默认使用墨金。22 套主题共用一个选择器。打开本地展示页的「颜色 → 配色主题」，先比较同一张卡里的页面、正文和主按钮，再应用到整页。切换明暗可继续比较同一任务。[主题预览](http://127.0.0.1:5190/showcase/#palettes)
+在根元素上设置 `data-palette="主题 id"` 切换配色，默认使用墨金。所有主题共用一个选择器。打开本地展示页的「颜色 → 配色主题」，先比较同一张卡里的页面、正文和主按钮，再应用到整页。切换明暗可继续比较同一任务。[主题预览](http://127.0.0.1:5190/showcase/#palettes)
 
 ### 从三种品牌色接入
 
@@ -138,7 +138,7 @@ import { Button, ThemeScope } from './vincent-ux/react'
 
 在页面使用 `Button variant="primary"` 或 `.vx-btn--primary`。已有形状的自定义主操作控件可以加 `.vx-action`，一起取得 `action-fill`、`action-fill-hover`、`action-text` 和 `action-edge`。图标继承文字颜色。反色横幅在局部提供整组颜色。新增主题后运行 `npm run build` 和 `npm run check`，再用键盘试一次选中、提交和等待反馈。[颜色规则](../principles/visual.md#颜色只表达意义)
 
-配色参考包括产品调性分类，以及 Leo 边减边设计《高级感网站配色》三条视频中的 12 组原色。[分类研究](research/color-theme-taxonomy.md) · [原色记录](../tokens/src/palettes.json)
+在展示页可对照品牌色带与实际按钮。同步副本的 `palettes.json` 在有品牌原色的主题上提供 `swatches`，依次为两种基础色和强调色。例如用 `data-palette="forest-violet"` 接入「森林电紫」，正文、焦点和按钮自动沿用对应的语义变量。配色参考包括 Leo 边减边设计拆解的 12 组与 A BLUE DOT 演示的 6 组。[三色搭配与用色比例](research/three-color-composition.md) · [主题分类研究](research/color-theme-taxonomy.md)
 
 接入文字时，标题用 `.vx-title`，段落用 `.vx-body`，日期或来源用 `.vx-meta`。行内链接使用原生 `a`，按钮形态的文字链接使用 `.vx-link`。这些角色会随主题和明暗切换。比如「奶油焦橙」在浅色模式下使用墨黑标题、暖灰正文和较深的橙色链接，焦橙保留给主按钮。[预览同一段文字](http://127.0.0.1:5190/showcase/?palette=cream-ember#text-colors) · [文字用色规则](../principles/visual.md#文字三级)
 

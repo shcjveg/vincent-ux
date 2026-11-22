@@ -112,7 +112,7 @@ mkdirSync(join(ROOT, 'tokens/dist'), { recursive: true })
 writeFileSync(join(ROOT, 'tokens/dist/tokens.css'), css + (paletteCSS ? `\n${paletteCSS}` : ''))
 const catalog = [
   ...Object.entries(paletteSource).filter(([, p]) => p.default).map(([id, p]) => ({ id, name: p.name, default: true })),
-  ...palettes.map(({ id, meta }) => ({ id, name: meta.name })),
+  ...palettes.map(({ id, meta }) => ({ id, name: meta.name, swatches: meta.swatches })),
 ]
 writeFileSync(join(ROOT, 'tokens/dist/palettes.json'), JSON.stringify(catalog, null, 2) + '\n')
 writeFileSync(

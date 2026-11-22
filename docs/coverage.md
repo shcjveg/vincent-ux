@@ -6,7 +6,7 @@
 
 | 系统部分 | 具体改造或保留的实现 | 验收入口 |
 |---|---|---|
-| 颜色、表面与主操作 | 22 套主题提供页面、文本、操作、反馈和焦点角色；局部主题和整页消费同一规则 | [主题与阅读回归](../tests/design-principles.spec.ts) |
+| 颜色、表面与主操作 | 所有主题提供页面、文本、操作、反馈和焦点角色；局部主题和整页消费同一规则 | [主题与阅读回归](../tests/design-principles.spec.ts) |
 | 排版、形状与留白 | 字号随根字号缩放，控件有最小高度并随文字增长。公共 CSS 的字号、内外边距、间隔和圆角接入刻度。卡片标题可按宿主文档选标题级别。320px 宽叠加两倍字号时，任务状态与长按钮换行 | [基础变量](../tokens/src/base.tokens.json) · [刻度检查](../scripts/check.mjs) · [嵌入项目](../tests/consumer.spec.ts) |
 | 图标与命中区 | HTML 和 React 图标使用同一尺寸刻度；分页用语义图标。独立操作的命中区随输入方式变化，关闭页签同步预留空间 | [图标清单一致性](../tests/tooling.test.mjs) · [触控回归](../tests/system-contracts.spec.ts) |
 | 组件组合与页面空间 | 表单栅格、筛选搜索、门户按自身宽度重排；工作区测量实际占宽决定导航和对话的呈现方式 | [桌面内嵌窄模块、键盘登录与工作区草稿](../tests/system-contracts.spec.ts) |
@@ -34,10 +34,10 @@
 | 同屏偏好和表单字段生效时间不同 | [操作何时生效](../principles/interaction.md#操作何时生效) | [发布设置](../showcase/SettingsExample.tsx)、`ThemeToggle`、`Checkbox`、`DateFilter` | [原则回归](../tests/design-principles.spec.ts)核对取消、刷新、写入失败、重试与导出文件。[日期组件测试](../tests/components.spec.ts)核对「应用」前后的比较范围 |
 | 编辑新条件时误导出旧结果以外的对象 | [已应用的查询范围](../patterns/browse.md#已应用的查询范围) | [明细查询](../showcase/ReportExample.tsx) | [原则回归](../tests/design-principles.spec.ts)核对下钻、失败、并发查询与导出的逐条记录。宿主负责服务端范围和权限 |
 | 连续回复把读者从旧内容拉到底部 | [持续输出与回读](../patterns/page-chat-flow.md#持续输出与回读) | [ChatTranscript](../components/react/ChatTranscript.tsx)、[工作区示例](../showcase/WorkspaceDemo.tsx) | [原则回归](../tests/design-principles.spec.ts)核对跟随、回读、会话恢复和键盘返回。宿主按会话保留阅读位置 |
-| 按钮有品牌色，但正文和注释抢眼程度相近，选中行的小字变淡 | [文字三级](../principles/visual.md#文字三级) | [阅读卡与配色对照](../showcase/index.html#text-colors)、门户及导览链接 | `npm run check` 核对实际表面、选中、悬停、淡色底的文字对比度和常用层级顺序。[浏览器测试](../tests/design-principles.spec.ts)核对 22 套浅深主题的文字角色与行内导航 |
+| 按钮有品牌色，但正文和注释抢眼程度相近，选中行的小字变淡 | [文字三级](../principles/visual.md#文字三级) | [阅读卡与配色对照](../showcase/index.html#text-colors)、门户及导览链接 | `npm run check` 核对实际表面、选中、悬停、淡色底的文字对比度和常用层级顺序。[浏览器测试](../tests/design-principles.spec.ts)核对各套浅深主题的文字角色与行内导航 |
 | 嵌入其他产品时，按钮重置污染宿主、弹窗脱离主题 | [接入边界](usage.md#按产品边界接入) | `embedded.css`、`ThemeScope`、作用域内的浮层 | [独立接入回归](../tests/consumer.spec.ts) 在临时项目构建同步副本，实际打开弹窗、切换明暗、检查宿主 |
 | 保存失败后丢草稿，或把草稿当作生效值 | [保存与重试](usage.md#保存与重试) | `useDraftForm`、设置表单和嵌入编辑器 | 独立接入回归与[展示页交互](../tests/design-principles.spec.ts)覆盖失败、重试与刷新 |
-| 不同调性的产品只能共用一套配色 | [视觉原则 · 颜色只表达意义](../principles/visual.md)、[使用指南 · 配色与主题](usage.md#配色与主题)、[分类调研](research/color-theme-taxonomy.md) | `data-palette` + `tokens/src/palettes.json`；[展示页](../showcase/index.html) 颜色 › 配色主题 | `npm run check`：22 套主题浅色／暗色对比度、强调色与危急色色相间隔；[组件测试](../tests/components.spec.ts)：配色切换和深链接改变门户主按钮，键盘与浅深模式仍可用 |
+| 不同调性的产品只能共用一套配色 | [视觉原则 · 颜色只表达意义](../principles/visual.md)、[使用指南 · 配色与主题](usage.md#配色与主题)、[分类调研](research/color-theme-taxonomy.md) | `data-palette` + `tokens/src/palettes.json`；[展示页](../showcase/index.html) 颜色 › 配色主题 | `npm run check`：各主题浅色／暗色对比度、强调色与危急色色相间隔；[组件测试](../tests/components.spec.ts)：配色切换和深链接改变门户主按钮，键盘与浅深模式仍可用 |
 | 原型组合已更新但组件规范与展示仍停留在旧结构 | [收起与展开](../components/disclosure.md)、[组件指南](../components/README.md) | `Fold` 分组／详情／编辑、行内步骤与对话过程；[ComponentExamples](../showcase/ComponentExamples.tsx) | [收纳回归](../tests/disclosure.spec.ts)：摘要显隐、独立分组、输入保留、明确放弃草稿、键盘和过程状态；展示页筛选、指标与外壳直接使用真实组件 |
 | AI 反馈和普通业务操作混用 | [待办工作页](../patterns/task-workspace.md)、[方案选择与执行授权](../patterns/decision.md) | `TaskCard` / `TaskStatus`；[TaskCardDemo](../showcase/react.tsx) | [组件测试](../tests/components.spec.ts)：选择不提交、自定义要求、提交中锁定、失败重试、交办与历史；产品另查反馈是否集中在应用待办与全局汇总 |
 | 历史增加重复层级，处理记录失去原选择 | [历史二级页](../patterns/task-workspace.md#历史二级页) | `Breadcrumbs` / `completedChoice` / `completedAction`；TaskCardDemo | [面包屑独立回归](../tests/breadcrumbs.spec.ts)：唯一路径页头、键盘返回、范围保留、历史空态；组件测试：历史锁定与对话入口；宿主负责原会话、快照和版本对应 |
@@ -48,7 +48,7 @@
 | 抽屉里分区重叠、靠卡片粗线收起展开，字段样式与编辑出口各不相同 | [抽屉详情](../components/drawer.md) | `DetailDrawer` / `DrawerSection` / `Property` / `.vx-log`；DetailDrawerDemo | 组件测试：查看态无控件、编辑后同位置出现控件、计算字段不可编辑、分区红点在标题左上角、底部只有一个出口；视觉检查：只有极细线分隔、文字三档 |
 | 列表里看不出哪些对象等我处理，筛选不知道各类有多少 | [对象列表与筛选](../patterns/todo-and-badge.md#对象列表与筛选) | `Select attention` / 选项 `attention` / `AttentionMark`；BrowserDemo | 组件测试：触发器有点不计数、选项行尾计数、零项无计数、行标题左上角红点不改变文字位置 |
 | 对客入口与内部工作台一样朴素，缺少品牌感；或为了“高级”到处加渐变与动效 | [对客门户](../templates/README.md) | `.vx-portal` / `PortalFeed` / `.vx-portal-hero` / `.vx-rise`；PortalExample | 组件测试：氛围层对读屏隐藏、快捷登录可键盘触发、减少动态效果时动画停住；视觉检查：唯一强调色、无真实内容 |
-| 「拖了一阵」和「已经阻断」都用红色，用户分不清哪件更急 | [视觉原则 · 颜色只表达意义](../principles/visual.md)、[使用指南 · 配色与主题](usage.md#配色与主题) | `--vx-brand-warning` / `--vx-brand-warning-soft`、`[data-tone='warning']`、`.vx-tag--warning` / `.vx-text-warning`；OrganismsExamples 状态列 | `npm run check`：22 套配色下警示色对比度与色相间隔；视觉检查：warning 只用于未到阻断的一档 |
+| 「拖了一阵」和「已经阻断」都用红色，用户分不清哪件更急 | [视觉原则 · 颜色只表达意义](../principles/visual.md)、[使用指南 · 配色与主题](usage.md#配色与主题) | `--vx-brand-warning` / `--vx-brand-warning-soft`、`[data-tone='warning']`、`.vx-tag--warning` / `.vx-text-warning`；OrganismsExamples 状态列 | `npm run check`：各套配色下警示色对比度与色相间隔；视觉检查：warning 只用于未到阻断的一档 |
 | 导览遮住被讲解的目标，或讲弹窗里的操作时弹窗把说明卡锁在外面 | [功能导览](../patterns/guide.md) | `Guide variant="banner"` 贴底／换顶、`Dialog modal={false}`；[GuideDemo](../showcase/react.tsx) | [组件测试](../tests/components.spec.ts)：挡住目标时换到顶部、挡住不了回到底部、超高目标只框可见部分；横幅动作保持同一行 |
 | 动作按钮上的提示被点开固定，挡住后续弹窗 | [组件指南](../components/README.md) | `Tip` / `TextTip`；InteractionDemo 导出按钮 | 组件测试：动作按钮的提示只随悬停出现、点击执行后收起、不固定；说明型触发器仍可点击固定 |
 | 展开收起闪断，关闭后的输入与子组件状态丢失 | [收起与展开](../components/disclosure.md) | `Fold` / `.vx-fold-inner`；DisclosureExamples | [收纳回归](../tests/disclosure.spec.ts)：高度过渡、关闭后内容 `inert` 且不进入键盘顺序、重开保留输入 |

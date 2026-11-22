@@ -1,5 +1,8 @@
+import paletteSource from '../tokens/src/palettes.json' with { type: 'json' }
 import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
+
+const paletteCount = Object.keys(paletteSource).filter(key => !key.startsWith('$')).length
 
 test.beforeEach(async ({ page }) => {
   await page.goto('/showcase/')
@@ -897,7 +900,7 @@ test('配色主题：切换后语义变量随之改变，明暗仍然生效，�
  const accent=()=>page.evaluate(()=>{const el=document.createElement('i');el.style.color='var(--vx-brand-accent)';document.body.append(el);const c=getComputedStyle(el).color;el.remove();return c})
  const palette=()=>page.evaluate(()=>document.documentElement.dataset.palette??'')
  await expect(page.locator('[data-palettes]')).toHaveCount(1)
- await expect(page.locator('[data-palettes] .sc-palette')).toHaveCount(22)
+ await expect(page.locator('[data-palettes] .sc-palette')).toHaveCount(paletteCount)
  const base=await accent()
  const pick=page.getByRole('combobox',{name:'配色主题',exact:true});await expect(pick).toHaveText('墨金')
  await pick.click();await page.getByRole('option',{name:'信号',exact:true}).click();expect(await palette()).toBe('signal');await expect(pick).toHaveText('信号')

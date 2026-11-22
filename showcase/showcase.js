@@ -119,13 +119,22 @@ function linkToGuides() {
   media.addEventListener('change', () => renderSwatches())
   // 色卡就是该主题的一小块界面。与门户共用按钮 CSS，切换明暗时就地更新。
   grid.innerHTML = Object.entries(palettes).map(([id, p]) => `
-    <article class="sc-palette vx-theme" data-palette="${id}">
+    <article class="sc-palette vx-theme" id="palette-${id}" data-palette="${id}">
       <h4>${p.name}</h4>
-      <dl class="sc-palette-roles" data-vx-swatch>
-        <div><dt>页面</dt><dd class="sc-palette-paper"></dd></div>
-        <div><dt>正文</dt><dd class="sc-palette-ink"></dd></div>
-        <div><dt>操作</dt><dd class="sc-palette-action"></dd></div>
-      </dl>
+      ${p.swatches ? `
+        <div data-vx-swatch>
+          <div class="sc-palette-band" aria-hidden="true">
+            ${p.swatches.map(hex => `<i style="background:${hex}"></i>`).join('')}
+          </div>
+          <dl class="sc-palette-roles">
+            ${p.swatches.map((hex, i) => `<div><dt><span class="sc-palette-key" aria-hidden="true" style="background:${hex}"></span>${['基色一', '基色二', '强调色'][i]}</dt><dd><code>${hex}</code></dd></div>`).join('')}
+          </dl>
+        </div>` : `
+        <dl class="sc-palette-roles" data-vx-swatch>
+          <div><dt>页面</dt><dd><i class="sc-palette-paper"></i></dd></div>
+          <div><dt>正文</dt><dd><i class="sc-palette-ink"></i></dd></div>
+          <div><dt>操作</dt><dd><i class="sc-palette-action"></i></dd></div>
+        </dl>`}
       <button type="button" class="vx-btn vx-btn--sm vx-btn--primary" data-palette-id="${id}" aria-label="应用配色 · ${p.name}">
         应用配色
       </button>

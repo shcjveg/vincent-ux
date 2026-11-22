@@ -19,7 +19,7 @@
 |---|---|---|
 | 跨项目复用与升级 | 副本可查到设计依据和独立案例，能检查宿主样式，升级保留本地定制并报告双方改动 | [设计要求与验收](docs/tasks.md)、[升级方法](docs/usage.md#升级已有副本)、[工具回归](tests/tooling.test.mjs) |
 | 设计原则 | 同一任务跨端能办完，同类对象可比较，用户能区分草稿与已生效范围，持续输出能保住回读位置，选方案后仍可改选或接管 | [原则与评审问题](principles/README.md#把原则用在新页面上)、[示例回归](tests/design-principles.spec.ts)、[验证边界](docs/coverage.md) |
-| 设计变量与图标 | 可重复生成，浅深主题语义一致，22 套配色主题逐套满足对比度与色相间隔，警示／危急语气可区分，变量与含义映射可检查 | `npm run build`、`npm run icons`、`npm run check` |
+| 设计变量与图标 | 可重复生成，浅深主题语义一致，所有配色主题逐套满足对比度与色相间隔，警示／危急语气可区分，变量与含义映射可检查 | `npm run build`、`npm run icons`、`npm run check` |
 | 组件交互 | 搜索、筛选与日期；表单、浮层、页签、导览横幅避让与非模态弹窗、决定与待办卡的提交中／失败／历史状态 | `npm test`、`showcase/` |
 | 可访问性 | 标签、键盘、焦点恢复、对比度与浅深主题自动扫描 | `tests/components.spec.ts`、`tests/disclosure.spec.ts`、`tests/workspace-state.spec.ts`、`principles/accessibility.md` |
 | 页面组合 | 桌面与 320／390px 窄屏、会话切换和关闭恢复、内容锚点、局部滚动与导览避让 | `patterns/page-composition.md`、`patterns/page-chat-flow.md`、浏览器测试 |
