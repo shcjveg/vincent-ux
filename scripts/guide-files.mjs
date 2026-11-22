@@ -27,31 +27,33 @@ export function portableMarkdown(root, path, source, destinations, version) {
   })
 }
 
-export function taskIndex(source) {
+export function requirementIndex(source) {
   const cells = line => line.split('|').slice(1, -1).map(s => s.trim())
   const links = cell => [...cell.matchAll(/\[([^\]]+)\]\(([^\s)]+)\)/g)].map(([, label, url]) => ({ label, url }))
   return source.split('\n').filter(line => line.startsWith('|')).slice(2).map(line => {
-    const [task, guidance = '', example = '', acceptance] = cells(line)
-    return { task, guidance: links(guidance), example: links(example)[0], acceptance }
+    const [topic, rule, acceptance, guidance = '', example = ''] = cells(line)
+    return { topic, rule, acceptance, guidance: links(guidance), examples: links(example) }
   })
 }
 
-export function taskPage(markdown, version) {
+export function requirementPage(markdown, version) {
   const escape = s => s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;')
   const link = ({ label, url }) => {
     const href = /^(?:https?:|#)/.test(url) ? url : posix.normalize(posix.join('docs', url))
     return `<a href="${escape(href)}">${escape(label)}</a>`
   }
-  const cards = taskIndex(markdown).map(item => `<article class="vx-card vx-card--padded vx-stack">
-      <h2 class="vx-title">${escape(item.task)}</h2><p class="vx-body">${escape(item.acceptance)}</p>
-      <p>${item.guidance.map(link).join(' · ')}</p><p>操作案例　${link(item.example)}</p>
+  const cards = requirementIndex(markdown).map(item => `<article class="vx-card vx-card--padded vx-stack">
+      <h2 class="vx-title">${escape(item.topic)}</h2><p class="vx-body">${escape(item.rule)}</p>
+      <p><strong>验收方法</strong>　${escape(item.acceptance)}</p>
+      <p class="vx-nav-links">规范原文　${item.guidance.map(link).join(' · ')}</p>
+      <p class="vx-nav-links">应用示例　${item.examples.map(link).join(' · ')}</p>
     </article>`).join('\n')
   return `<!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>任务指南 · Vincent UX v${version}</title>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>设计要求与验收 · Vincent UX v${version}</title>
 <link rel="stylesheet" href="./styles.css"></head><body><main class="vx-page vx-page--narrow vx-stack">
-<header class="vx-pagehead"><div><h1>按任务做设计</h1><p>Vincent UX v${version} · <a href="./principles/README.md">基础原则</a> · <a href="./docs/tasks.md#找不到相近任务时">设计新组件</a></p></div></header>
-<label class="vx-field"><span class="vx-field-label">查找任务</span><input type="search" class="vx-input" placeholder="例如：批量、回读、范围"></label>
-<p class="vx-meta">副本自带内容库和批量改交期示例。打开完整工作区、门户或报表前，从同版本设计系统仓库启动 npm run showcase。</p>
+<header class="vx-pagehead"><div><h1>设计要求与验收</h1><p>Vincent UX v${version} · <a href="./principles/README.md">基础原则</a> · <a href="./docs/tasks.md#没有现成组件时">设计新组件</a></p></div></header>
+<label class="vx-field"><span class="vx-field-label">查找设计要求</span><input type="search" class="vx-input" placeholder="例如：对齐、范围、部分失败"></label>
+<p class="vx-meta">本页可直接查阅。链接到本机展示页的示例需先在同版本设计系统仓库运行 <code>npm run showcase</code>。</p>
 <p role="status" class="vx-meta"></p>${cards}
 </main><script>
 const cards = [...document.querySelectorAll('article')];
@@ -59,7 +61,7 @@ const input = document.querySelector('input');
 function filter() {
   for (const card of cards) card.hidden = !card.textContent.includes(input.value.trim());
   const count = cards.filter(card => !card.hidden).length;
-  document.querySelector('[role=status]').textContent = count ? count + ' 个任务' : '没有匹配的任务，可从上方「设计新组件」开始。';
+  document.querySelector('[role=status]').textContent = count ? count + ' 项设计要求' : '没有匹配的设计要求，可从上方「设计新组件」开始。';
 }
 input.addEventListener('input', filter); filter();
 </script></body></html>\n`

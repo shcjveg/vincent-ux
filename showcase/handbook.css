@@ -30,6 +30,7 @@
 .hb-tasks section h2 { margin: 0 0 var(--vx-space-3); font-size: var(--vx-font-size-lg); }
 .hb-tasks dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: var(--vx-space-2) var(--vx-space-4); margin: 0; }
 .hb-tasks dt { color: var(--vx-text-secondary); }
+.hb-tasks dt:has(+ .vx-nav-links) { align-self: center; }
 .hb-tasks dd { margin: 0; }
 @media (max-width: 38rem) {
   .hb-tasks dl { display: block; }

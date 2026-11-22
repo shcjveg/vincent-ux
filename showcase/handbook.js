@@ -52,8 +52,8 @@ function directoryFiles(path) {
   return Object.keys(files).filter(key => key.startsWith('../' + path) && !key.slice(3 + path.length).includes('/'))
 }
 
-// 任务索引逐项阅读，规则、案例和验收条件在小屏也能一起看见。
-function presentTasks(table) {
+// 逐项呈现规范，窄屏也能在同一节内查到要求与验收方法。
+function presentRequirements(table) {
   const list = document.createElement('div')
   list.className = 'hb-tasks'
   const labels = [...table.tHead.rows[0].cells].map(cell => cell.textContent)
@@ -67,6 +67,7 @@ function presentTasks(table) {
       const term = document.createElement('dt')
       term.textContent = labels[index + 1]
       const value = document.createElement('dd')
+      if (cell.querySelector('a')) value.className = 'vx-nav-links'
       value.append(...cell.childNodes)
       body.append(term, value)
     })
@@ -122,7 +123,7 @@ async function showPage() {
     const markdown = (await loadFile()).replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, '')
     article.innerHTML = marked.parse(markdown, { headerIds: false, mangle: false })
     for (const link of article.querySelectorAll('a[href]')) link.href = resolveLink(link.getAttribute('href'))
-    if (file === 'docs/tasks.md') presentTasks(article.querySelector('table'))
+    if (file === 'docs/tasks.md') presentRequirements(article.querySelector('table'))
     for (const table of article.querySelectorAll('table')) {
       const wrapper = document.createElement('div')
       wrapper.className = 'hb-table'

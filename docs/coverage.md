@@ -14,16 +14,18 @@
 | 导航、选择与焦点 | 清除选择时优先回到原入口，入口被筛选移走后可回到结果区。外壳跨宽度保留输入。页签、面包屑、历史与模态沿用已有交互 | [焦点与返回](../tests/system-contracts.spec.ts) · [面包屑](../tests/breadcrumbs.spec.ts) · [工作区](../tests/workspace-state.spec.ts) |
 | 等待、动效与无障碍 | 等待动画使用共用时长。减少动态效果时退出分批入场的等待。已有字段关联、键盘操作、强制色彩样式和浅深主题检查继续生效 | [动效与字号回归](../tests/system-contracts.spec.ts) · [语义与对比检查](../tests/components.spec.ts) |
 | 任务、指标与 AI 会话 | 复核原有的选择后确认、处理后进入历史、指标与时点说明、持续输出时回读。生命周期与结果由业务回调驱动 | [任务与指标](../tests/components.spec.ts) · [会话回读](../tests/design-principles.spec.ts) |
-| 跨项目使用原则 | 任务索引连接规则、案例与验收，随副本交付。批量改交期使用已有表格、表单与按钮，并在逐笔回执后只重试失败项 | [按任务做设计](tasks.md) · [批量重试](../tests/batch.spec.ts) |
+| 跨项目使用原则 | 规范索引连接设计要求、验收方法和示例，随副本交付。批量改交期使用已有表格、表单与按钮，并在逐笔回执后只重试失败项 | [设计要求与验收](tasks.md) · [批量重试](../tests/batch.spec.ts) |
 | 交付与升级 | 整页与嵌入样式由同一源码构建。临时宿主只取同步副本，通过严格 TypeScript 编译，验证整页筛选与空结果、局部样式隔离、标题、保存和重试。副本自带同版指南、静态检查器和升级清单，首次升级旧版可指定干净原件。质量检查能辨认原样同步的文件，也能指出宿主样式的直接品牌色引用 | [独立接入回归](../tests/consumer.spec.ts) · [升级回归](../tests/tooling.test.mjs) |
 
 组件参数另以真实任务验收。报表直接点选两个地区，日期快捷项显示实际起止，长列表在矮视口可点到末项。对话回读的距离随字号变化，新段落到达时保留阅读位置。[输入与选择](../components/README.md#3-输入与选择) · [按行高回读与长列表回归](../tests/design-principles.spec.ts) · [列表容量原例 02:20](https://www.xiaohongshu.com/discovery/item/6adbda97000000002c01621b) · [阅读距离原例 01:01](https://www.xiaohongshu.com/discovery/item/6ada3150000000002c0144b0)
 
 这些验收覆盖参考实现与公开接口。实际读屏软件的播报、用户是否能从第一眼判断业务含义，以及业务服务端的数据权限和保存结果，需要在相应产品里验证。
 
-## 按任务查找依据
+<span id="按任务查找依据"></span>
 
-开始设计时可先读[任务索引](tasks.md)。下表记录具体实现和各项核验的责任。
+## 实现案例与回归记录
+
+设计要求见[规范与验收索引](tasks.md)。下表按实际出现的问题记录案例、回归证据，以及需要产品单独核验的部分。
 
 | 通用问题 | 规则来源 | 组件与可运行示例 | 验证与责任 |
 |---|---|---|---|
@@ -37,7 +39,7 @@
 | 保存失败后丢草稿，或把草稿当作生效值 | [保存与重试](usage.md#保存与重试) | `useDraftForm`、设置表单和嵌入编辑器 | 独立接入回归与[展示页交互](../tests/design-principles.spec.ts)覆盖失败、重试与刷新 |
 | 不同调性的产品只能共用一套配色 | [视觉原则 · 颜色只表达意义](../principles/visual.md)、[使用指南 · 配色与主题](usage.md#配色与主题)、[分类调研](research/color-theme-taxonomy.md) | `data-palette` + `tokens/src/palettes.json`；[展示页](../showcase/index.html) 颜色 › 配色主题 | `npm run check`：22 套主题浅色／暗色对比度、强调色与危急色色相间隔；[组件测试](../tests/components.spec.ts)：配色切换和深链接改变门户主按钮，键盘与浅深模式仍可用 |
 | 原型组合已更新但组件规范与展示仍停留在旧结构 | [收起与展开](../components/disclosure.md)、[组件指南](../components/README.md) | `Fold` 分组／详情／编辑、行内步骤与对话过程；[ComponentExamples](../showcase/ComponentExamples.tsx) | [收纳回归](../tests/disclosure.spec.ts)：摘要显隐、独立分组、输入保留、明确放弃草稿、键盘和过程状态；展示页筛选、指标与外壳直接使用真实组件 |
-| AI 反馈和普通业务操作混用 | [待办工作页](../patterns/task-workspace.md)、[关键节点拍板](../patterns/decision.md) | `TaskCard` / `TaskStatus`；[TaskCardDemo](../showcase/react.tsx) | [组件测试](../tests/components.spec.ts)：选择不提交、自定义要求、提交中锁定、失败重试、交办与历史；产品另查反馈是否集中在应用待办与全局汇总 |
+| AI 反馈和普通业务操作混用 | [待办工作页](../patterns/task-workspace.md)、[方案选择与执行授权](../patterns/decision.md) | `TaskCard` / `TaskStatus`；[TaskCardDemo](../showcase/react.tsx) | [组件测试](../tests/components.spec.ts)：选择不提交、自定义要求、提交中锁定、失败重试、交办与历史；产品另查反馈是否集中在应用待办与全局汇总 |
 | 历史增加重复层级，处理记录失去原选择 | [历史二级页](../patterns/task-workspace.md#历史二级页) | `Breadcrumbs` / `completedChoice` / `completedAction`；TaskCardDemo | [面包屑独立回归](../tests/breadcrumbs.spec.ts)：唯一路径页头、键盘返回、范围保留、历史空态；组件测试：历史锁定与对话入口；宿主负责原会话、快照和版本对应 |
 | 筛选、数量、排序混在不同层级 | [内容浏览](../patterns/browse.md)、[范围与排序](../patterns/task-workspace.md#范围与排序) | `Select` / `DateFilter` / `SortMenu` / `Collection`；BrowserDemo、TaskCardDemo | 组件测试：全部首项、搜索、日期取消／应用、单一时间口径只显示范围、排序独立于日期、结果数量随筛选更新、连续切月与切月后键盘入口 |
 | 明暗切换各页自写，嵌入宿主后默认值和记忆互相覆盖 | [组件指南](../components/README.md)、[使用指南 · 配色与主题](usage.md#配色与主题) | `ThemeToggle` / `.vx-theme-toggle`；展示页左下角与设置区共享整页偏好，嵌入模块可独立切换 | [组件测试](../tests/components.spec.ts)：点击切换、名称说明下一步、记住选择且优先于根元素默认值；左下角其它浮钮由使用方让到其上方 |
@@ -52,7 +54,7 @@
 | 展开收起闪断，关闭后的输入与子组件状态丢失 | [收起与展开](../components/disclosure.md) | `Fold` / `.vx-fold-inner`；DisclosureExamples | [收纳回归](../tests/disclosure.spec.ts)：高度过渡、关闭后内容 `inert` 且不进入键盘顺序、重开保留输入 |
 | 搜索框和筛选项挤在同一行互相换行，条件区跳动 | [浏览与筛选](../patterns/browse.md)、[组件指南](../components/README.md) | `FilterBar side` / `.vx-filterbar-side`；BrowserDemo | 组件测试：搜索框位于侧栏、筛选项自行换行、320px 整列落到筛选项下方 |
 | 设置页的明暗切换只能浮在左下角 | [组件指南](../components/README.md) | `ThemeToggle variant="inline"`；SettingsExample 浏览偏好行 | 组件测试：普通小按钮写出当前模式、点击切换并记住选择 |
-| 点击或切换后错误清除提醒 | [待办与红点](../patterns/todo-and-badge.md) | `Attention` / `AttentionTitle` / `TaskCard` / `Tabs.indicator` | 组件测试：选中态红点保留、标签宽度稳定、完成终点消失；宿主负责同一未处理实例集合及旧实例不重复提醒 |
+| 点击或切换后错误清除提醒 | [待处理事项与提醒](../patterns/todo-and-badge.md) | `Attention` / `AttentionTitle` / `TaskCard` / `Tabs.indicator` | 组件测试：选中态红点保留、标签宽度稳定、完成终点消失；宿主负责同一未处理实例集合及旧实例不重复提醒 |
 | 空状态随页面变化，更新时间摆放无依据 | [空状态与数据时间](../components/README.md#空状态数据时间与操作自适应) | `EmptyState` / `DataTime` / `SectionCard updatedAt`；[ComponentStatesDemo](../showcase/WorkspaceDemo.tsx) | [工作区与状态测试](../tests/workspace-state.spec.ts)：同类空态样式一致、无需动作时不加按钮、可靠时间居右、无来源不生成时间 |
 | 窄区域裁字、按钮与表格挤坏 | [空间按内容分配](../patterns/page-composition.md#空间按内容分配) | `Button` / `TableScroll`；ComponentStatesDemo | 320／390／1440px：短按钮完整、长动作增高、表格局部滚动；实际产品另查最长数据和组合宽度 |
 | 侧栏收起后图标偏移、用户入口重复 | [导航](../patterns/nav-overflow.md)、[模板](../templates/README.md) | `.vx-nav` / `ActionMenu` / `WorkspaceOverlay`；WorkspaceDemo | 工作区测试：同一图标中线、头像单入口、手机抽屉焦点与 Esc 恢复 |

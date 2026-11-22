@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, statSync } from 'node:fs'
 import { dirname, join, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { guideFiles, localLinks, taskIndex } from './guide-files.mjs'
+import { guideFiles, localLinks, requirementIndex } from './guide-files.mjs'
 
 const root = fileURLToPath(new URL('..', import.meta.url))
 const read = path => readFileSync(join(root, path), 'utf8')
@@ -39,11 +39,12 @@ for (const page of ['showcase/index.html', 'showcase/handbook.html']) {
   }
 }
 
-const tasks = taskIndex(read('docs/tasks.md'))
-for (const { task, guidance, example, acceptance } of tasks) {
-  if (!task || !guidance.length || !example || !acceptance)
-    errors.push('请补全任务的判断依据、案例与验收：' + task)
+const requirements = requirementIndex(read('docs/tasks.md'))
+if (!requirements.length) errors.push('设计要求与验收索引为空')
+for (const { topic, rule, acceptance, guidance, examples } of requirements) {
+  if (!topic || !rule || !acceptance || !guidance.length || !examples.length)
+    errors.push('请补全设计要求、验收方法及对应的规范与示例：' + topic)
 }
 for (const err of errors) console.error(err)
 if (errors.length) process.exitCode = 1
-else console.log(`✓ 指南链接及 ${tasks.length} 项任务的规则、案例与回归入口一致`)
+else console.log(`✓ 指南链接有效，${requirements.length} 项设计要求均附验收方法与示例`)

@@ -1,19 +1,24 @@
-# 按任务做设计
+# 设计要求与验收
 
-设计前先写出用户要对哪个对象做什么、怎样才算完成。找到相近的任务后，读对应原则和模式，打开案例，用自己的数据完成验收。[基础原则与冲突取舍](../principles/README.md) · [完整模式目录](../patterns/README.md) · [系统覆盖表](coverage.md)
+按需要决定的设计问题查找。先读要求和验收方法，再打开规范或示例。换成自己项目的对象和数据后，同一项要求仍应能指导设计。[基础原则与取舍](../principles/README.md) · [交互模式](../patterns/README.md) · [已验证范围](coverage.md)
 
-| 任务 | 判断依据与组合方式 | 案例 | 在页面怎样验收 | 回归 |
-|---|---|---|---|---|
-| 给一项关键操作选择按钮底色、配文和图标颜色 | [区分品牌、动作和状态](../principles/visual.md#颜色只表达意义) · [用同一组变量组合按钮底色、文字与边界](usage.md#从三种品牌色接入) | [配色与主操作对照](../showcase/index.html#palettes) | 选一组品牌色，切换明暗，核对按钮上的文字与图标，悬停后仍然可读。 | [各主题的局部色卡和整页主按钮在两种明暗下使用同一组外观](../tests/design-principles.spec.ts) |
-| 给没有专用组件的批量修改设计确认与重试 | [保留失败操作的输入](../principles/interaction.md#请求与恢复) · [按逐笔结果限定重试范围](../patterns/browse.md#批量提交的逐项结果) | [批量改交期](../examples/batch/index.html) | 让两笔订单中一笔失败，核对原日期、成功数量与重试对象。 | [部分成功后只重试失败订单](../tests/batch.spec.ts) |
-| 从筛选结果交接一份报表 | [区分编辑和生效](../principles/interaction.md#操作何时生效) · [明细和导出使用同一份查询范围](../patterns/browse.md#已应用的查询范围) | [地区明细与导出](../showcase/index.html#report) | 改条件时保留原结果。下钻后导出，逐条核对地区和城市。 | [新查询先完成时，晚到的旧响应无法改写结果](../tests/design-principles.spec.ts) |
-| 在现有产品里编辑一项设置 | [让等待和失败可见](../principles/interaction.md#每个组件都有完整状态) · [保存失败保留原草稿](usage.md#保存与重试) | [嵌入式项目偏好](../examples/embedded/index.html) | 让保存失败，保留草稿。重试成功后刷新，读回已保存的名称。 | [独立项目只依赖同步产物，整页与嵌入两种接入都能完成任务](../tests/consumer.spec.ts) |
-| 在窄侧栏里完成同一个任务 | [可达性](../principles/accessibility.md) · [缩窄后仍可完成主任务](../patterns/page-composition.md#跨端保留任务) | [登录门户](../showcase/index.html#portal) | 把入口放进窄侧栏，键盘触发校验、修正输入，再完成登录。 | [桌面里的窄模块各按自己的宽度重排，同一登录任务可完成](../tests/system-contracts.spec.ts) |
-| 在持续输出时回看旧消息 | [由读者决定何时恢复跟随](../principles/README.md#把原则用在新页面上) · [回读时保留当前位置](../patterns/page-chat-flow.md#持续输出与回读) | [会话工作区](../showcase/index.html#session-workspace) | 生成期间向上翻，等到下一段出现，再主动跳至最新。 | [分段回复跟随底部，回读与切换会话保留位置，读者可主动返回](../tests/design-principles.spec.ts) |
-| 让长短不齐的对象仍可比较 | [把相同字段放在相同位置](../principles/visual.md#强调与比较) · [页面阅读顺序](../patterns/page-composition.md#一个阅读顺序) | [集合与视图切换](../showcase/index.html#browse) | 并排放入长标题、短标题与缺摘要的记录，按同一位置查找状态与日期。 | [长短和缺省摘要保留可比较的对象、状态和时间](../tests/design-principles.spec.ts) |
-| 先比较建议，再决定是否交给 AI 执行 | [用户有决定权](../principles/README.md#把原则用在新页面上) · [确认、调整或接管](../patterns/decision.md) | [待办实例与历史](../showcase/index.html#task-workspace) | 先选一个方案，再改选，核对待办仍在。确认交办或接管后，到历史核对处理方式和对象。 | [待办实例选择不提交，确认后才进入历史](../tests/components.spec.ts) |
+| 设计主题 | 设计要求 | 验收方法 | 规范原文 | 应用示例 | 回归用例 |
+|---|---|---|---|---|---|
+| 控件配色与文字对比 | 为每种动作底色配套指定文字、图标与边界颜色。选中和焦点还需有形状或轮廓提示。 | 在明暗主题中逐一悬停、聚焦、选中，检查文字可读、焦点可辨。 | [颜色语义](../principles/visual.md#颜色只表达意义) · [动作色的搭配](usage.md#从三种品牌色接入) | [主题色卡与主按钮](../showcase/index.html#palettes) | [主题与控件对比](../tests/design-principles.spec.ts) |
+| 对象比较与字段对齐 | 供人逐项比较的字段保持相同的次序和位置，内容长短与缺省值都应在布局中有位置。 | 并排放入长标题、短标题和缺摘要的对象，在同一位置找到要比较的字段。 | [强调与比较](../principles/visual.md#强调与比较) · [阅读顺序](../patterns/page-composition.md#一个阅读顺序) | [内容库列表与网格](../showcase/index.html#browse) | [长短与缺省内容](../tests/design-principles.spec.ts) |
+| 导航分组与入口识别 | 同级入口按同一种依据分组，组名说明分类，入口名称说明去向。读者第一次看到目录就能辨认两者。 | 不悬停先指出入口及其分组，再用键盘打开一项，核对到达的标题和当前位置。 | [分组目录](../patterns/nav-overflow.md#分组目录) | [展示页目录](../showcase/index.html#demo-index) | [目录与键盘定位](../tests/handbook.spec.ts) |
+| 信息递进与展开 | 把选择下一步必需的信息直接展示。摘要足以支持决定时，再将补充细节放入展开区。 | 收起明细后能否判断当前状态和下一步？修改其中一项再收起，核对摘要是否仍准确。 | [信息递进](../principles/interaction.md#信息递进) · [展开控件的适用条件](../components/disclosure.md#按实际用途选用) | [可展开的设置摘要](../showcase/index.html#disclosure) | [展开、编辑与收起](../tests/disclosure.spec.ts) |
+| 按钮的归属与对齐 | 按钮靠近它影响的对象。提交按钮对齐输入控件，整组操作靠近组标题，同排按钮用同档高度。 | 缩窄容器，切换到最长标签和等待状态。核对按钮仍与对象成组、键盘顺序自然，反馈出现时位置稳定。 | [按作用范围放置按钮](../principles/interaction.md#按作用范围放置按钮) | [查询按钮与结果栏操作](../showcase/index.html#report) | [按钮布局与状态切换](../tests/design-principles.spec.ts) |
+| 结果与操作的范围一致 | 数量、明细和作用于当前结果的操作共用已生效条件。用户还能编辑下一组条件时，保留当前结果的范围标识。 | 编辑条件但暂缓提交，核对原结果。缩小当前范围后执行操作，核对实际处理的对象与可见范围一致。 | [生效时点](../principles/interaction.md#操作何时生效) · [结果范围](../patterns/browse.md#已应用的查询范围) | [地区明细与导出](../showcase/index.html#report) | [条件快照与响应顺序](../tests/design-principles.spec.ts) |
+| 保存时点与草稿恢复 | 草稿、提交中和已保存各有可辨的状态。提交失败后保留原输入，让用户能在原处修正或重试。 | 使保存失败，检查草稿仍在。重试成功后重新打开，读取已保存的值。 | [请求与恢复](../principles/interaction.md#请求与恢复) · [保存与重试](usage.md#保存与重试) | [嵌入式项目偏好](../examples/embedded/index.html) | [独立项目保存与重试](../tests/consumer.spec.ts) |
+| 批量提交与部分失败 | 提交前显示所选对象和影响范围。按实际回执区分成功项与失败项，只向失败项提供重试。 | 让两项中的一项失败。核对已成功数、失败项的输入，以及重试实际处理的对象。 | [逐项结果](../patterns/browse.md#批量提交的逐项结果) · [请求与恢复](../principles/interaction.md#请求与恢复) | [批量改交期](../examples/batch/index.html) | [部分成功后的重试范围](../tests/batch.spec.ts) |
+| 容器适配与键盘可达 | 根据所在容器的可用宽度重排。关键输入、反馈和主操作在窄区仍可见、可用键盘完成。 | 将同一界面分别放在宽、窄容器中，只用键盘触发校验、修正输入并完成操作。 | [跨端保留任务](../patterns/page-composition.md#跨端保留任务) · [无障碍底线](../principles/accessibility.md) | [门户登录表单](../showcase/index.html#portal) | [容器宽度与键盘操作](../tests/system-contracts.spec.ts) |
+| 持续更新与阅读位置 | 内容更新时保持读者当前的位置。读者离开最新内容后，提供主动返回的入口。 | 更新期间向前翻，等下一段出现。核对眼前的内容仍在原处，再主动返回最新内容。 | [用户有决定权](../principles/README.md#把原则用在新页面上) · [持续输出与回读](../patterns/page-chat-flow.md#持续输出与回读) | [持续生成的对话](../showcase/index.html#session-workspace) | [跟随、回读与返回](../tests/design-principles.spec.ts) |
+| 方案选择与执行授权 | 多个方案仍可比较或调整时，选择只更新草稿。执行前让用户核对对象和后果，执行后可查结果。 | 选择一个方案，再改选或退出，核对对象状态。确认执行后检查实际处理的对象与结果记录。 | [决定、调整与接管](../patterns/decision.md) · [授权边界](../patterns/write-levels.md) | [待办方案与处理历史](../showcase/index.html#task-workspace) | [改选与确认](../tests/components.spec.ts) |
 
-## 找不到相近任务时
+## 没有现成组件时
+
+<span id="找不到相近任务时"></span>
 
 把业务对象、权限和写入服务留给产品。先用已有语义变量和控件拼出能操作的最小流程，再核对以下问题。
 

@@ -1,6 +1,6 @@
 import { join } from 'node:path'
 import { readFileSync, readdirSync } from 'node:fs'
-import { guideFiles, portableMarkdown, taskPage } from './guide-files.mjs'
+import { guideFiles, portableMarkdown, requirementPage } from './guide-files.mjs'
 import { projectRules } from './project-rules.mjs'
 
 export function distribution(root, pkg, react) {
@@ -43,6 +43,6 @@ export function distribution(root, pkg, react) {
     contentMap.set(to, content)
   }
   contentMap.set('tools/rules.json', JSON.stringify(projectRules(root), null, 2) + '\n')
-  contentMap.set('guide.html', taskPage(contentMap.get('docs/tasks.md'), pkg.version))
+  contentMap.set('guide.html', requirementPage(contentMap.get('docs/tasks.md'), pkg.version))
   return contentMap
 }

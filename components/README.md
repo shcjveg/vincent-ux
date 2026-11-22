@@ -1,7 +1,7 @@
 <!-- vincent-ux v1.8.0 · components/README.md -->
 # 组件选用指南
 
-按「要做的事」分八组，一个组件只出现在一组里。每组先说什么情况用哪个，再说常见的误用。长什么样看 `showcase/index.html`；多个组件怎么配合看 `patterns/`；颜色语义看 `principles/visual.md`。带「React」的有交互组件，其余直接用类名。
+按组件职责选型。需要规定多个组件如何配合时查[交互模式](../patterns/README.md)。需要自定义组件时先确定[设计要求与验收方法](../docs/tasks.md)。
 
 ## 组件规范与展示入口
 
@@ -30,9 +30,9 @@
 | 情况 | 用 |
 |---|---|
 | 标题、正文、辅助说明 | `.vx-title` / `.vx-body` / `.vx-meta`（只改字色时 `.vx-text-2` / `.vx-text-3`），区域内通常三档 |
-| 一句话里要你看的钱，或亏损、阻断 | `.vx-text-accent` / `.vx-text-critical` |
+| 需要突出的关键值，或需要立即处理的严重状态 | `.vx-text-accent` / `.vx-text-critical` |
 | 只给读屏的文字 | `.vx-sr-only` |
-| 金额、百分比、件数 | `.vx-num`；金额用 `.vx-money`（负数 `--neg`，要你看的钱 `--accent`） |
+| 金额、百分比、件数 | `.vx-num`；金额用 `.vx-money`（负数 `--neg`，重点金额 `--accent`） |
 | 对象的识别图（商品、渠道、人） | `.vx-thumb`（`--sm` / `--lg`）、`.vx-avatar` |
 | 表达一个功能 | `Icon`（React）/ `.vx-icon`，按 `icons/icons.json` 的含义选 |
 
@@ -42,7 +42,7 @@
 
 | 情况 | 用 |
 |---|---|
-| 这一块推荐的下一步 | `Button variant="primary"` / `.vx-btn--primary`，一个任务区域最多一个 |
+| 当前任务区域的主操作 | `Button variant="primary"` / `.vx-btn--primary`，一个任务区域最多一个 |
 | 其他可选的动作 | `.vx-btn`（次按钮） |
 | 轻的动作：查看、再问问、收起 | `.vx-btn--ghost` |
 | 不可撤回的危险动作 | `Button variant="danger"` / `.vx-btn--danger`，按后果确认 |
