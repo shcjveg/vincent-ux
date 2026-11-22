@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, EmptyState, Segmented, Select, useAppliedQuery } from '../components/react'
+import { Button, EmptyState, Segmented, RadioGroup, useAppliedQuery } from '../components/react'
 import { downloadJson } from './download'
 
 type RecordRow = { region: string; city: string; title: string; state: string }
@@ -19,7 +19,7 @@ export function ReportExample() {
   const cities = [...new Set(result?.data.map(row => row.city))]
   return <section className="vx-card vx-card--padded vx-stack" aria-label="明细查询">
     <form className="vx-cluster" onSubmit={event => { event.preventDefault(); void (failure?.scope === draft ? retry() : run(draft)) }}>
-      <Select label="查询地区" value={draft} options={['华东', '华南'].map(value => ({ value, label: value }))} onChange={setDraft} />
+      <RadioGroup name="report-region" label="查询地区" value={draft} options={['华东', '华南'].map(value => ({ value, label: value }))} onChange={setDraft} />
       <Button type="submit" variant="primary" disabled={pending?.scope === draft}>{failure?.scope === draft ? '重试查询' : '查询'}</Button>
     </form>
     {pending && <p role="status" className="vx-meta">正在查询{pending.scope}…</p>}

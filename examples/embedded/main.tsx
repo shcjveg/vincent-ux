@@ -13,7 +13,7 @@ function ProjectPreferences() {
   return <ThemeScope palette="cream-ember">
     <SectionCard title={form.saved} headingLevel={2}>
       <div className="vx-cluster">
-        <Dialog open={open} onOpenChange={next => { setOpen(next); if (!next) form.discard() }}
+        <Dialog open={open} dismissible={form.draft === form.saved && !busy} onOpenChange={next => { setOpen(next); if (!next) form.discard() }}
           title="编辑项目名称" trigger={<Button variant="primary">编辑名称</Button>}
           actions={<Button variant="primary" disabled={!form.draft.trim()} loading={busy} onClick={async () => {
             if (await form.submit()) setOpen(false)

@@ -4,6 +4,11 @@ import { Button } from './Button'
 
 export type ChatReadingPosition = { following: boolean; top: number }
 
+// The reading thresholds scale with the transcript's actual text size.
+function readingDistance(pane: HTMLDivElement) {
+  return (pane.scrollHeight - pane.clientHeight - pane.scrollTop) / parseFloat(getComputedStyle(pane).lineHeight)
+}
+
 /** A transcript that grows at the end. Mount a separate instance for each conversation. */
 export function ChatTranscript({ children, initialPosition, onPositionChange, label = '对话记录' }: {
   children: ReactNode
@@ -14,14 +19,18 @@ export function ChatTranscript({ children, initialPosition, onPositionChange, la
   const viewport = useRef<HTMLDivElement>(null)
   const content = useRef<HTMLDivElement>(null)
   const position = useRef(initialPosition ?? { following: true, top: 0 })
-  const [following, setFollowing] = useState(position.current.following)
+  const [showJump, setShowJump] = useState(false)
 
   useLayoutEffect(() => {
     const pane = viewport.current!
     pane.scrollTop = position.current.following ? pane.scrollHeight : position.current.top
-    const observer = new ResizeObserver(() => {
-      if (position.current.following && pane.clientHeight) pane.scrollTop = pane.scrollHeight
-    })
+    const update = () => {
+      if (!pane.clientHeight) return
+      if (position.current.following) pane.scrollTop = pane.scrollHeight
+      setShowJump(!position.current.following && readingDistance(pane) > 3)
+    }
+    update()
+    const observer = new ResizeObserver(update)
     observer.observe(content.current!)
     observer.observe(pane)
     return () => observer.disconnect()
@@ -29,10 +38,13 @@ export function ChatTranscript({ children, initialPosition, onPositionChange, la
 
   function remember(pane: HTMLDivElement) {
     if (!pane.clientHeight) return
-    // Fractional scroll positions can leave a subpixel gap at the bottom.
-    const atEnd = pane.scrollHeight - pane.clientHeight - pane.scrollTop <= 2
-    position.current = { following: atEnd, top: pane.scrollTop }
-    setFollowing(atEnd)
+    const delta = pane.scrollTop - position.current.top
+    // Restoring a saved scrollTop must preserve that conversation's reading intent.
+    if (delta === 0) return
+    const distance = readingDistance(pane)
+    const following = distance <= 0 || (delta > 0 && distance < 1)
+    position.current = { following, top: pane.scrollTop }
+    setShowJump(!following && distance > 3)
     onPositionChange?.(position.current)
   }
 
@@ -48,6 +60,6 @@ export function ChatTranscript({ children, initialPosition, onPositionChange, la
       onScroll={event => remember(event.currentTarget)}>
       <div ref={content} className="vx-transcript-content">{children}</div>
     </div>
-    {!following && <Button size="sm" className="vx-transcript-jump" onClick={jumpToEnd}>跳至最新</Button>}
+    {showJump && <Button size="sm" className="vx-transcript-jump" onClick={jumpToEnd}>跳至最新</Button>}
   </div>
 }

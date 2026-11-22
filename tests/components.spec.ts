@@ -714,7 +714,12 @@ test('选择器支持搜索无结果、键盘选择且无对号占位', async ({
 
 test('日期浮层保留草稿边界，排序按钮切换图标且不改变日期范围', async({page})=>{
  const demo=page.getByTestId('task-card-demo'),date=demo.getByRole('button',{name:/^时间范围/}),sort=demo.locator('.vx-sort-toggle')
- await date.click();await page.getByRole('button',{name:'最近 7 天',exact:true}).click();await page.getByRole('button',{name:'应用',exact:true}).click();await expect(date).toContainText('更新时间 · 最近 7 天')
+ await date.click()
+ await page.getByRole('button',{name:'最近 7 天',exact:true}).click()
+ const from=await page.getByLabel('起始日期',{exact:true}).inputValue()
+ const to=await page.getByLabel('截止日期',{exact:true}).inputValue()
+ await page.getByRole('button',{name:'应用',exact:true}).click()
+ await expect(date).toContainText(`更新时间 · 最近 7 天（${from}—${to}）`)
  await expect(sort).toHaveText('更新时间');await expect(sort.locator('[data-icon=sort-desc]')).toHaveCount(1);await sort.click();await expect(sort.locator('[data-icon=sort-asc]')).toHaveCount(1);await expect(sort).toBeFocused();await sort.press('Enter');await expect(sort.locator('[data-icon=sort-desc]')).toHaveCount(1);await expect(demo.getByRole('combobox',{name:'排序依据'})).toHaveCount(0);await expect(date).toContainText('更新时间 · 最近 7 天')
  await date.click();await page.getByRole('button',{name:'自定义',exact:true}).click();await page.getByLabel('起始日期',{exact:true}).fill('2099-03-02');await page.getByLabel('截止日期',{exact:true}).fill('2099-03-01');await expect(page.getByRole('button',{name:'应用',exact:true})).toBeDisabled();await page.keyboard.press('Escape');await expect(page.locator('.vx-date-popup')).toBeHidden();await expect(date).toContainText('最近 7 天')
  await date.click();await page.getByRole('button',{name:'具体日期',exact:true}).click();const day=page.getByLabel('具体日期',{exact:true});await day.fill('2099-03-02');await day.blur();await expect(day).toHaveValue('2099-03-02');const apply=page.getByRole('button',{name:'应用',exact:true});await expect(apply).toBeEnabled();await apply.click();await expect(page.locator('.vx-date-popup')).toBeHidden();await expect(date).toContainText('2099-03-02')
@@ -725,7 +730,7 @@ test('单一时间口径：触发器只显示范围，浮层不出字段下拉',
  const date=page.getByTestId('date-single-demo').locator('.vx-date-trigger')
  await date.click();const popup=page.locator('.vx-date-popup');await expect(popup.getByRole('combobox',{name:'筛选时间字段'})).toHaveCount(0)
  await popup.getByRole('button',{name:'最近 30 天',exact:true}).click();await popup.getByRole('button',{name:'应用',exact:true}).click()
- await expect(date).toHaveText('最近 30 天');await expect(date).toHaveAccessibleName('时间范围：最近 30 天')
+ await expect(date).toHaveText('最近 30 天（2026-09-27—2026-10-26）');await expect(date).toHaveAccessibleName('时间范围：最近 30 天（2026-09-27—2026-10-26）')
 })
 
 test('连续月历跨月选择、键盘跨年、单日与对比范围可应用', async({page})=>{

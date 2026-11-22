@@ -76,6 +76,8 @@ test('独立项目只依赖同步产物，整页与嵌入两种接入都能完�
     const save = dialog.getByRole('button', { name: '保存名称' })
     await expect(save).toHaveCSS('background-color', light)
     await dialog.getByRole('textbox').fill('冬季项目')
+    await page.locator('.vx-scrim').click({ position: { x: 2, y: 2 } })
+    await expect(dialog.getByRole('textbox')).toHaveValue('冬季项目')
     await page.evaluate(() => {
       const write = Storage.prototype.setItem
       Storage.prototype.setItem = function() {

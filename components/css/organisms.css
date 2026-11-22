@@ -1191,8 +1191,8 @@ body:has(.vx-guide--banner) [data-tour] { scroll-margin-bottom: calc(var(--vx-gu
 .vx-attention-label { min-width: 0; }
 .vx-attention-count { align-self: center; flex-shrink: 0; font-weight: var(--vx-font-weight-medium); }
 .vx-menu-positioner { z-index: var(--vx-z-popover); }
-.vx-menu { min-width: 200px; max-width: calc(100vw - 24px); padding: var(--vx-space-1); border-radius: var(--vx-radius-lg); background: var(--vx-surface-card); box-shadow: var(--vx-shadow-overlay); outline: none; }
-.vx-menu-item { display: flex; align-items: center; gap: var(--vx-space-2); min-height: 40px; padding: var(--vx-space-2) var(--vx-space-3); border-radius: var(--vx-radius-sm); color: var(--vx-text-primary); font-size: var(--vx-font-size-md); cursor: pointer; outline: none; }
+.vx-menu { max-height: var(--available-height, 100dvh); overflow-y: auto; overscroll-behavior: contain; min-width: 200px; max-width: calc(100vw - 24px); padding: var(--vx-space-1); border-radius: var(--vx-radius-lg); background: var(--vx-surface-card); box-shadow: var(--vx-shadow-overlay); outline: none; }
+.vx-menu-item { display: flex; align-items: center; gap: var(--vx-space-2); min-height: 40px; padding: var(--vx-space-2) var(--vx-space-3); border-radius: calc(var(--vx-radius-lg) - var(--vx-space-1)); color: var(--vx-text-primary); font-size: var(--vx-font-size-md); cursor: pointer; outline: none; }
 .vx-menu-item[data-highlighted] { background: var(--vx-fill-hover); }
 @media (pointer: coarse) { .vx-menu-item { min-height: var(--vx-size-hit-touch); } }
 
@@ -1377,7 +1377,7 @@ body:has(.vx-guide--banner) [data-tour] { scroll-margin-bottom: calc(var(--vx-gu
 
 /* The scroll container stays in place when the return action appears. */
 .vx-transcript { position: relative; display: flex; flex-direction: column; flex: 1; min-height: 0; }
-.vx-transcript > .vx-chat-body { display: block; min-height: 0; overflow-anchor: none; }
+.vx-transcript > .vx-chat-body { display: block; font-size: var(--vx-font-size-md); line-height: var(--vx-font-leading-relaxed); min-height: 0; overflow-anchor: none; }
 .vx-transcript-content { display: flex; flex-direction: column; gap: var(--vx-space-4); }
 .vx-transcript-jump { position: absolute; inset-inline-end: var(--vx-space-4); bottom: var(--vx-space-2); box-shadow: var(--vx-shadow-card); }
 
