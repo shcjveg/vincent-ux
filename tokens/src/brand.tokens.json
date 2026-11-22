@@ -1,7 +1,9 @@
 {
-  "$description": "品牌层：使用方项目换品牌只换这个文件。默认品牌「墨金」：金只给钱、选中和需要你看的地方；朱只给红点、亏损和阻断。",
+  "$description": "默认墨金主题的品牌角色和图表色。新增配色使用 palettes.json，构建时映射为同一组角色。",
   "$name": "ink-gold",
   "brand": {
+    "field": { "$type": "color", "$value": "var(--vx-brand-accent)", "$description": "品牌识别区。基础主题用自身强调色，三色主题用第一种原色" },
+    "on-field": { "$type": "color", "$value": "var(--vx-surface-card)", "$description": "品牌识别区上可读的文字与图标" },
     "accent": {
       "$type": "color",
       "light": "#80570D",

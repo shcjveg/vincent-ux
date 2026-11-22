@@ -9,6 +9,7 @@
 
 | 组件 | 规范与用途 | 展示入口 |
 |---|---|---|
+| `PalettePicker` | [整卡比较与紧凑选择](../docs/usage.md#配色与主题)，直接预览候选主题 | [配色主题](../showcase/index.html#palettes) |
 | `ThemeScope` / `ThemeToggle` | 局部主题、明暗切换和浮层挂载范围 | [独立项目的嵌入示例](../examples/embedded/index.html) |
 | `useDraftForm` | [保存与重试](../docs/usage.md#保存与重试)，由产品提供实际保存方法 | [设置表单](../showcase/SettingsExample.tsx)、[独立项目编辑器](../examples/embedded/main.tsx) |
 | `Breadcrumbs` | [面包屑与二级页](breadcrumbs.md)：路径替换页头、返回原范围、历史空态 | [面包屑](../showcase/index.html#breadcrumbs) |
@@ -49,7 +50,7 @@
 | 交给 AI 问一问 / 起草一份 | `AgentAction kind="ask | draft"`（React），见 `patterns/delegate.md` |
 | 外壳和工具栏里的纯图标动作 | `.vx-icon-btn`，必须带 `aria-label` |
 | 当前用户入口（外壳没有用户卡片时） | `UserMenu`（React）：右上角一个头像，点开是名字、身份和账户动作的极简菜单 |
-| 明暗切换 | `ThemeToggle`（React）：左下角最底一个半透明小圆钮，点一下在浅色与暗色之间切换，记住选择；没选过时用根元素上的默认明暗（嵌入浅色宿主时写 `data-theme="light"`），再没有就跟随系统。左下角的其它浮钮让到它上方。设置页这类表单行用 `variant="inline"`，写成普通小按钮 |
+| 明暗切换 | `ThemeToggle`（React）：随字号缩放的浮动圆钮，点一下在浅色与暗色之间切换，记住选择；没选过时用根元素上的默认明暗（嵌入浅色宿主时写 `data-theme="light"`），再没有就跟随系统。左下角的其它浮钮让到它上方。设置页这类表单行用 `variant="inline"`，写成普通小按钮 |
 
 行内提交用 `.vx-form-row` 将按钮对齐输入控件。字段带帮助或错误时，把输入框和提交按钮放在 `Field` 的同一行，说明由字段排在行下。结果级操作用 `.vx-results-head` 排在标题行末端。忙碌时用 `Button loading` 保留标签宽度。用真实控件走一遍等待、切换和重试，核对作用范围与位置。[按钮布局与状态](../principles/interaction.md#按作用范围放置按钮)
 
@@ -246,7 +247,7 @@
 - `EmptyState` 是列表、表格和卡片空状态的唯一内容组件。默认 section 与正文左侧对齐、普通字号、辅助文字色和统一间距，不增加空表头、重复零计数或装饰图标；整页列表用 page 居中，可传语义图标。文案先说明“暂无什么”或“没有符合筛选条件的什么”，只有有帮助时才补原因与真实操作。请求失败与无权限不能伪装成空数据。
 - `SectionCard updatedAt` / `SectionHeader updatedAt` 使用 `DataTime` 在标题区右侧呈现源数据时间。只在新鲜度影响判断且有可靠来源时显示；没有来源不补当前时间，不拿查看时间或业务截止时间充当更新时间。统计期间留在范围控件，逐行更新时间不同则归属于各记录。窄屏可在标题区内换行，仍居右。
 - 表格保留可读列宽并使用 `TableScroll` 局部滚动；短动作标签不拆字，输入框有稳定的可操作宽度，操作组整体换行。普通长按钮可以换行时，按钮高度随内容增长，禁止固定高度裁字。
-- 对话发送使用 `.vx-composer-send`，不要混用主按钮与通用图标按钮的颜色规则。可发送时深底亮色图标；空输入禁用时浅底辅助色图标，禁用不响应悬停。
+- 对话发送使用 `.vx-composer-send`，不要混用主按钮与通用图标按钮的颜色规则。可发送时使用主操作的底色与图标色。空输入时呈现禁用态。
 
 追加消息的对话区用 `ChatTranscript`。阅读位置由宿主按会话保存，接入见[持续输出与回读](../patterns/page-chat-flow.md#持续输出与回读)。
 

@@ -1009,7 +1009,10 @@ body:has(.vx-guide) .vx-dialog, body:has(.vx-guide) .vx-drawer { z-index: calc(v
   display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--vx-space-6);
   background: var(--vx-ink-base); color: var(--vx-text-on-strong);
 }
-.vx-guide--banner .vx-guide-card, .vx-stage-banner { --vx-text-link: var(--vx-text-on-strong); }
+.vx-guide--banner .vx-guide-card, .vx-stage-banner {
+  --vx-text-link: var(--vx-text-on-strong);
+  --vx-action-edge: var(--vx-action-edge-on-strong);
+}
 .vx-guide--banner .vx-guide-card[data-placement='top'] { top: 16px; bottom: auto; }
 .vx-guide--banner .vx-guide-close { position: absolute; top: 6px; right: 6px; color: inherit; }
 .vx-guide--banner .vx-guide-copy, .vx-guide--banner .vx-guide-actions { margin: 0; }
@@ -1037,13 +1040,6 @@ body:has(.vx-guide) .vx-dialog, body:has(.vx-guide) .vx-drawer { z-index: calc(v
 .vx-stage-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--vx-space-2); padding-right: var(--vx-space-3); }
 .vx-stage-banner .vx-btn:not(.vx-btn--primary) { color: inherit; background: transparent; box-shadow: inset 0 0 0 1px currentColor; }
 .vx-stage-banner .vx-btn:disabled:not([data-loading='true']) { opacity: .65; }
-/* 反色横幅使用同一动作组件，只在这里交换纸色与墨色。 */
-:is(.vx-guide--banner, .vx-stage-banner) {
-  --vx-action-fill: var(--vx-text-on-strong);
-  --vx-action-fill-hover: color-mix(in srgb, var(--vx-text-on-strong) 92%, var(--vx-ink-base));
-  --vx-action-text: var(--vx-ink-base);
-  --vx-action-edge: transparent;
-}
 :is(.vx-guide--banner, .vx-stage-banner) .vx-btn:not(.vx-btn--primary)[data-loading='true'] { color: transparent; }
 :is(.vx-guide--banner, .vx-stage-banner) .vx-btn:not(.vx-btn--primary)[data-loading='true']::after { border-color: var(--vx-text-on-strong) transparent; }
 .vx-stage-close { position: absolute; top: 6px; right: 6px; color: inherit; }

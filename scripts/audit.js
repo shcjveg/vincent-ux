@@ -19,6 +19,8 @@
   ]
   const ACCENT_OK = [
     'a[href]', 'button.vx-link', '.vx-stat-delta--up', '.vx-money--accent', '.vx-tag--accent', '.vx-money', '.vx-stat-value--accent', '.vx-bar', '.vx-spark', '.vx-callout--accent', '.vx-dot--accent',
+    '.vx-brand-panel', '.vx-nav-brand', '.vx-btn--primary', '.vx-action', '.vx-composer-send', '.vx-ask',
+    '.vx-check:checked', '.vx-check:indeterminate', '.vx-nav-item[aria-current]', '.vx-portal-feed',
     '.vx-choice', '.vx-guide-progress', '.vx-text-accent', '[data-tone="accent"]', '[aria-pressed="true"]', '[aria-selected="true"]',
   ]
   const ENTRY = '.vx-nav-item, .vx-tab, .vx-todo-group-head, [data-entry]'

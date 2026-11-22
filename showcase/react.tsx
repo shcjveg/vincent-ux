@@ -1,4 +1,4 @@
-import palettes from '../tokens/dist/palettes.json'
+import { PaletteControls } from './PaletteControls'
 import { downloadJson } from './download'
 import { PortalExample } from './PortalExample'
 import { ReportExample } from './ReportExample'
@@ -314,20 +314,6 @@ function GuideDemo() {
   </div>
 }
 
-/** 导航里的配色选择：只读写根元素的 data-palette，色卡区点选也改同一个属性。 */
-function PalettePick() {
-  const root = document.documentElement
-  const [current, setCurrent] = useState(root.dataset.palette ?? '')
-  useEffect(() => {
-    const watch = new MutationObserver(() => setCurrent(root.dataset.palette ?? ''))
-    watch.observe(root, { attributes: true, attributeFilter: ['data-palette'] })
-    return () => watch.disconnect()
-  }, [])
-  const fallback = palettes.find(p => p.default)?.id ?? null
-  return <Select label="配色主题" value={current || fallback} options={palettes.map(({ id, name }) => ({ value: id, label: name }))}
-    onChange={id => { if (id === fallback) delete root.dataset.palette; else root.dataset.palette = id }} />
-}
-
 function TaskCardDemo(){
  const [handled,setHandled]=useState(''),[history,setHistory]=useState(false),[revision,setRevision]=useState(1)
  const [completedChoice,setCompletedChoice]=useState<{id:string;text:string}>(),[completedAction,setCompletedAction]=useState<'continue'|'takeover'>()
@@ -369,7 +355,7 @@ function Showcase() {
   }, [])
   return <>
     <ThemeToggle variant="inline" />
-    {createPortal(<PalettePick />, document.getElementById('palette-pick')!)}
+    <PaletteControls />
     {createPortal(<BrowserDemo />, document.getElementById('browse-demo')!)}
     {createPortal(<InteractionDemo />, document.getElementById('interaction-demo')!)}
     {createPortal(<GuideDemo />, document.getElementById('guide-demo')!)}

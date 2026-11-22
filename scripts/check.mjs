@@ -38,6 +38,13 @@ if (!process.argv.slice(2).length) {
       const [group, key] = path, target = group === 'brand' || group === 'viz' ? b : t
       Object.assign(target[group][key], { light, dark })
     }
+    // 与 CSS 一样，从当前主题解析单色别名；只为渐变的两个色标单独核对。
+    function color(group, key, mode) {
+      const token = (b[group] ?? t[group])[key]
+      const value = token[mode] ?? token.$value
+      const alias = /^var\(--vx-([a-z]+)-([a-z-]+)\)$/.exec(value)
+      return alias ? color(alias[1], alias[2], mode) : value
+    }
     const verify = (label, fg, bg, min) => { const r = contrast(rgb(fg), bg); if (r < min) errors.push(`对比度 [${id}] ${label} = ${r.toFixed(2)}，需 ≥ ${min}`) }
     // 强调色（选中、等你动手）与危急色（阻断、超时）色相至少隔 40°，免得两种语气看成一种。
     const hue = (c) => toOklch(rgb(c))[2], gap = (x, y) => { const d = Math.abs(x - y) % 360; return Math.min(d, 360 - d) }
@@ -54,6 +61,8 @@ if (!process.argv.slice(2).length) {
         for (const [role, value] of Object.entries(readingInk)) verify(`${mode} text-${role} / ${label}`, value, bg, 4.5)
       }
       const surfaces = Object.entries(t.surface).filter(([key]) => !key.startsWith('$') && key !== 'scrim')
+      const layers = ['canvas', 'shell', 'card'].map(key => toOklch(rgb(t.surface[key][mode]))[0])
+      if (layers.some((l, i) => i > 0 && l <= layers[i - 1])) errors.push(`[${id}] ${mode} 画布、承载区与内容卡的明度次序有误`)
       for (const [surface, value] of surfaces) {
         for (const under of ['canvas', 'card']) {
           const bg = blend(rgb(value[mode]), rgb(t.surface[under][mode]))
@@ -76,14 +85,26 @@ if (!process.argv.slice(2).length) {
         verifyReading(bg, `${tone}-soft`)
         verify(`${mode} ${tone} / soft`, b.brand[tone][mode], bg, 4.5)
       }
-      const label = t.action.text[mode] ?? t.text['on-strong'][mode]
-      const edge = t.action.edge[mode] ?? 'transparent'
+      const field = color('brand', 'field', mode)
+      verify(mode + ' 品牌区文字', color('brand', 'on-field', mode), rgb(field), 4.5)
+      const selected = color('selection', 'fill', mode)
+      verify(mode + ' 选中标记', color('selection', 'on-fill', mode), rgb(selected), 4.5)
+      if (palette.swatches && (field !== palette.swatches[0] || t.action.fill[mode] !== palette.swatches[2])) {
+        errors.push(`品牌原色 [${id}] ${mode} 识别区或主按钮偏离色卡`)
+      }
+      const label = color('action', 'text', mode)
+      const edge = color('action', 'edge', mode)
+      const inverseEdge = color('action', 'edge-on-strong', mode)
+      const inverse = rgb(t.ink.base[mode])
       if (palette.swatches && toOklch(rgb(label))[1] > 0.025) errors.push(`主动作 [${id}] ${mode} 字色过艳`)
       const paints = [t.action.fill[mode] ?? t.ink.base[mode], t.action['fill-hover'][mode] ?? t.ink.top[mode]]
       if (!t.action.fill[mode]) paints.push(t.ink.top[mode])
       for (const fill of new Set(paints)) {
         const paint = rgb(fill)
         verify(`${mode} 主动作文字 / ${fill}`, label, paint, 4.5)
+        if (Math.max(contrast(paint, inverse), inverseEdge === 'transparent' ? 0 : contrast(rgb(inverseEdge), inverse)) < 3) {
+          errors.push(`主动作 [${id}] ${mode} 在反色说明面上的边界未达 3:1`)
+        }
         for (const [key, surface] of surfaces) {
           const bg = blend(rgb(surface[mode]), rgb(t.surface.canvas[mode]))
           if (Math.max(contrast(paint, bg), edge === 'transparent' ? 0 : contrast(rgb(edge), bg)) < 3) {

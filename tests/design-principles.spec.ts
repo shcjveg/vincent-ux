@@ -212,52 +212,86 @@ test('分段回复跟随底部，回读与切换会话保留位置，读者可�
   await expect.poll(distance).toBeLessThan(3)
 })
 
-test('色卡、实际按钮和模式切换共用配色，选中反馈与键盘焦点正确', async ({ page }) => {
-  await page.goto('/showcase/?palette=cream-ember#portal')
-  const portal = page.getByTestId('portal-demo')
-  const login = portal.getByRole('button', { name: '登录', exact: true })
+test('点色卡即改变画布、导航与主操作，两个选择入口和链接同步', async ({ page }) => {
+  await page.goto('/showcase/?palette=royal-lime#palettes')
   const picker = page.getByRole('combobox', { name: '配色主题', exact: true })
-  const sample = (id: string) => page.locator(`[data-palette-id="${id}"]`)
-  const colors = (el: typeof login) => el.evaluate(node => [getComputedStyle(node).backgroundColor, getComputedStyle(node).color])
-  await expect(picker).toHaveText('奶油焦橙')
-  const initial = await colors(sample('cream-ember'))
-  expect(await colors(login)).toEqual(initial)
-  await login.click()
-  await expect(portal.getByRole('alert')).toHaveText('请输入演示账号。')
-  const butter = sample('burgundy-butter')
-  await butter.focus()
-  await butter.press('Enter')
-  await expect(butter).toBeFocused()
-  await expect(butter).toHaveAttribute('aria-pressed', 'true')
-  await expect(picker).toHaveText('松木酒红')
-  const normal = await colors(butter)
-  expect(normal).not.toEqual(initial)
-  await expect.poll(() => colors(login)).toEqual(normal)
-  await expect(page).toHaveURL(/palette=burgundy-butter/)
+  const grid = page.getByRole('radiogroup', { name: '配色主题' })
+  const preview = page.locator('.sc-palette-preview')
+  const login = page.getByTestId('portal-demo').getByRole('button', { name: '登录', exact: true })
+  const background = (el: typeof login) => el.evaluate(node => getComputedStyle(node).backgroundColor)
+  const canvas = page.locator('body'), nav = page.locator('.sc-toc')
+  const before = await Promise.all([background(canvas), background(nav)])
+  await page.locator('#palette-forest-violet .vx-palette-reading').click()
+  const forest = grid.getByRole('radio', { name: '森林电紫' })
+  await expect(forest).toBeChecked()
+  await expect(picker).toHaveText('森林电紫')
+  await expect(preview.locator('strong')).toHaveText('森林电紫')
+  await expect.poll(() => background(canvas)).not.toBe(before[0])
+  await expect.poll(() => background(nav)).not.toBe(before[1])
+  await expect(login).toHaveCSS('background-color', 'rgb(139, 92, 246)')
+  await expect(preview.getByRole('link')).toHaveCSS('background-color', 'rgb(139, 92, 246)')
+  await expect(page).toHaveURL(/palette=forest-violet/)
   await page.reload()
-  await expect.poll(() => colors(login)).toEqual(normal)
-  await butter.hover()
-  await expect.poll(async () => (await colors(butter))[0]).not.toBe(normal[0])
-  expect((await colors(butter))[1]).toBe(normal[1])
-  await page.locator('#showcase-mode button').click()
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
-  await expect.poll(async () => (await colors(login))[0]).not.toBe(normal[0])
-  await expect(async () => {
-    expect(await colors(butter)).toEqual(await colors(login))
-  }).toPass({ timeout: 5000 })
+  await expect(forest).toBeChecked()
+  await forest.press('ArrowRight')
+  await expect(forest).not.toBeChecked()
+  await expect(grid.locator('input:checked')).toBeFocused()
+  await expect(picker).toHaveText(await grid.locator('input:checked').getAttribute('aria-label') as string)
   await picker.click()
   await page.getByRole('option', { name: '墨金', exact: true }).click()
+  await expect(grid.getByRole('radio', { name: '墨金' })).toBeChecked()
   await expect(login).toHaveCSS('background-image', /linear-gradient/)
 })
 
+test('首次跟随系统明暗，手动选择随页面与指南保留，放大后切换器仍可用', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await page.goto('/showcase/?palette=forest-violet')
+  const toggle = page.locator('#showcase-mode button')
+  const live = page.locator('.sc-palette-preview a')
+  await expect(toggle).toHaveText('暗色')
+  const darkCanvas = await page.locator('body').evaluate(el => getComputedStyle(el).backgroundColor)
+  await expect(live).toHaveCSS('background-color', 'rgb(139, 92, 246)')
+  await page.emulateMedia({ colorScheme: 'light' })
+  await expect(toggle).toHaveText('浅色')
+  await expect(page.locator('body')).not.toHaveCSS('background-color', darkCanvas)
+  await expect(live).toHaveCSS('background-color', 'rgb(139, 92, 246)')
+  await toggle.click()
+  await expect(live).toHaveCSS('background-color', 'rgb(139, 92, 246)')
+  await page.setViewportSize({ width: 320, height: 740 })
+  const normal = await toggle.boundingBox()
+  await page.evaluate(() => document.documentElement.style.fontSize = '200%')
+  const large = await toggle.boundingBox()
+  expect(large!.width).toBeGreaterThan(normal!.width)
+  expect(large!.height).toBeGreaterThan(normal!.height)
+  expect(large!.x + large!.width).toBeLessThanOrEqual(320)
+  expect(await toggle.evaluate(el => getComputedStyle(el).whiteSpace)).toBe('nowrap')
+  await page.locator('#color a[href*="handbook"]').first().click()
+  await expect(page.locator('article h1')).toBeVisible()
+  await expect(page.locator('html')).toHaveCSS('color-scheme', 'dark')
+  await page.getByRole('link', { name: '回到刚才的演示' }).click()
+  await expect(toggle).toHaveText('暗色')
+  await expect(live).toHaveCSS('background-color', 'rgb(139, 92, 246)')
+})
+
+test('产品从根切换主题，选择器、指南和独立整页示例同步', async ({ page }) => {
+  await page.evaluate(() => document.documentElement.dataset.palette = 'grove')
+  await expect(page.locator('#palette-pick button')).toHaveText('松林')
+  await expect(page.getByRole('radio', { name: '松林' })).toBeChecked()
+  await page.locator('#showcase-mode button').click()
+  const button = page.locator('.sc-palette-preview .vx-btn--primary')
+  const fill = await page.locator('#palette-grove .vx-palette-action').evaluate(el => getComputedStyle(el).backgroundColor)
+  await expect(button).toHaveCSS('background-color', fill)
+  const scheme = await page.locator('html').getAttribute('data-theme')
+  await page.locator('#handbook').getByRole('link', { name: '设计要求与验收', exact: true }).click()
+  await page.getByRole('link', { name: '批量改交期', exact: true }).click()
+  await expect(page.locator('html')).toHaveAttribute('data-palette', 'grove')
+  await expect(page.locator('html')).toHaveAttribute('data-theme', scheme!)
+  await expect(page.locator('form .vx-btn--primary').first()).toHaveCSS('background-color', fill)
+})
+
 test('各主题的阅读卡、门户与行内链接使用对应的文字色阶', async ({ page }) => {
-  await expect(page.locator('[data-palette-id]')).toHaveCount(paletteCount)
-  const sourceSwatches = Object.fromEntries(Object.entries(paletteSource).flatMap(([id, palette]) =>
-    typeof palette === 'object' && 'swatches' in palette ? [[id, palette.swatches]] : []))
-  const shownSwatches = await page.locator('.sc-palette:has(.sc-palette-band)').evaluateAll(cards => Object.fromEntries(
-    cards.map(card => [card.getAttribute('data-palette'), Array.from(card.querySelectorAll('dd code'), el => el.textContent)])))
-  expect(shownSwatches).toEqual(sourceSwatches)
-  const themes = await page.locator('[data-palette-id]').evaluateAll(cards => cards.map(card => (card as HTMLElement).dataset.paletteId!))
+  await expect(page.locator('.vx-palette-grid input')).toHaveCount(paletteCount)
+  const themes = await page.locator('.vx-palette-grid input').evaluateAll(cards => cards.map(card => (card as HTMLInputElement).value))
   const mismatches = await page.evaluate(ids => {
     const root = document.documentElement
     const sample = document.querySelector('#text-colors')!
@@ -324,27 +358,69 @@ test('批量操作使用完整已选范围，可导出、移动、归档和撤�
   await expect(demo.getByText('已归档', { exact: true })).toHaveCount(0)
 })
 
-test('各主题的局部色卡和整页主按钮在两种明暗下使用同一组外观', async ({ page }) => {
-  await expect(page.locator('[data-palette-id]')).toHaveCount(paletteCount)
+test('两种明暗下逐张核对候选色卡与真正应用到页面的颜色', async ({ page }) => {
+  await expect(page.locator('.vx-palette-grid input')).toHaveCount(paletteCount)
   await page.addStyleTag({ content: '* { transition: none !important; }' })
-  const mismatches = await page.evaluate(() => {
-    const root = document.documentElement
-    const login = document.querySelector('#portal .vx-btn--primary')!
+  const mismatches = await page.evaluate(async source => {
+    const paint = (el: Element, property: string) => getComputedStyle(el).getPropertyValue(property)
+    const comparisons = [
+      ['.vx-palette-identity', '.sc-brand', 'background-color'],
+      ['.vx-palette-identity', '.vx-nav-brand', 'color'],
+      ['.vx-palette-identity', '.vx-portal-feed', 'background-color'],
+      ['.vx-palette-rail', '.sc-toc', 'background-color'],
+      ['.vx-palette-page', 'body', 'background-color'],
+      ['.vx-palette-heading', '#text-colors h3', 'color'],
+      ['.vx-palette-content', '#text-colors', 'background-color'],
+      ['.vx-palette-nav-lines i', '.vx-check:checked', 'background-color'],
+      ['.vx-palette-reading', '#text-colors .vx-body', 'color'],
+      ...['.sc-palette-preview a', '#portal .vx-btn--primary'].flatMap(selector =>
+        ['background-color', 'background-image', 'color', 'box-shadow'].map(key => ['.vx-palette-action', selector, key])),
+    ]
     const differences: string[] = []
     for (const mode of ['light', 'dark']) {
-      root.dataset.theme = mode
-      for (const card of document.querySelectorAll<HTMLElement>('[data-palette-id]')) {
-        root.dataset.palette = card.dataset.paletteId
-        for (const key of ['background-color', 'background-image', 'color', 'box-shadow']) {
-          if (getComputedStyle(login).getPropertyValue(key) !== getComputedStyle(card).getPropertyValue(key)) {
-            differences.push(`${mode} ${root.dataset.palette} ${key}`)
-          }
-        }
+      document.documentElement.dataset.theme = mode
+      // 先记录整页候选，防止所有色卡碰巧继承已选主题也能通过。
+      const previews = Array.from(document.querySelectorAll<HTMLInputElement>('.vx-palette-grid input'), radio => ({
+        radio, colors: comparisons.map(([selector,, key]) => paint(radio.parentElement!.querySelector(selector)!, key)),
+      }))
+      const combinations = new Set(previews.map(({ colors }) => colors.join('|')))
+      if (combinations.size !== previews.length) differences.push(mode + ' 候选外观重复')
+      for (const { radio, colors } of previews) {
+        radio.click()
+        await new Promise(requestAnimationFrame)
+        comparisons.forEach(([, selector, key], i) => {
+          if (paint(document.querySelector(selector)!, key) !== colors[i]) differences.push([mode, radio.value, selector, key].join(' '))
+        })
+        const palette = source[radio.value as keyof typeof source]
+        const raw = typeof palette === 'object' && 'swatches' in palette ? palette.swatches : []
+        const shown = Array.from(document.querySelectorAll('.sc-palette-source code'), el => el.textContent)
+        if (shown.join() !== raw.join()) differences.push(radio.value + ' 原始色号')
       }
     }
     return differences
-  })
+  }, paletteSource)
   expect(mismatches).toEqual([])
+})
+
+test('暗色选择翠绿朱红后，品牌区与可操作的朱红按钮保留原色', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await page.goto('/showcase/#palettes')
+  const picker = page.getByRole('combobox', { name: '配色主题', exact: true })
+  await picker.click()
+  const option = page.getByRole('option', { name: '翠绿朱红' })
+  await expect(option.locator('.vx-palette-identity')).toHaveCSS('background-color', 'rgb(1, 141, 62)')
+  await expect(option.locator('.vx-palette-action')).toHaveCSS('background-color', 'rgb(231, 21, 6)')
+  await option.click()
+  const cta = page.locator('.sc-palette-preview a')
+  for (const mode of ['dark', 'light']) {
+    await expect(page.locator('.sc-brand')).toHaveCSS('background-color', 'rgb(1, 141, 62)')
+    await expect(cta).toHaveCSS('background-color', 'rgb(231, 21, 6)')
+    await expect(cta).toHaveCSS('color', 'rgb(255, 255, 255)')
+    await cta.hover()
+    await expect(cta).toHaveCSS('background-color', 'rgb(199, 9, 0)')
+    await picker.hover()
+    if (mode === 'dark') await page.locator('#showcase-mode button').click()
+  }
 })
 
 test('轻微回读立即停止跟随，返回入口按实际行高显示', async ({ page }) => {

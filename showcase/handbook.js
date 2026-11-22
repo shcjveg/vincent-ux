@@ -14,7 +14,6 @@ const context = new URLSearchParams(location.search)
 const file = context.get('doc') || 'docs/tasks.md'
 const palette = context.get('palette')
 const from = context.get('from')
-if (palette) document.documentElement.dataset.palette = palette
 const article = document.querySelector('article')
 function readerUrl(path, hash = '') {
   const url = new URL('handbook.html', location.href)
@@ -44,7 +43,7 @@ function resolveLink(href) {
   const path = decodeURI(url.pathname.slice(1))
   if (files['../' + path] || (path.endsWith('/') && directoryFiles(path).length)) return readerUrl(path, url.hash)
   const target = new URL(path + url.search + url.hash, siteRoot)
-  if (palette && path.startsWith('showcase/') && !target.searchParams.has('palette')) target.searchParams.set('palette', palette)
+  if (palette && (path.startsWith('showcase/') || path.startsWith('examples/')) && !target.searchParams.has('palette')) target.searchParams.set('palette', palette)
   return target.href
 }
 
@@ -162,8 +161,4 @@ async function showPage() {
   if (location.hash) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView()
 }
 
-try {
-  const mode = localStorage.getItem('vx-theme')
-  if (mode === 'dark' || mode === 'light') document.documentElement.dataset.theme = mode
-} catch { /* 无存储权限时沿用系统明暗。 */ }
 showPage()

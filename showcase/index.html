@@ -1,9 +1,10 @@
 <!doctype html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>设计系统预览 · Vincent UX</title>
+    <script src="%BASE_URL%vx-page-theme.js"></script>
     <link rel="stylesheet" href="../styles.css" />
     <link rel="stylesheet" href="showcase.css" />
   <style>body { padding-bottom: var(--vx-guide-space, 0px); }</style>
@@ -12,8 +13,7 @@
     <a class="sc-skip" href="#handbook">跳到项目使用指南</a>
     <div class="sc">
       <header class="sc-toc">
-        <div class="sc-brand"><h1>Vincent UX</h1><div id="showcase-mode"></div></div>
-        <span class="vx-text-3" data-version>展示与验收</span>
+        <div class="sc-brand vx-brand-panel"><h1>Vincent UX</h1><div id="showcase-mode"></div><span data-version>展示与验收</span></div>
         <a class="sc-index-jump" href="#demo-index">浏览规范示例目录</a>
         <div class="sc-palette-pick"><span aria-hidden="true">配色</span><div id="palette-pick"></div></div>
         <nav class="sc-catalog vx-index" id="demo-index" aria-labelledby="demo-index-title" tabindex="-1">
@@ -89,10 +89,10 @@
         <section class="sc-sec" data-catalog="视觉基础" id="color">
           <h2>颜色</h2>
           <p class="sc-lead">中性色组织页面层次，动作色标出推荐操作，状态色传达需要关注的程度。为每种底色配套选择文字、图标和边界颜色。</p>
-          <div data-vx-swatch class="sc-swatches" data-swatches="text-primary text-secondary text-tertiary text-link text-disabled ink-base brand-accent brand-accent-bright brand-accent-soft brand-critical brand-critical-soft fill-hover fill-selected line-faint"></div>
+          <div data-vx-swatch class="sc-swatches" data-swatches="surface-canvas surface-shell surface-card brand-field brand-on-field action-fill action-text selection-fill focus-ring text-primary text-secondary text-tertiary text-link text-disabled ink-base brand-accent brand-accent-bright brand-accent-soft brand-critical brand-critical-soft fill-hover fill-selected line-faint"></div>
           <span id="leo-palettes"></span>
           <h3 class="sc-sub" id="palettes">配色主题</h3>
-          <p class="sc-lead">三色色带按 60／30／10 展示品牌原色。卡面、标题和按钮显示这些色彩适配当前明暗模式后的效果。应用后，可在<a href="#text-colors">正文</a>和<a href="#portal">登录表单</a>中查看效果。</p>
+          <p class="sc-lead">色卡左侧对应导航，右侧对应画布、内容卡和主按钮。点选即可应用到整页，也可在<a href="#text-colors">正文</a>和<a href="#portal">登录表单</a>中核对。</p>
           <p class="sc-reference vx-nav-links"><a href="./handbook.html?doc=docs/usage.md#从三种品牌色接入"><svg class="vx-icon" aria-hidden="true"><use href="../icons/dist/sprite.svg#note"/></svg>按钮底色、文字与边界</a> <a href="./handbook.html?doc=docs/research/three-color-composition.md">三色搭配与用色比例</a></p>
           <div class="sc-palettes" data-palettes></div>
         </section>

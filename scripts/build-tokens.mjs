@@ -11,7 +11,7 @@
 //   基础主题按色相与彩度派生；网站三色主题从原色映射到承载面、文字和主按钮。
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
 import { fromOklch, format, parse, toOklch } from './color.mjs'
-import { websitePalette, websiteNeutral, websiteAction, websiteTextLink } from './website-palette.mjs'
+import { websitePalette, websiteNeutral, paletteAction, websiteBrandField, websiteTextLink } from './website-palette.mjs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -57,6 +57,7 @@ const modeProperties = dark => [['--vx-light', dark ? ' ' : 'initial'], ['--vx-d
 // —— 配色主题 ——
 // 角色：中性层（面、文字、线、填充、墨色、阴影、中性图表色）跟主题的中性色相；强调色（含焦点环、强调图表色）
 // 跟主题的强调色；危急色只换色相；警示色默认不随主题变（主题可给 warning.hue）；涨跌色（data）不随主题变，保证正负含义稳定。
+const shellLightness = toOklch(parse(themed.find(t => t.name === 'surface-shell').light))[0]
 const ACCENT_BASE_CHROMA = 0.098
 const role = (p) => {
   const [group, key] = p
@@ -64,13 +65,14 @@ const role = (p) => {
   if (group === 'focus') return 'accent'
   if (group === 'viz') return key === 'accent' || ['series-1', 'series-3', 'series-5'].includes(key) ? 'accent' : 'neutral'
   if (['surface', 'fill', 'text', 'line', 'ink', 'shadow'].includes(group)) return 'neutral'
-  return null
+  if (group === 'data' || group === 'blur') return null
+  throw new Error('明暗变量缺少主题角色：' + p.join('-'))
 }
 function shift(color, r, palette, mode, path) {
   const c = parse(color)
   const [L, C, h] = toOklch(c)
   let next
-  if (r === 'neutral' && palette.paper) next = websiteNeutral([L, C], palette, mode, path)
+  if (r === 'neutral' && palette.paper) next = websiteNeutral([L, C], palette, mode, path, shellLightness)
   else if (r === 'neutral') {
     const k = mode === 'dark' ? palette.neutral.darkChroma ?? palette.neutral.chroma : palette.neutral.chroma
     next = [L, C * k, palette.neutral.hue]
@@ -83,15 +85,19 @@ const derive = (t, r, palette, mode) => t.type === 'color'
   ? shift(t[mode], r, palette, mode, t.path)
   : String(t[mode]).replace(/rgba?\([^)]*\)|#[0-9A-Fa-f]{6}\b/g, (m) => shift(m, r, palette, mode, t.path))
 
-const paletteSource = read('palettes.json')
-const palettes = Object.entries(paletteSource).filter(([id, p]) => !id.startsWith('$') && !p.default).map(([id, meta]) => {
+// 两种配方在此汇合。CSS、嵌入副本与可查询的 JSON 消费同一组已解析角色。
+function compilePalette([id, meta]) {
   const palette = meta.swatches ? websitePalette(meta.swatches) : meta
   const tokens = themed.filter(t => role(t.path)).map(t => ({
     ...t, light: derive(t, role(t.path), palette, 'light'), dark: derive(t, role(t.path), palette, 'dark'),
   }))
-  if (meta.swatches) tokens.push(websiteTextLink(meta.swatches), ...websiteAction(meta.swatches, tokens))
+  if (meta.swatches) tokens.push(...websiteBrandField(meta.swatches), websiteTextLink(meta.swatches))
+  tokens.push(...paletteAction(tokens, meta.swatches?.[2]))
   return { id, meta, tokens }
-}).sort((a, b) => a.meta.name.localeCompare(b.meta.name, 'zh-CN'))
+}
+const paletteSource = read('palettes.json')
+const palettes = Object.entries(paletteSource).filter(([id, p]) => !id.startsWith('$') && !p.default)
+  .map(compilePalette).sort((a, b) => a.meta.name.localeCompare(b.meta.name, 'zh-CN'))
 const overridden = new Set(palettes.flatMap(p => p.tokens.map(t => t.name)))
 const defaultsAtScope = base.filter(t => overridden.has(t.name) || String(t.value).includes('var('))
 const css = [

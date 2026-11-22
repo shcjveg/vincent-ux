@@ -1,5 +1,5 @@
 {
-  "$description": "主题变量：浅色与暗色各一个取值（light / dark）。中性层与品牌无关；品牌色在 brand.tokens.json。组件只引用这里和 brand 的语义名，不引用色值。",
+  "$description": "主题变量：浅色与暗色各一个取值（light / dark）。默认主题提供明度层级，其他主题从配方派生承载面、文字和控件。组件只引用这里和 brand 的语义名，不引用色值。",
   "surface": {
     "$description": "面分层：每升一级亮一档（浅色）或亮一档（暗色），层级靠明度差而不是线。",
     "canvas": {
@@ -130,11 +130,16 @@
       "$description": "输入与未选中控件的必要边界；与装饰分隔线分开"
     }
   },
+  "selection": {
+    "fill": { "$type": "color", "$value": "var(--vx-brand-accent)", "$description": "选中控件的实色标记" },
+    "on-fill": { "$type": "color", "$value": "var(--vx-surface-card)", "$description": "选中标记上的勾、圆点与滑块" }
+  },
   "action": {
     "$description": "主要操作的底、悬停底、文字与边界成套使用。危险操作和选中状态有各自的语义色。",
     "fill": { "$type": "string", "$value": "linear-gradient(180deg, var(--vx-ink-top), var(--vx-ink-base))" },
     "text": { "$type": "color", "$value": "var(--vx-text-on-strong)" },
     "edge": { "$type": "color", "$value": "transparent" },
+    "edge-on-strong": { "$type": "color", "$value": "var(--vx-text-on-strong)", "$description": "主操作放在反色说明面时的边界" },
     "fill-hover": { "$type": "color", "$value": "var(--vx-ink-top)" }
   },
   "ink": {

@@ -1,5 +1,5 @@
 {
-  "$description": "配色主题：只换颜色，不换圆角、字体、间距。基础主题给出参数，色值由 scripts/build-tokens.mjs 从默认配色（theme / brand）派生：明度一律沿用默认配色，只换色相与彩度，对比度由 scripts/check.mjs 逐套核对。定位依据见 docs/research/color-theme-taxonomy.md：三条轴（暖冷、软硬、清浊）定位，场景与人群只作标签。neutral.hue / accent.hue / critical.hue 为 OKLCH 色相角；neutral.chroma 为中性层彩度相对默认配色的倍数（0 为纯灰），darkChroma 缺省同 chroma；accent.chroma 为浅色强调色的 OKLCH 彩度（默认配色为 0.098），网站配色的 swatches 按原片顺序记录前两色与主动作色，三个值用于派生浅深承载面、墨色与可读的文字强调色；其余基础主题强调色按同一比例缩放；accent.lightness 为浅色强调色的明度微调（OKLCH L），只在对比度差一点时使用。",
+  "$description": "配色主题：只换颜色，不换圆角、字体、间距。基础主题给出参数，色值由 scripts/build-tokens.mjs 从默认配色（theme / brand）派生：明度一律沿用默认配色，只换色相与彩度，对比度由 scripts/check.mjs 逐套核对。定位依据见 docs/research/color-theme-taxonomy.md：三条轴（暖冷、软硬、清浊）定位，场景与人群只作标签。neutral.hue / accent.hue / critical.hue 为 OKLCH 色相角；neutral.chroma 为中性层彩度相对默认配色的倍数（0 为纯灰），darkChroma 缺省同 chroma；accent.chroma 为浅色强调色的 OKLCH 彩度（默认配色为 0.098），网站配色的 swatches 按原片顺序记录前两色与主动作色，第一种用于品牌识别区，第三种用于主动作常态；配套文字、承载面和悬停按角色派生；其余基础主题强调色按同一比例缩放；accent.lightness 为浅色强调色的明度微调（OKLCH L），只在对比度差一点时使用。",
   "ink-gold": {
     "name": "墨金",
     "default": true,

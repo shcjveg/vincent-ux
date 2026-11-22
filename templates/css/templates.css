@@ -26,11 +26,15 @@
 }
 
 .vx-nav-brand {
+  border-radius: var(--vx-radius-md);
   display: flex;
   align-items: center;
   gap: var(--vx-space-2-5);
   padding: var(--vx-space-2) var(--vx-space-1-5) var(--vx-space-3-5) var(--vx-space-2-5);
 }
+
+.vx-nav-brand .vx-icon-btn:focus-visible { outline-color: currentColor; }
+.vx-nav-brand .vx-icon-btn:hover { background: var(--vx-brand-on-field); color: var(--vx-brand-field); }
 
 .vx-nav-brand-text {
   flex: 1;
@@ -48,11 +52,12 @@
   display: block;
   margin-top: var(--vx-space-px);
   font-size: var(--vx-font-size-xs);
-  color: var(--vx-text-tertiary);
+  color: inherit;
 }
 
 .vx-nav-brand .vx-icon-btn {
   margin-left: auto;
+  color: inherit;
 }
 
 .vx-nav-scroll {
@@ -113,8 +118,8 @@
 
 .vx-nav-item[aria-current='page'],
 .vx-nav-item[aria-current='true'] {
-  background: var(--vx-fill-selected);
-  color: var(--vx-text-primary);
+  background: var(--vx-brand-accent-soft);
+  color: var(--vx-selection-fill);
   font-weight: var(--vx-font-weight-medium);
 }
 
@@ -128,7 +133,7 @@
 }
 
 .vx-nav-item[aria-current] svg {
-  color: var(--vx-text-primary);
+  color: inherit;
 }
 
 .vx-nav-item-label {
@@ -561,6 +566,7 @@ button.vx-nav-account:hover, button.vx-nav-account[data-popup-open] { background
 .vx-portal-feed {
   position: relative; min-height: 0; overflow: hidden; display: flex; justify-content: center; gap: var(--vx-space-4);
   padding-inline: var(--vx-space-6);
+  background: var(--vx-brand-field);
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, currentColor 18%, currentColor 82%, transparent 100%);
   mask-image: linear-gradient(to bottom, transparent 0, currentColor 18%, currentColor 82%, transparent 100%);
   animation: vx-fade var(--vx-motion-duration-slow) var(--vx-motion-ease-out) both;
