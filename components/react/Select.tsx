@@ -1,4 +1,4 @@
-// vincent-ux v1.7.0 · components/react/Select.tsx
+// vincent-ux v1.8.0 · components/react/Select.tsx
 import { useThemeContainer } from './ThemeScope'
 import { Combobox as C } from '@base-ui/react/combobox'
 import { useState, type AriaAttributes, type Ref } from 'react'

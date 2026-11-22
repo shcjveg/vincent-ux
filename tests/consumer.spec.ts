@@ -21,9 +21,16 @@ test('独立项目只依赖同步产物，整页与嵌入两种接入都能完�
     }))
     execFileSync(process.execPath, [resolve('node_modules/typescript/bin/tsc'), '-p', tsconfig])
     await build({ root: dir, configFile: false, logLevel: 'silent',
-      build: { rolldownOptions: { input: [join(dir, 'vincent-ux/example-react/index.html'), join(dir, 'vincent-ux/example.html')] } } })
+      build: { rolldownOptions: { input: ['example-react/index.html', 'example.html', 'guide.html', 'example-batch/index.html'].map(file => join(dir, 'vincent-ux', file)) } } })
     server = await preview({ root: dir, configFile: false, logLevel: 'silent', preview: { port: 0, host: '127.0.0.1' } })
     const base = server.resolvedUrls!.local[0]
+    await page.goto(new URL('vincent-ux/guide.html', base).href)
+    await page.getByRole('searchbox').fill('批量')
+    await expect(page.getByRole('article')).toHaveCount(1)
+    await page.getByRole('link', { name: '批量改交期', exact: true }).click()
+    await page.getByRole('button', { name: '确认修改 2 笔订单' }).click()
+    await page.getByRole('button', { name: '重试 1 笔失败订单' }).click()
+    await expect(page.getByRole('status')).toContainText('全部 2 笔已更新')
     await page.goto(new URL('vincent-ux/example.html', base).href)
     await expect(page).toHaveTitle('内容库 · Vincent UX 示例')
     await page.getByRole('searchbox').fill('访谈')

@@ -45,12 +45,13 @@ npm run sync -- ../my-app/src/vincent-ux
 
 整页接入使用 `styles.css`；在已有产品里嵌入一个模块时使用 `embedded.css` 和 `ThemeScope`。React 组件和表单提交行为从 `react/index.ts` 导入。纯 HTML 项目可加 `--no-react`。[整页 HTML 示例](http://127.0.0.1:5190/examples/basic.html) · [嵌入式 React 示例](http://127.0.0.1:5190/examples/embedded/)
 
-依赖安装、代码示例、按层取用与更新方式见 [接入指南](docs/usage.md)。
+同步后可从副本的 `guide.html` 按任务查找原则与案例。在使用方的 CI 运行 `node src/vincent-ux/tools/check.mjs src`。已有副本先用 `--dry-run` 预览更新和本地定制。[接入指南](docs/usage.md) · [旧版升级](docs/usage.md#升级已有副本)
 
 ## 设计指南
 
 | 你想做什么 | 从这里开始 |
 |---|---|
+| 设计没有现成组件的任务，找到组合和验收方法 | [按任务做设计](docs/tasks.md) · [批量改交期示例](examples/batch/index.html) |
 | 理解视觉、内容、交互与无障碍约定 | [设计原则](principles/README.md) |
 | 选择配色主题，调整字号、间距与动效 | [配色接入](docs/usage.md#从三种品牌色接入) · [设计变量](tokens/src/) |
 | 按功能含义选择图标 | [图标指南](icons/README.md) |

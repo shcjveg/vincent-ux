@@ -1,4 +1,4 @@
-// vincent-ux v1.7.0 · components/react/Pagination.tsx
+// vincent-ux v1.8.0 · components/react/Pagination.tsx
 import { Icon } from './Icon'
 
 export function Pagination({ page, totalPages, onChange, disabled = false }: {

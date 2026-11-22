@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtempSync, readFileSync, writeFileSync, existsSync, rmSync, cpSync } from 'node:fs'
+import { mkdtempSync, readFileSync, writeFileSync, existsSync, rmSync, cpSync, mkdirSync, unlinkSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
@@ -16,25 +16,59 @@ test('HTML 接入包含样式入口、图标和可运行示例；重复复制不
   const pkg = JSON.parse(readFileSync(join(root, 'package.json'), 'utf8'))
   assert.ok(guide.includes(pkg.version))
   for (const [name, version] of Object.entries(pkg.dependencies)) assert.ok(guide.includes(name + '@' + version))
-  for (const [, link] of guide.matchAll(/\]\(\.\/([^)]*)\)/g)) assert.ok(existsSync(join(dir, link)), link)
+  for (const [, link] of guide.matchAll(/\]\(\.\/([^)]*)\)/g)) assert.ok(existsSync(join(dir, link.split('#')[0])), link)
   const css = readFileSync(join(dir, 'styles.css'), 'utf8')
   for (const [, path] of css.matchAll(/@import '(.+)'/g)) assert.ok(existsSync(resolve(dir, path)), path)
   assert.match(sync(dir, '--no-react').stdout, /更新 0 个/)
 }))
-test('差异文件阻止整批写入；显式覆盖才替换本地修改', () => temporary(dir => {
-  sync(dir, '--no-react')
+test('重复升级沿用接入模式并保留项目定制，可显式切换 React 或还原上游', () => temporary(dir => {
+  assert.equal(sync(dir, '--no-react').status, 0)
   const path = join(dir, 'css/atoms.css')
   writeFileSync(path, '/* my local changes */')
   const preview = sync(dir, '--dry-run')
-  assert.equal(preview.status, 1)
-  assert.match(preview.stdout, /冲突 css\/atoms\.css/)
-  assert.match(preview.stdout, /新增 react\/SearchField\.tsx/)
-  assert.equal(sync(dir).status, 1)
+  assert.equal(preview.status, 0)
+  assert.match(preview.stdout, /保留 css\/atoms\.css/)
+  assert.equal(sync(dir).status, 0)
   assert.equal(readFileSync(path, 'utf8'), '/* my local changes */')
   assert.ok(!existsSync(join(dir, 'react')))
-  assert.equal(sync(dir, '--overwrite').status, 0)
+  assert.equal(sync(dir, '--react', '--overwrite').status, 0)
   assert.ok(existsSync(join(dir, 'react/SearchField.tsx')))
   assert.notEqual(readFileSync(path, 'utf8'), '/* my local changes */')
+}))
+
+test('有本地定制的旧副本先预览、解决同文件冲突，再按新版清单继续升级', () => temporary(dir => {
+  const base = join(dir, 'pristine')
+  const dest = join(dir, 'app')
+  mkdirSync(join(base, 'css'), { recursive: true })
+  const stamp = '/* vincent-ux v1.6.0 · styles.css */'
+  writeFileSync(join(base, 'styles.css'), stamp + '\n.old {}')
+  writeFileSync(join(base, 'css/atoms.css'), '/* old upstream */')
+  writeFileSync(join(base, 'legacy.css'), '.old {}')
+  writeFileSync(join(base, 'LICENSE'), readFileSync(join(root, 'LICENSE')))
+  cpSync(base, dest, { recursive: true })
+  writeFileSync(join(dest, 'css/atoms.css'), '/* product edit */')
+  writeFileSync(join(dest, 'custom.css'), '/* product only */')
+  unlinkSync(join(dest, 'LICENSE'))
+  const oldStyle = readFileSync(join(dest, 'styles.css'), 'utf8')
+  for (const args of [['--dry-run'], []]) {
+    const result = sync(dest, '--base', base, ...args)
+    assert.equal(result.status, 1, result.stderr)
+    assert.match(result.stdout, /冲突 css\/atoms.css/)
+    assert.match(result.stdout, /删除 legacy.css/)
+    assert.equal(readFileSync(join(dest, 'styles.css'), 'utf8'), oldStyle)
+    assert.ok(!existsSync(join(dest, 'vincent-ux.lock.json')))
+  }
+  const success = sync(dest, '--base', base, '--keep-local', 'css/atoms.css')
+  assert.equal(success.status, 0, success.stderr)
+  assert.ok(!existsSync(join(dest, 'legacy.css')))
+  assert.ok(!existsSync(join(dest, 'LICENSE')))
+  assert.ok(!existsSync(join(dest, 'react')))
+  assert.equal(readFileSync(join(dest, 'custom.css'), 'utf8'), '/* product only */')
+  assert.equal(readFileSync(join(dest, 'css/atoms.css'), 'utf8'), '/* product edit */')
+  const again = sync(dest, '--dry-run')
+  assert.equal(again.status, 0, again.stderr)
+  assert.match(again.stdout, /更新 0 个/)
+  assert.match(again.stdout, /保留 css\/atoms.css/)
 }))
 test('dry-run 与非法参数不会写文件', () => temporary(dir => {
   const dest = join(dir, 'preview')
@@ -88,7 +122,7 @@ test('同一行的多条声明与跨行间距采用相同检查', () => temporar
 
 test('同步到任意目录后可无提示接入，宿主直接用品牌色仍提示', () => temporary(dir => {
   assert.equal(sync(dir).status, 0)
-  const check = () => spawnSync(process.execPath, [join(root, 'scripts/check.mjs'), dir], { encoding: 'utf8' })
+  const check = () => spawnSync(process.execPath, [join(dir, 'tools/check.mjs'), dir], { encoding: 'utf8' })
   const clean = check()
   assert.equal(clean.status, 0, clean.stdout)
   assert.match(clean.stdout, /，0 条提示/)
@@ -97,4 +131,6 @@ test('同步到任意目录后可无提示接入，宿主直接用品牌色仍�
   assert.equal(changed.status, 0, changed.stdout)
   assert.match(changed.stdout, /app\.css:1 页面直接用品牌色/)
   assert.match(changed.stdout, /，1 条提示/)
+  writeFileSync(join(dir, 'app.css'), '.submit { padding: 17px; }')
+  assert.equal(check().status, 1)
 }))

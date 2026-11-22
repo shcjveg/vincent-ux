@@ -28,6 +28,7 @@ jobs:
       - name: Verify committed generated assets
         run: git diff --exit-code -- tokens/dist icons/dist components patterns principles templates SKILL.md styles.css scripts/audit.js
       - run: npm run check
+      - run: npm run check:guide
       - run: npm run typecheck
       - run: npx playwright install --with-deps --only-shell chromium
       - run: npm test

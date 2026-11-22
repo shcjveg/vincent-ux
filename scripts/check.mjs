@@ -6,72 +6,20 @@
 //   3. 禁用图标：引用了 icons.json forbidden 里的图标
 //   4. 对比度：主题文字色在各级面上的对比度（只对本仓库）
 //   5. 使用方页面 CSS 直接用品牌色（只提示）：颜色语义应由设计系统的语义类承担
-import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs'
-import { dirname, join, extname, relative } from 'node:path'
+import { readFileSync, existsSync } from 'node:fs'
+import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+
+import { checkProject, report } from './check-project.mjs'
+import { projectRules } from './project-rules.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..')
 const targets = process.argv.slice(2).length ? process.argv.slice(2) : [join(ROOT, 'components'), join(ROOT, 'templates')]
 const icons = JSON.parse(readFileSync(join(ROOT, 'icons/icons.json'), 'utf8'))
-const baseTokens = JSON.parse(readFileSync(join(ROOT, 'tokens/src/base.tokens.json'), 'utf8'))
-const SPACE = new Set(Object.entries(baseTokens.space).filter(([k]) => !k.startsWith('$')).map(([, v]) => parseFloat(v.$value)))
 for (const target of targets) if (!existsSync(target)) { console.error(`检查目录不存在：${target}`); process.exit(2) }
-
-const files = []
-const walk = (p) => {
-  if (!existsSync(p)) return
-  if (statSync(p).isDirectory()) {
-    for (const e of readdirSync(p)) if (!['node_modules', 'dist', '.git', '.showcase-dist', 'test-results', 'playwright-report'].includes(e)) walk(join(p, e))
-  } else if (['.css', '.tsx', '.ts', '.jsx', '.js', '.html'].includes(extname(p))) files.push(p)
-}
-targets.forEach(walk)
-
-const errors = []
-const warnings = []
-const pascal = (s) => s.split('-').map((x) => x[0].toUpperCase() + x.slice(1)).join('')
-const forbidden = icons.forbidden.names.flatMap((n) => [n, pascal(n)])
-
-// 同步目录由宿主决定。用发布内容辨认系统样式，业务修改后的副本仍按页面检查。
-const consumer = process.argv.length > 2
-const shippedCSS = consumer ? new Set([
-  ...readdirSync(join(ROOT, 'components/css')).filter(f => f.endsWith('.css')).map(f => 'components/css/' + f),
-  'templates/css/templates.css', 'tokens/dist/embedded.css',
-].map(f => readFileSync(join(ROOT, f), 'utf8'))) : new Set()
+const result = checkProject(targets, projectRules(ROOT), process.argv.length > 2)
+const { errors } = result
 const iconSrc = readFileSync(join(ROOT, 'components/react/Icon.tsx'), 'utf8')
-
-for (const f of files) {
-  const rel = relative(process.cwd(), f)
-  const src = readFileSync(f, 'utf8')
-  const pageCSS = consumer && extname(f) === '.css' && !shippedCSS.has(src)
-  if (consumer && /\.(tsx|jsx)$/.test(f) && src !== iconSrc && /from ['"]lucide-react['"]/.test(src))
-    warnings.push(`${rel} 直接引用 lucide-react，改用 <Icon name="含义" />`)
-  const code = src.replace(/\/\*[\s\S]*?\*\//g, match => match.replace(/[^\n]/g, ' ')).replace(/^\s*\/\/.*$/gm, '')
-  if (/tokens\.css$/.test(f)) continue
-  code.split('\n').forEach((line, i) => {
-    const at = `${rel}:${i + 1}`
-    if (extname(f) === '.css' && /(#[0-9a-f]{3,8}\b|rgba?\(|hsla?\()/i.test(line) && !/var\(--/.test(line.split(':')[0])) {
-      if (!/^\s*--/.test(line)) errors.push(`${at} 裸色值：${line.trim()}`)
-    }
-    if (pageCSS && /var\(--vx-brand-(accent|critical)(-bright)?\)/.test(line))
-      warnings.push(`${at} 页面直接用品牌色，改用语气：元素上写 data-tone，样式取 var(--vx-tone) / var(--vx-tone-soft)，或用 .vx-text-accent / .vx-text-critical / .vx-tag--*`)
-    for (const n of forbidden) {
-      const re = new RegExp(`(['"\`<\\s{,])${n}(['"\`\\s/>,}])`)
-      if (re.test(line) && /icon|lucide|from|<|name=/i.test(line)) errors.push(`${at} 禁用图标：${n}`)
-    }
-  })
-  if (extname(f) === '.css') {
-    const internal = !process.argv.slice(2).length
-    const declarations = /(?:^|[;{])\s*((?:padding|margin)(?:-[\w-]+)?|(?:row-|column-)?gap|font-size|border-radius)\s*:\s*([^;}]+)/gm
-    for (const match of code.matchAll(declarations)) {
-      for (const size of match[2].matchAll(/(-?\d+(?:\.\d+)?)px\b/g)) {
-        const at = `${rel}:${code.slice(0, match.index + match[0].indexOf(match[1])).split('\n').length}`
-        const spacing = !['font-size', 'border-radius'].includes(match[1])
-        if (spacing && !SPACE.has(Math.abs(Number(size[1])))) errors.push(`${at} 间距 ${size[0]} 不在设计刻度里`)
-        else if (internal) errors.push(`${at} ${match[1]} 的 ${size[0]} 应使用对应设计变量`)
-      }
-    }
-  }
-}
 
 // 图标：React 组件里的含义必须和 icons.json 一一对应；使用方直接 import lucide-react 的地方提示改用 <Icon>
 const meanings = Object.values(icons.meanings).flatMap((g) => Object.keys(g).filter((k) => !k.startsWith('$')))
@@ -149,18 +97,4 @@ if (!process.argv.slice(2).length) {
   }
 }
 
-// 使用方也检查变量拼写；设计系统公开变量可按需引入，自定义局部变量以本次源码声明为准。
-const tokenCSS = readFileSync(join(ROOT, 'tokens/dist/tokens.css'), 'utf8')
-const source = files.map(f => readFileSync(f, 'utf8')).join('\n')
-const publicCSS = ['base', 'atoms', 'molecules', 'organisms'].map(name => readFileSync(join(ROOT, `components/css/${name}.css`), 'utf8')).join('\n')
-const definitions = new Set([...(tokenCSS + publicCSS + source).matchAll(/(--vx-[\w-]+)['"]?\s*:/g)].map(m => m[1]))
-for (const f of files) {
-  const code = readFileSync(f, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '')
-  for (const variable of new Set([...code.matchAll(/var\(\s*(--vx-[\w-]+)\s*\)/g)].map(m => m[1])))
-    if (!definitions.has(variable)) errors.push(`${relative(process.cwd(), f)} 未定义变量：${variable}`)
-}
-
-for (const w of warnings) console.log('提示 ' + w)
-for (const e of errors) console.log('✗ ' + e)
-console.log(errors.length ? `\n${errors.length} 个问题，${warnings.length} 条提示` : `✓ 通过（${files.length} 个文件，${warnings.length} 条提示）`)
-process.exit(errors.length ? 1 : 0)
+process.exitCode = report(result)

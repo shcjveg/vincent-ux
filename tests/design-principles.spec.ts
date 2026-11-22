@@ -210,7 +210,9 @@ test('色卡、实际按钮和模式切换共用配色，选中反馈与键盘�
   await page.locator('.vx-theme-toggle:not(.vx-theme-toggle--inline)').click()
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
   await expect.poll(async () => (await colors(login))[0]).not.toBe(normal[0])
-  await expect.poll(() => colors(butter)).toEqual(await colors(login))
+  await expect(async () => {
+    expect(await colors(butter)).toEqual(await colors(login))
+  }).toPass({ timeout: 5000 })
   await picker.click()
   await page.getByRole('option', { name: '墨金', exact: true }).click()
   await expect(login).toHaveCSS('background-image', /linear-gradient/)

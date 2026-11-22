@@ -1,4 +1,4 @@
-// vincent-ux v1.7.0 · components/react/DataTime.tsx
+// vincent-ux v1.8.0 · components/react/DataTime.tsx
 export type DataTimeValue = { text:string;dateTime?:string;detail?:string;label?:string }
 
 /** Source-provided data freshness; never invent a time from the render clock. */

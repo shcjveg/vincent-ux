@@ -1,4 +1,4 @@
-// vincent-ux v1.7.0 · components/react/DateFilter.tsx
+// vincent-ux v1.8.0 · components/react/DateFilter.tsx
 import { useThemeContainer } from './ThemeScope'
 import { useState } from 'react'
 import { Popover } from '@base-ui/react/popover'

@@ -1,4 +1,4 @@
-// vincent-ux v1.7.0 · components/react/ThemeScope.tsx
+// vincent-ux v1.8.0 · components/react/ThemeScope.tsx
 import { createContext, useContext, useState, type ComponentPropsWithoutRef } from 'react'
 
 type Mode = 'light' | 'dark'
