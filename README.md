@@ -62,6 +62,24 @@ npm run sync -- ../my-app/src/vincent-ux
 
 各层的改造、可运行示例和验收边界见[按系统层核验](docs/coverage.md#按系统层核验)。让 AI 也用同一套设计语言：[Agent 使用说明](SKILL.md)。
 
+## 快速查找路由
+
+按任务类型快速定位文档和组件：
+
+| 任务类型 | 参考文档 | 相关组件 |
+|---|---|---|
+| 配色与主题 | [配色接入](docs/usage.md#从三种品牌色接入) | `PalettePicker`, `ThemeToggle`, `ThemeScope` |
+| 按钮与表单 | [交互原则](principles/interaction.md#按作用范围放置按钮) | `Button`, `Field`, `Checkbox`, `Switch`, `RadioGroup` |
+| 搜索与筛选 | [浏览与筛选](patterns/browse.md) | `SearchField`, `FilterBar`, `Collection`, `Pagination` |
+| 数据展示 | [视觉原则](principles/visual.md#按页面任务分配颜色) | `Metric`, `TableScroll`, `DataTime` |
+| 决策与选择 | [关键节点拍板](patterns/decision.md) | `DecisionCard`, `ActionBar` |
+| AI 协作 | [带上下文派活](patterns/delegate.md) | `AgentAction`, `TaskCard` |
+| 弹窗与抽屉 | [抽屉详情](components/drawer.md) | `Dialog`, `DetailDrawer` |
+| 导航与页签 | [页面模板](templates/README.md) | `Tabs`, `Breadcrumbs` |
+| 状态与反馈 | [交互原则](principles/interaction.md#每个组件都有完整状态) | `EmptyState`, `Spinner`, `Toast` |
+| 动效规范 | [Motion Tokens](principles/interaction.md#motion-tokens-系统) | 时长与缓动 token |
+| 修改设计系统 | 查 `components/`, `principles/`, `patterns/` 对应文档 → 修改 → 运行 `npm run check` |
+
 ## 开源
 
 [MIT](LICENSE) · [更新记录](CHANGELOG.md) · [参与贡献](CONTRIBUTING.md) · [安全报告](SECURITY.md)

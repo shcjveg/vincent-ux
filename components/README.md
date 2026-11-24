@@ -75,6 +75,58 @@
 
 误用：页内频繁切换用选择卡（用分段）；把大量条件同时铺开（常用条件前置，复杂条件按需展开）。
 
+### Button 完整状态矩阵
+
+每个按钮必须实现以下 6 个状态，不可遗漏：
+
+| 状态 | CSS 实现 | 视觉表现 |
+|---|---|---|
+| 默认 | 基础类名 `.vx-btn` / `.vx-btn--primary` | 对应变体的底色与文字色 |
+| 悬停 | `:hover` 叠加 `--vx-fill-hover` | 底色变深一档 |
+| 按下 | `:active` | 位移 0.5px，不改变颜色 |
+| 聚焦 | `:focus-visible` | 独立焦点环 `--vx-focus-ring` |
+| 禁用 | `[disabled]` | 降低强调度，但保持可辨识；不叠加通用透明度 |
+| 加载中 | `loading` 属性（React）/ `[aria-busy="true"]` | 原生禁用 + spinner，保持按钮尺寸 |
+
+**实现细节**：
+- 加载中必须同时设置 `disabled` 和视觉转圈，防止重复提交
+- 禁用状态不响应悬停，使用专用配色而非 `opacity: 0.5`
+- 焦点环独立于边框，始终可见，不能为了美观隐藏
+
+**禁止事项**：
+- 禁止在加载时改变按钮宽度（文字变转圈会跳动）
+- 禁止省略任何一个状态
+- 禁止用 `pointer-events: none` 代替真实 disabled
+- 禁止让焦点环与按钮边框重叠
+
+### Input 完整状态矩阵
+
+每个输入框必须实现以下 7 个状态：
+
+| 状态 | CSS 实现 | 视觉表现 |
+|---|---|---|
+| 默认 | `.vx-input` | 凹面 `surface-inset` + 边框 `line-control` |
+| 悬停 | `:hover` | 边框加深 |
+| 聚焦 | `:focus` | 独立焦点环 + 边框保持 |
+| 有值 | 用户输入后 | 文字用 `text-primary` |
+| Placeholder | `:placeholder-shown` | 专用 token `text-placeholder`，不用 `opacity` 调淡 |
+| 错误 | `[aria-invalid="true"]` | 错误边框 `line-critical` + 字段下方错误文字 |
+| 禁用 | `[disabled]` | 专用禁用配色，不响应交互 |
+
+**字段组合结构**（使用 Field 组件或 `.vx-field`）：
+```
+字段标签（label，关联 input）
+输入框（input）
+帮助文字（hint，正常状态）
+错误提示（error，失败状态，替换 hint 位置）
+```
+
+**禁止事项**：
+- 禁止用 `opacity` 淡化 placeholder，必须用 `text-placeholder` token
+- 禁止省略错误状态的独立边框颜色
+- 禁止让焦点环与输入框边框颜色相同
+- 禁止在禁用时仍然允许聚焦
+
 ## 4. 状态与反馈
 
 | 情况 | 用 |
